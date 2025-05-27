@@ -1,3 +1,4 @@
+import { get } from 'http';
 import { NavigationPage } from '../utils/NavigationPage';
 import { waitForWithRetry } from '../utils/waitForWithRetry';
 
@@ -129,6 +130,20 @@ export class PurchaseRequisitionPage {
     get receiveButton() {
         return this.page.locator('[data-dyn-controlname="Receive"][data-dyn-role="AppBarTab"]');
     }
+
+    get purchaseButton() {
+        return this.page.locator('[data-dyn-controlname="Purchase"][data-dyn-role="AppBarTab"]');
+    }
+
+    get confirmPoButton() {
+        return this.page.locator('[data-dyn-controlname="buttonConfirm"][data-dyn-role="MenuItemButton"]');
+    }
+
+    get dialogBox() {
+        return this.page.locator('[data-dyn-formname="SysBoxForm"][role="dialog"]');
+    }
+
+
     // Method to fill the requisition details
 
     async fillRequisitionName() {
@@ -347,7 +362,7 @@ export class PurchaseRequisitionPage {
         throw new Error(`Second 'Pending' row not found after ${maxRetries} refresh attempts.`);
     }
 
-    async waitForPOLinkInPRDetailsAndClick(maxRetries = 40, interval = 4000) {
+    async waitForPOLinkInPRDetailsAndClick(maxRetries = 60, interval = 4000) {
         const refreshButton = this.page.locator("//button[starts-with(@id, 'PurchReqTable') and contains(@id, 'SystemDefinedRefreshButton') and @aria-label='Refresh']");
 
         for (let i = 0; i < maxRetries; i++) {
@@ -386,5 +401,18 @@ export class PurchaseRequisitionPage {
         await this.receiveButton.click();
     }
 
+    async clickPurchaseButton() {
+        await waitForWithRetry(this.purchaseButton, this.page, 5, 4000, 2000);
+        await this.purchaseButton.click();
+    }
 
+    async clickConfirmPoButton() {
+        await waitForWithRetry(this.confirmPoButton, this.page, 5, 4000, 2000);
+        await this.confirmPoButton.click();
+    }
+
+    async waitForDialogBoxToHide() {
+        await this.dialogBox.waitFor({ state: 'hidden', timeout: 10000 });
+        return this.dialogBox;
+    }
 }
