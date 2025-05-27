@@ -117,7 +117,18 @@ export class PurchaseRequisitionPage {
         return this.page.locator("//div[@role='row'][.//input[@aria-label='Status' and @value='Pending']]//div[@role='checkbox']");
     }
 
+    get purchaseOrderInPRDetails() {
+        return this.page.locator('[data-dyn-controlname="LineViewLineDetails_References_PurchId"][role="link"]');
+    }
 
+    get purchaseRequisitionLink() {
+        return this.page.locator('[data-dyn-controlname="PurchReqTable_PurchReqId"] input[class="dyn-field dyn-hyperlink _nrrlfe"]');
+    }
+
+
+    get receiveButton() {
+        return this.page.locator('[data-dyn-controlname="Receive"][data-dyn-role="AppBarTab"]');
+    }
     // Method to fill the requisition details
 
     async fillRequisitionName() {
@@ -334,6 +345,45 @@ export class PurchaseRequisitionPage {
         }
 
         throw new Error(`Second 'Pending' row not found after ${maxRetries} refresh attempts.`);
+    }
+
+    async waitForPOLinkInPRDetailsAndClick(maxRetries = 40, interval = 4000) {
+        const refreshButton = this.page.locator("//button[starts-with(@id, 'PurchReqTable') and contains(@id, 'SystemDefinedRefreshButton') and @aria-label='Refresh']");
+
+        for (let i = 0; i < maxRetries; i++) {
+            if (await this.purchaseOrderInPRDetails.isVisible()) {
+                await this.purchaseOrderInPRDetails.click();
+                return true;
+            }
+            else {
+                console.log(`Attempt ${i + 1}: PO not found, refreshing...`);
+                await refreshButton.click();
+                await this.page.waitForTimeout(interval); // wait between retries
+            }
+        }
+
+        throw new Error(`PO not found after ${maxRetries} refresh attempts.`);
+    }
+
+    async clickOnPurchaseRequisition() {
+
+        await waitForWithRetry(this.purchaseRequisitionId, this.page, 5, 4000, 2000);
+        for (let i = 0; i < 10; i++) {
+
+            if (!await this.page.locator('[data-dyn-controlname="HeaderTitle"]').isVisible()) {
+                await this.purchaseRequisitionId.click();
+                this.page.keyboard.press('Enter');
+                console.log("clicked on Purchase Requisition ID");
+                break;
+            }
+            else {
+                console.log("Purchase Requisition ID is not visible, retrying...");
+            }
+        }
+    }
+    async clickReceiveButton() {
+        await waitForWithRetry(this.receiveButton, this.page, 5, 4000, 2000);
+        await this.receiveButton.click();
     }
 
 
