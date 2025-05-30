@@ -59,12 +59,15 @@ test.describe('UAT Purchase Requisition Flow', () => {
     expect(actualTitle).toContain(preRquisitionName);
 
     await requisitionPage.setAndSelectBusinessJustificationReason('Business Justification');
-    //await requisitionPage.enterBusinessJustificationHeaderDetails('Non-Capex PR '+preRquisitionName);
+    const justificationDetails = `** Non-Capex PR ${preRquisitionName}`;
+    console.log('Filling justification:', justificationDetails);
+    await requisitionPage.enterBusinessJustificationHeaderDetails(justificationDetails);
+
     await requisitionPage.clickAddNewPRLineButton();
     await navigationPage.waitUntilProcessingMessageDisappears();
     await requisitionPage.selectItemName('101100');
     await requisitionPage.selectSupplier('TT118');
-
+    await requisitionPage.enterPurchaseQuantity('100');
 
     await requisitionPage.clickFinancialDimensions();
     await requisitionPage.enterBusinessUnit('HDQ');
@@ -190,6 +193,7 @@ test.describe('UAT Purchase Requisition Flow', () => {
 
 
     //****************************Purchase Order  */
+
     navigationPage.openModulesMenu();
     await clickMenuItem(page, 'Procurement and sourcing', false);
     await clickMenuItem(page, 'Purchase requisitions', true);
@@ -201,8 +205,7 @@ test.describe('UAT Purchase Requisition Flow', () => {
     await checkMatchingRow(page, prName);
     await requisitionPage.clickOnPurchaseRequisition();
     await navigationPage.waitUntilProcessingMessageDisappears();
-    // await requisitionPage.clickOnPurchaseRequisition();
-    // await navigationPage.waitUntilProcessingMessageDisappears();
+
     await requisitionPage.waitForPOLinkInPRDetailsAndClick();
     await navigationPage.waitUntilProcessingMessageDisappears();
     await requisitionPage.clickPurchaseButton();
@@ -210,6 +213,21 @@ test.describe('UAT Purchase Requisition Flow', () => {
     await requisitionPage.waitForDialogBoxToHide();
     const isOperationCompletedMessageDisplayedOnPOPage = await requisitionPage.checkMessageBar();
     expect(isOperationCompletedMessageDisplayedOnPOPage).toBe("Operation completed");
+    await requisitionPage.clickReceiveButton();
+    await requisitionPage.clickProductReceiptButton();
+    await navigationPage.waitUntilProcessingMessageDisappears();
+    await requisitionPage.enterProductReceiptText('noncapexGR');
+    await requisitionPage.enterGoodRecieveQuantity('100.00');
+    await requisitionPage.submitRequisition();
+    await navigationPage.waitUntilProcessingMessageDisappears();
+
+    await requisitionPage.clickJournalProductReceiptButton();
+    await requisitionPage.clickVouchersButton();
+    await navigationPage.waitUntilProcessingMessageDisappears();
+    await requisitionPage.waitForJournalVoucherRowsOnGoodReceipt();
+    const matchedQuantity = await requisitionPage.isAmountInputWithValuePresent('-100.00');
+    console.log(`Matched Quantity: ${matchedQuantity}`);
+    expect(matchedQuantity).toBe(true);
 
   });
 

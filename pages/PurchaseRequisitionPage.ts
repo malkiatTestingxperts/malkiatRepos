@@ -35,7 +35,7 @@ export class PurchaseRequisitionPage {
 
     get enterPRHeaderDetails() {
 
-        return this.page.locator('[data-dyn-controlname="BusinessJustificationHeader_BusinessJustification"]');
+        return this.page.locator('textarea[name="BusinessJustificationHeader_BusinessJustification"]');
     }
 
     get enterItemNumberInPRLine() {
@@ -62,6 +62,11 @@ export class PurchaseRequisitionPage {
     get selectValueInFinancialDimensions() {
         return this.page.locator('[data-dyn-controlname="ValueColumn"][data-dyn-focus="input"]');
     }
+
+    clickPublication(labelText: string) {
+        return this.page.locator(`div[data-dyn-controlname="ValueColumn"] input[value*='${labelText}']`);
+    }
+
 
     get selectWorkflowButton() {
         return this.page.locator('//button//span[text()="Workflow"]');//'[data-dyn-controlname="PurchReqTableWorkflowDropDialogButtonGroup"] button');
@@ -144,6 +149,38 @@ export class PurchaseRequisitionPage {
     }
 
 
+    get purchaseQuantity() {
+        return this.page.locator('[data-dyn-controlname="PurchReqLine_PurchQty"] input');
+    }
+
+    get buttonProductReceipt() {
+        return this.page.locator('button[name="buttonUpdatePackingSlip"]');
+    }
+
+    get productReceiptText() {
+        return this.page.locator('[data-dyn-controlname="PurchParmTable_Num"] input');
+    }
+
+    get receiveQuantity() {
+        return this.page.locator('[data-dyn-controlname="PurchParmLine_ReceiveNow"] input');
+    }
+
+    get buttonJournalProductReceipt() {
+        return this.page.locator('[data-dyn-controlname="buttonJournalPackingSlip"]');
+    }
+
+    get buttonVouchers() {
+        return this.page.locator('button[data-dyn-controlname="LedgerTransactVoucher"]');
+    }
+
+    get yearClosedColumn() {
+        return this.page.locator('[data-dyn-columnname="YearClosed"]');
+    }
+
+    get journalVoucherRow() {
+        return this.page.locator('[data-dyn-controlname="LedgerTrans_AmountCur"] input');
+    }
+
     // Method to fill the requisition details
 
     async fillRequisitionName() {
@@ -190,11 +227,13 @@ export class PurchaseRequisitionPage {
         await this.setbusinessJustification.press('Enter');
         await this.selectbusinessJustification.waitFor({ state: 'visible', timeout: 100000 });
         await this.selectbusinessJustification.click();
+        await this.page.waitForTimeout(2000);
     }
 
     async enterBusinessJustificationHeaderDetails(detail: string) {
+        await this.enterPRHeaderDetails.waitFor({ state: 'visible' });
         await this.enterPRHeaderDetails.click({ force: true });
-        await this.enterPRHeaderDetails.fill(detail);
+        await this.enterPRHeaderDetails.type(detail, { delay: 200 }); // optional delay for realism
     }
 
     async selectItemName(itemName: string) {
@@ -217,15 +256,21 @@ export class PurchaseRequisitionPage {
     }
 
     async enterBusinessUnit(businessUnit: string) {
-        await this.enterBusinessUnitinFinancialDimensions.scrollIntoViewIfNeeded();
-        await this.enterBusinessUnitinFinancialDimensions.pressSequentially(businessUnit, { delay: 100 })
-        await this.page.locator('[data-dyn-controlname="LineDimensionEntryControl_DECValue_BusinessUnit"] [class="lookupButton"]').click();
+        const field = this.enterBusinessUnitinFinancialDimensions;
+
+        await field.waitFor({ state: 'visible' });
+        await field.fill(''); // Clear any prefilled value
+        await field.type(businessUnit, { delay: 100 }); // Or use fill() if no delay needed
+
+        await this.page.locator('[data-dyn-controlname="LineDimensionEntryControl_DECValue_BusinessUnit"] .lookupButton').click();
         await this.selectValueInFinancialDimensions.waitFor({ state: 'visible', timeout: 10000 });
         await this.selectValueInFinancialDimensions.click();
         await this.page.waitForTimeout(2000);
     }
+
     async enterCostCenter(costCenter: string) {
         await this.enterCostCenterinFinancialDimensions.scrollIntoViewIfNeeded();
+        await this.enterCostCenterinFinancialDimensions.fill('');
         await this.enterCostCenterinFinancialDimensions.pressSequentially(costCenter, { delay: 100 })
         await this.page.locator("[data-dyn-controlname='LineDimensionEntryControl_DECValue_CostCenter'] [class='lookupButton']").click();
         await this.selectValueInFinancialDimensions.waitFor({ state: 'visible', timeout: 10000 });
@@ -234,10 +279,12 @@ export class PurchaseRequisitionPage {
     }
     async enterPublications(publication: string) {
         await this.enterPublicationinFinancialDimensions.scrollIntoViewIfNeeded();
-        await this.enterPublicationinFinancialDimensions.pressSequentially(publication, { delay: 100 })
-        await this.page.locator("[data-dyn-controlname='LineDimensionEntryControl_DECValue_Publications'] [class='lookupButton']").click();
-        await this.selectValueInFinancialDimensions.waitFor({ state: 'visible', timeout: 10000 });
-        await this.selectValueInFinancialDimensions.click();
+        await this.enterPublicationinFinancialDimensions.clear();
+        await this.enterPublicationinFinancialDimensions.fill(publication);
+        await this.page.waitForTimeout(2000);
+        //await this.page.locator("[data-dyn-controlname='LineDimensionEntryControl_DECValue_Publications'] [class='lookupButton']").click();
+        await this.clickPublication(publication).waitFor({ state: 'visible', timeout: 10000 });
+        await this.clickPublication(publication).click();
     }
 
     async clickWorkflow() {
@@ -414,5 +461,68 @@ export class PurchaseRequisitionPage {
     async waitForDialogBoxToHide() {
         await this.dialogBox.waitFor({ state: 'hidden', timeout: 10000 });
         return this.dialogBox;
+    }
+
+    async enterPurchaseQuantity(quantity: string) {
+        await this.purchaseQuantity.click();
+        await this.purchaseQuantity.clear();
+        await this.purchaseQuantity.type(quantity, { delay: 200 });
+        await this.page.waitForTimeout(2000);
+    }
+
+    async clickProductReceiptButton() {
+        await waitForWithRetry(this.buttonProductReceipt, this.page, 5, 4000, 2000);
+        await this.buttonProductReceipt.click();
+    }
+
+    async enterProductReceiptText(receiptText: string) {
+        await this.productReceiptText.scrollIntoViewIfNeeded();
+        await this.productReceiptText.fill(receiptText);
+    }
+
+    async enterGoodRecieveQuantity(quantity: string) {
+        await this.receiveQuantity.click();
+        await this.receiveQuantity.fill('');
+        await this.receiveQuantity.fill(quantity);
+        await this.page.waitForTimeout(2000);
+    }
+
+    async clickJournalProductReceiptButton() {
+        await waitForWithRetry(this.buttonJournalProductReceipt, this.page, 5, 4000, 2000);
+        await this.buttonJournalProductReceipt.click();
+        await this.page.waitForTimeout(2000);
+    }
+
+    async clickVouchersButton() {
+        await waitForWithRetry(this.buttonVouchers, this.page, 5, 4000, 2000);
+        await this.buttonVouchers.click();
+    }
+
+    async isAmountInputWithValuePresent(expectedValue: string): Promise<boolean> {
+        const amountInputs = this.journalVoucherRow;
+        const count = await amountInputs.count();
+        for (let i = 0; i < count; i++) {
+            const value = await amountInputs.nth(i).inputValue();
+            if (value.trim() === expectedValue.trim()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    async waitForJournalVoucherRowsOnGoodReceipt(maxRetries = 80, interval = 4000) {
+        const refreshButton = this.page.locator("//button[starts-with(@id, 'LedgerTransVoucher') and contains(@id, 'SystemDefinedRefreshButton') and @aria-label='Refresh']");
+        for (let i = 0; i < maxRetries; i++) {
+            if (await this.journalVoucherRow.first().isVisible()) {
+                console.log(`Journal voucher row found after ${i + 1} refresh(es)`);
+                return true;
+            }
+            else {
+                console.log(`Attempt ${i + 1}: Journal voucher row not found, refreshing...`);
+                await refreshButton.click();
+                await this.page.waitForTimeout(interval);
+            }
+        }
+        throw new Error(`Journal voucher rows not found after ${maxRetries} refresh attempts.`);
     }
 }
