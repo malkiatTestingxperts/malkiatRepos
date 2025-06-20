@@ -42,6 +42,11 @@ export class PurchaseRequisitionPage {
 
         return this.page.locator('[data-dyn-controlname="PurchReqLine_ItemId"] input');
     }
+
+    get enterAssetIdInPRLine() {
+
+        return this.page.locator('[data-dyn-controlname="PurchReqLine_TMLFGH_AssetId"] input');
+    }
     get enterSupplierNameInPRLine() {
 
         return this.page.locator('[data-dyn-controlname="PurchReqLine_VendAccount"] input');
@@ -181,6 +186,13 @@ export class PurchaseRequisitionPage {
         return this.page.locator('[data-dyn-controlname="LedgerTrans_AmountCur"] input');
     }
 
+    get capexToggle() {
+        return this.page.locator("//span[starts-with(@id, 'PurchReqCreate_') and contains(@id, '_Capex_toggle')]");
+    }
+
+    get selectCapexNumber() {
+        return this.page.locator('[role="gridcell"] [data-dyn-controlname="SysGen_AssetId"]');
+    }
     // Method to fill the requisition details
 
     async fillRequisitionName() {
@@ -281,7 +293,7 @@ export class PurchaseRequisitionPage {
         await this.enterPublicationinFinancialDimensions.scrollIntoViewIfNeeded();
         await this.enterPublicationinFinancialDimensions.clear();
         await this.enterPublicationinFinancialDimensions.fill(publication);
-        await this.page.waitForTimeout(2000);
+        await this.page.waitForTimeout(5000);
         //await this.page.locator("[data-dyn-controlname='LineDimensionEntryControl_DECValue_Publications'] [class='lookupButton']").click();
         await this.clickPublication(publication).waitFor({ state: 'visible', timeout: 10000 });
         await this.clickPublication(publication).click();
@@ -476,16 +488,40 @@ export class PurchaseRequisitionPage {
     }
 
     async enterProductReceiptText(receiptText: string) {
-        await this.productReceiptText.scrollIntoViewIfNeeded();
-        await this.productReceiptText.fill(receiptText);
-    }
-
-    async enterGoodRecieveQuantity(quantity: string) {
-        await this.receiveQuantity.click();
-        await this.receiveQuantity.fill('');
-        await this.receiveQuantity.fill(quantity);
+        const input = this.productReceiptText;
+        await input.scrollIntoViewIfNeeded();
+        await input.waitFor({ state: 'visible' });
+        await input.click({ force: true }); // Sometimes necessary for custom input boxes
+        await input.fill(''); // Clear existing text
+        await input.type(receiptText, { delay: 100 });
         await this.page.waitForTimeout(2000);
     }
+
+
+    async enterGoodRecieveQuantity(quantity: string) {
+        const input = this.receiveQuantity;
+
+        await input.scrollIntoViewIfNeeded();
+        await input.waitFor({ state: 'visible' });
+        await input.click({ force: true }); // Focus the field
+
+        // Clear it (double-click + backspace as backup)
+        await input.click({ clickCount: 3 });
+        await this.page.keyboard.press('Backspace');
+
+        // Type one character at a time using keyboard
+        for (const char of quantity) {
+            await this.page.keyboard.type(char);
+            await this.page.waitForTimeout(50); // tiny delay between characters
+        }
+
+        // Optional: blur the input to trigger any model update
+        await this.page.keyboard.press('Tab');
+
+        await this.page.waitForTimeout(2000);
+    }
+
+
 
     async clickJournalProductReceiptButton() {
         await waitForWithRetry(this.buttonJournalProductReceipt, this.page, 5, 4000, 2000);
@@ -524,5 +560,24 @@ export class PurchaseRequisitionPage {
             }
         }
         throw new Error(`Journal voucher rows not found after ${maxRetries} refresh attempts.`);
+    }
+
+    async clickCapexToggle() {
+        await this.capexToggle.click();
+    }
+
+    async selectCapexNum(capexNumber: string) {
+        await this.enterAssetIdInPRLine.fill(capexNumber);
+        await this.enterAssetIdInPRLine.press('Enter');
+        await this.selectCapexNumber.waitFor({ state: 'visible', timeout: 100000 });
+        await this.selectCapexNumber.click();
+    }
+    async fillGRName() {
+        const randomString = Math.random().toString(36).substring(2, 6).toUpperCase();
+        const randomNumber = Math.floor(Math.random() * 10000);
+        const requisitionTitle = `Test-${randomString}${randomNumber}`;
+
+        await this.requisitionName.fill(requisitionTitle);
+        return requisitionTitle;
     }
 }

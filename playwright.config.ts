@@ -1,7 +1,8 @@
 import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
-  timeout: 700000,
+  timeout: 900000,
+  workers: 1,
   use: {
     storageState: 'auth2.json',
     headless: false,
