@@ -26,4 +26,25 @@ export async function clickMenuItem(page: Page, title: string, isSubMenu = false
   }
 }
 
+export async function expandMenuIfCollapsed(page: Page, label: string) {
+  // Parent expandable menu item
+  const parentMenu = page.locator(`a.modulesFlyout-LinkGroup[aria-label="${label}"]`);
+
+  await parentMenu.waitFor({ state: 'visible' });
+
+  // Expand if not already
+  const isExpanded = await parentMenu.getAttribute('aria-expanded');
+  if (isExpanded !== 'true') {
+    await parentMenu.click();
+    await page.waitForTimeout(500); // allow animation to finish
+  }
+
+  // Sub-menu item inside the expanded section
+  const subLink = page.locator(`div.modulesFlyout-link[aria-label="${label}"] > a.modulesFlyout-linkText`);
+  await subLink.waitFor({ state: 'visible' });
+  await subLink.click();
+}
+
+
+
 

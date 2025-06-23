@@ -1,0 +1,267 @@
+// PurchaseRequisitionTest.spec.ts
+import { test, expect } from '@playwright/test';
+import { NavigationPage } from '../utils/NavigationPage';
+import { selectQuickFilter, checkMatchingRow } from '../utils/Filter';
+import { clickMenuItem } from '../utils/Menu';
+import { expandMenuIfCollapsed } from '../utils/Menu';
+import { PurchaseRequisitionPage } from '../pages/PurchaseRequisitionPage';
+import { FixedAssetsPage } from '../pages/FixedAssetsPage';
+import { setEnvVariable, readEnvVariable } from '../utils/envHelper';
+import path from 'path';
+import dotenv from 'dotenv';
+dotenv.config();
+const baseURL = process.env.BASE_URL;
+if (!baseURL) {
+  throw new Error('BASE_URL environment variable is not set');
+}
+test.describe('UAT Fixed Asset Flow', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto(baseURL, { waitUntil: 'domcontentloaded' });
+  });
+
+  test.afterEach(async ({ page }, testInfo) => {
+    console.log('Running teardown from afterEach');
+
+    if (testInfo.status !== testInfo.expectedStatus) {
+      const screenshotPath = path.join('screenshots', `${testInfo.title.replace(/\s+/g, '_')}.png`);
+
+      // Take screenshot and save it
+      await page.screenshot({ path: screenshotPath, fullPage: true });
+
+      // Attach to HTML report
+      await testInfo.attach('Failure Screenshot', {
+        path: screenshotPath,
+        contentType: 'image/png',
+      });
+
+      console.log(`Screenshot attached to report at ${screenshotPath}`);
+    }
+    await page.close();
+  });
+
+
+  test('Create Fixed Asset', async ({ page }) => {
+
+    const navigationPage = new NavigationPage(page);
+    const requisitionPage = new PurchaseRequisitionPage(page);
+    const fixedAssetsPage = new FixedAssetsPage(page);
+    navigationPage.openModulesMenu();
+    await clickMenuItem(page, 'Fixed assets', false);
+    await page.waitForTimeout(5000);
+    await expandMenuIfCollapsed(page, 'Fixed assets');
+    await navigationPage.waitUntilProcessingMessageDisappears();
+    await expect(navigationPage.actionsGroupNewButton).toBeVisible();
+    await navigationPage.clickNewButton();
+    await navigationPage.waitUntilProcessingMessageDisappears();
+    await fixedAssetsPage.selectFixedAssetGroup('Operational ');
+    const random4Digit = Math.floor(1000 + Math.random() * 9000);
+    await fixedAssetsPage.enterCapexNumber(random4Digit.toString());
+
+    const randomString = Math.random().toString(36).substring(2, 6).toUpperCase();
+    const fixeAssetDescription = `CCTV Expansion${randomString}`;
+    await fixedAssetsPage.enterFADescr(fixeAssetDescription);
+    await fixedAssetsPage.enterFADescrAlias(fixeAssetDescription);
+    await fixedAssetsPage.selectFixedAssetLocation('VICAR LANE');
+    await fixedAssetsPage.selectFixedAssetSorting('Grattan');
+    await fixedAssetsPage.selectFixedAssetSorting2('NA');
+    // await page.waitForTimeout(9000);
+    await fixedAssetsPage.clickBooksButton()
+    await navigationPage.waitUntilProcessingMessageDisappears();
+    // await requisitionPage.clickFinancialDimensions();
+    await fixedAssetsPage.enterBusinessUnit('HDQ');
+    await fixedAssetsPage.enterCostCenter('QHO');
+    await fixedAssetsPage.enterPublications('NA');
+
+    await fixedAssetsPage.clickSaveButton();
+    await fixedAssetsPage.clickBackButtonBooksPage();
+    await page.waitForTimeout(9000);
+    await fixedAssetsPage.clickBackButtonFAPage();
+    await page.waitForTimeout(9000);
+    // co9nst preRquisitionName = await requisitionPage.fillRequisitionName();
+    // console.log(`Requisition Name: ${preRquisitionName}`);
+    // setEnvVariable('PR_NAME', preRquisitionName);
+    //   await requisitionPage.clickCapexToggle();
+    //   await requisitionPage.submitRequisition();
+    //   await navigationPage.waitUntilProcessingMessageDisappears();
+    //   const actualTitle = await requisitionPage.getHeaderTitle();
+    //   expect(actualTitle).toContain(preRquisitionName);
+
+    //   await requisitionPage.setAndSelectBusinessJustificationReason('Business Justification');
+    //   const justificationDetails = `** Capex PR ${preRquisitionName}`;
+    //   console.log('Filling justification:', justificationDetails);
+    //   await requisitionPage.enterBusinessJustificationHeaderDetails(justificationDetails);
+
+    //   await requisitionPage.clickAddNewPRLineButton();
+    //   await navigationPage.waitUntilProcessingMessageDisappears();
+
+
+    //   await requisitionPage.selectItemName('101100');
+
+    //   await requisitionPage.selectSupplier('TT118');
+    //   await requisitionPage.enterPurchaseQuantity('100');
+    //   await requisitionPage.selectCapexNum('2350');
+    //   await requisitionPage.clickFinancialDimensions();
+    //   await requisitionPage.enterBusinessUnit('HDQ');
+    //   await requisitionPage.enterCostCenter('FPC');
+    //   await requisitionPage.enterPublications('NA');
+    //   await navigationPage.clickSaveButton();
+    //   await navigationPage.waitUntilProcessingMessageDisappears();
+    //   await page.waitForTimeout(2000);
+    //   await navigationPage.clickBackButton();
+    //   await selectQuickFilter(page, preRquisitionName, 'Name');
+    //   await page.waitForTimeout(2000);
+    //   await checkMatchingRow(page, preRquisitionName);
+    //   await requisitionPage.clickWorkflow()
+    //   await requisitionPage.getSpanByLabel("Submit");
+    //   const message = await requisitionPage.checkMessageBar();
+    //   expect(message).toBe("Operation completed");
+
+    //   await requisitionPage.clickSubmitButton()
+    //   // await requisitionPage.clickSubmitButtonOnWorkflowDialog();
+    //   await navigationPage.waitUntilProcessingMessageDisappears();
+
+    // });
+
+
+
+    // test('Create Good Receipt For Capex PR', async ({ page }) => {
+    //   const navigationPage = new NavigationPage(page);
+    //   const requisitionPage = new PurchaseRequisitionPage(page);
+    //   const prName = readEnvVariable('PR_NAME');
+    //   console.log(`Updated PR_NAME: ${prName}`);
+    //   navigationPage.openModulesMenu();
+    //   await clickMenuItem(page, 'Procurement and sourcing', false);
+    //   await clickMenuItem(page, 'Purchase requisitions', true);
+    //   await clickMenuItem(page, 'Purchase requisitions prepared by me', false);
+    //   await navigationPage.waitUntilProcessingMessageDisappears();
+    //   await expect(navigationPage.isElementVisible).toBeVisible();
+
+    //   if (!prName) {
+    //     throw new Error('PR_NAME environment variable is not set');
+    //   }
+    //   await selectQuickFilter(page, prName, 'Name');
+    //   await page.waitForTimeout(2000);
+    //   await checkMatchingRow(page, prName);
+    //   const purchaseRequisitionId = requisitionPage.getPurchaseRequisitionId()
+    //   console.log(`Purchase Requisition ID: ${purchaseRequisitionId}`);
+    //   await requisitionPage.clickWorkflow()
+
+    //   await requisitionPage.getSpanByLabel("Workflow history");
+    //   await navigationPage.waitUntilProcessingMessageDisappears();
+    //   await requisitionPage.waitForPendingStatusRowAndSelect();
+    //   await requisitionPage.clickReassignWorkItem();
+    //   await navigationPage.waitUntilProcessingMessageDisappears();
+    //   await requisitionPage.enterUserName('ETXP001');
+    //   await requisitionPage.clickActionButton();
+
+    //   await requisitionPage.waitForStatusContains("Pending");
+    //   await navigationPage.clickHomeButton();
+    //   await navigationPage.waitUntilProcessingMessageDisappears();
+
+    //   if (purchaseRequisitionId) {
+    //     const approvalLink = await requisitionPage.getApprovalRequestLink(await purchaseRequisitionId + ".");
+    //     await approvalLink.click();
+    //     await navigationPage.waitUntilProcessingMessageDisappears();
+    //   } else {
+    //     throw new Error('Purchase Requisition ID is null');
+    //   }
+    //   await page.waitForTimeout(2000);
+    //   await requisitionPage.clickWorkflow()
+    //   await page.waitForTimeout(2000);
+    //   await requisitionPage.getSpanByLabel("Approve");
+    //   await navigationPage.waitUntilProcessingMessageDisappears();
+    //   await requisitionPage.clickActionButton();
+    //   await navigationPage.waitUntilProcessingMessageDisappears();
+
+
+
+    //   ///********e*********Again the same code */
+
+    //   navigationPage.openModulesMenu();
+    //   await clickMenuItem(page, 'Procurement and sourcing', false);
+    //   await clickMenuItem(page, 'Purchase requisitions', true);
+    //   await clickMenuItem(page, 'Purchase requisitions prepared by me', false);
+    //   await navigationPage.waitUntilProcessingMessageDisappears();
+    //   await expect(navigationPage.isElementVisible).toBeVisible();
+
+    //   await selectQuickFilter(page, prName, 'Name');
+    //   await page.waitForTimeout(2000);
+    //   await checkMatchingRow(page, prName);
+    //   // const purchaseRequisitionId = requisitionPage.getPurchaseRequisitionId()
+    //   // console.log(`Purchase Requisition ID: ${purchaseRequisitionId}`);
+    //   await requisitionPage.clickWorkflow()
+    //   await page.waitForTimeout(2000);
+    //   await requisitionPage.getSpanByLabel("Workflow history");
+    //   await navigationPage.waitUntilProcessingMessageDisappears();
+
+
+    //   // //////*******************from here debug */
+    //   await requisitionPage.waitForPendingStatusRowAndSelect();
+    //   await requisitionPage.clickReassignWorkItem();
+    //   await navigationPage.waitUntilProcessingMessageDisappears();
+    //   await requisitionPage.enterUserName('ETXP001');
+    //   await requisitionPage.clickActionButton();
+
+    //   // await requisitionPage.waitForStatusContains("Pending");
+    //   await navigationPage.clickHomeButton();
+    //   await navigationPage.waitUntilProcessingMessageDisappears();
+
+    //   if (purchaseRequisitionId) {
+    //     const approvalLink = await requisitionPage.getApprovalRequestLink(await purchaseRequisitionId + ".");
+    //     await approvalLink.click();
+    //     await navigationPage.waitUntilProcessingMessageDisappears();
+    //   } else {
+    //     throw new Error('Purchase Requisition ID is null');
+    //   }
+    //   await page.waitForTimeout(2000);
+    //   await requisitionPage.clickWorkflow()
+    //   await page.waitForTimeout(2000);
+    //   await requisitionPage.getSpanByLabel("Approve");
+    //   await navigationPage.waitUntilProcessingMessageDisappears();
+    //   await requisitionPage.clickActionButton();
+    //   await navigationPage.waitUntilProcessingMessageDisappears();
+
+
+
+    //   //****************************Purchase Order  */
+
+    //   navigationPage.openModulesMenu();
+    //   await clickMenuItem(page, 'Procurement and sourcing', false);
+    //   await clickMenuItem(page, 'Purchase requisitions', true);
+    //   await clickMenuItem(page, 'Purchase requisitions prepared by me', false);
+    //   await navigationPage.waitUntilProcessingMessageDisappears();
+    //   await expect(navigationPage.isElementVisible).toBeVisible();
+    //   await selectQuickFilter(page, prName, 'Name');
+    //   await page.waitForTimeout(2000);
+    //   await checkMatchingRow(page, prName);
+    //   await requisitionPage.clickOnPurchaseRequisition();
+    //   await navigationPage.waitUntilProcessingMessageDisappears();
+
+    //   await requisitionPage.waitForPOLinkInPRDetailsAndClick();
+    //   await navigationPage.waitUntilProcessingMessageDisappears();
+    //   await requisitionPage.clickPurchaseButton();
+    //   await requisitionPage.clickConfirmPoButton();
+    //   await requisitionPage.waitForDialogBoxToHide();
+    //   const isOperationCompletedMessageDisplayedOnPOPage = await requisitionPage.checkMessageBar();
+    //   expect(isOperationCompletedMessageDisplayedOnPOPage).toBe("Operation completed");
+    //   await requisitionPage.clickReceiveButton();
+    //   await requisitionPage.clickProductReceiptButton();
+    //   await navigationPage.waitUntilProcessingMessageDisappears();
+    //   const randomString = Math.random().toString(36).substring(2, 6).toUpperCase();
+    //   const capexGRName = `capexgr${randomString}`;
+    //   await requisitionPage.enterProductReceiptText(capexGRName);
+    //   await requisitionPage.enterGoodRecieveQuantity('50.00');
+    //   await requisitionPage.submitRequisition();
+    //   await navigationPage.waitUntilProcessingMessageDisappears();
+
+    //   await requisitionPage.clickJournalProductReceiptButton();
+    //   await requisitionPage.clickVouchersButton();
+    //   await navigationPage.waitUntilProcessingMessageDisappears();
+    //   await requisitionPage.waitForJournalVoucherRowsOnGoodReceipt();
+    //   const matchedQuantity = await requisitionPage.isAmountInputWithValuePresent('-50.00');
+    //   console.log(`Matched Quantity: ${matchedQuantity}`);
+    //   expect(matchedQuantity).toBe(true);
+
+  });
+
+});
