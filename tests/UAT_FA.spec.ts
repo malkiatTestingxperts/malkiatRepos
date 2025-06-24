@@ -4,6 +4,7 @@ import { NavigationPage } from '../utils/NavigationPage';
 import { selectQuickFilter, checkMatchingRow } from '../utils/Filter';
 import { clickMenuItem } from '../utils/Menu';
 import { expandMenuIfCollapsed } from '../utils/Menu';
+import { getFormattedDateOffset } from '../utils/DateHelper';
 import { PurchaseRequisitionPage } from '../pages/PurchaseRequisitionPage';
 import { FixedAssetsPage } from '../pages/FixedAssetsPage';
 import { setEnvVariable, readEnvVariable } from '../utils/envHelper';
@@ -45,39 +46,65 @@ test.describe('UAT Fixed Asset Flow', () => {
     const navigationPage = new NavigationPage(page);
     const requisitionPage = new PurchaseRequisitionPage(page);
     const fixedAssetsPage = new FixedAssetsPage(page);
+    // navigationPage.openModulesMenu();
+    // await clickMenuItem(page, 'Fixed assets', false);
+    // await page.waitForTimeout(5000);
+    // await expandMenuIfCollapsed(page, 'Fixed assets', 'Fixed assets');
+    // await navigationPage.waitUntilProcessingMessageDisappears();
+    // await expect(navigationPage.actionsGroupNewButton).toBeVisible();
+    // await navigationPage.clickNewButton();
+    // await navigationPage.waitUntilProcessingMessageDisappears();
+    // await fixedAssetsPage.selectFixedAssetGroup('Operational ');
+    // const random4Digit = Math.floor(1000 + Math.random() * 9000);
+    // console.log(`Random 4-digit number: ${random4Digit}`);
+    // await fixedAssetsPage.enterCapexNumber(random4Digit.toString());
+
+    // const randomString = Math.random().toString(36).substring(2, 6).toUpperCase();
+    // const fixeAssetDescription = `CCTV Expansion${randomString}`;
+    // console.log(`fixed asset description: ${fixeAssetDescription}`);
+    // await fixedAssetsPage.enterFADescr(fixeAssetDescription);
+    // await fixedAssetsPage.enterFADescrAlias(fixeAssetDescription);
+    // await fixedAssetsPage.selectFixedAssetLocation('VICAR LANE');
+    // await fixedAssetsPage.selectFixedAssetSorting('Grattan');
+    // await fixedAssetsPage.selectFixedAssetSorting2('NA');
+    // // await page.waitForTimeout(9000);
+    // await fixedAssetsPage.clickBooksButton()
+    // await navigationPage.waitUntilProcessingMessageDisappears();
+    // // await requisitionPage.clickFinancialDimensions();
+    // await fixedAssetsPage.enterBusinessUnit('HDQ');
+    // await fixedAssetsPage.enterCostCenter('QHO');
+    // await fixedAssetsPage.enterPublications('NA');
+
+    // await fixedAssetsPage.clickSaveButton();
+    // await fixedAssetsPage.clickBackButtonBooksPage();
+    // await page.waitForTimeout(4000);
+    // await fixedAssetsPage.clickBackButtonFAPage();
+
+    //*****************Create Journal FA */
     navigationPage.openModulesMenu();
     await clickMenuItem(page, 'Fixed assets', false);
     await page.waitForTimeout(5000);
-    await expandMenuIfCollapsed(page, 'Fixed assets');
+    await expandMenuIfCollapsed(page, 'Journal entries', 'Fixed assets journal');
     await navigationPage.waitUntilProcessingMessageDisappears();
-    await expect(navigationPage.actionsGroupNewButton).toBeVisible();
     await navigationPage.clickNewButton();
-    await navigationPage.waitUntilProcessingMessageDisappears();
-    await fixedAssetsPage.selectFixedAssetGroup('Operational ');
-    const random4Digit = Math.floor(1000 + Math.random() * 9000);
-    await fixedAssetsPage.enterCapexNumber(random4Digit.toString());
+    await fixedAssetsPage.selectFixedAssetJournalName('FXA');
 
-    const randomString = Math.random().toString(36).substring(2, 6).toUpperCase();
-    const fixeAssetDescription = `CCTV Expansion${randomString}`;
-    await fixedAssetsPage.enterFADescr(fixeAssetDescription);
-    await fixedAssetsPage.enterFADescrAlias(fixeAssetDescription);
-    await fixedAssetsPage.selectFixedAssetLocation('VICAR LANE');
-    await fixedAssetsPage.selectFixedAssetSorting('Grattan');
-    await fixedAssetsPage.selectFixedAssetSorting2('NA');
-    // await page.waitForTimeout(9000);
-    await fixedAssetsPage.clickBooksButton()
+    const random4Digit2 = Math.floor(1000 + Math.random() * 9000);
+    console.log(`Random 4-digit number: ${random4Digit2}`);
+    await fixedAssetsPage.enterJournalFixedAssetDescription("JournalFA-" + random4Digit2);
+    await fixedAssetsPage.clickFixedAssetJournalLine();
     await navigationPage.waitUntilProcessingMessageDisappears();
-    // await requisitionPage.clickFinancialDimensions();
-    await fixedAssetsPage.enterBusinessUnit('HDQ');
-    await fixedAssetsPage.enterCostCenter('QHO');
-    await fixedAssetsPage.enterPublications('NA');
 
-    await fixedAssetsPage.clickSaveButton();
-    await fixedAssetsPage.clickBackButtonBooksPage();
-    await page.waitForTimeout(9000);
-    await fixedAssetsPage.clickBackButtonFAPage();
-    await page.waitForTimeout(9000);
-    // co9nst preRquisitionName = await requisitionPage.fillRequisitionName();
+    var journalDate = getFormattedDateOffset(-1);
+    console.log(`Journal Date: ${journalDate}`);
+    await fixedAssetsPage.enterJournalDate(journalDate);
+    await fixedAssetsPage.enterAndSelectAccountNumberJournal('CCTV ExpansionCSVU');
+    await fixedAssetsPage.enterDebitAmountJournal('15000.00');
+    await fixedAssetsPage.clickValidateButton();
+    await navigationPage.waitUntilProcessingMessageDisappears();
+    const message = await requisitionPage.checkMessageBar();
+    expect(message).toContain("Journal is OK.");
+    // const preRquisi tionName = await requisitionPage.fillRequisitionName();
     // console.log(`Requisition Name: ${preRquisitionName}`);
     // setEnvVariable('PR_NAME', preRquisitionName);
     //   await requisitionPage.clickCapexToggle();

@@ -26,7 +26,7 @@ export async function clickMenuItem(page: Page, title: string, isSubMenu = false
   }
 }
 
-export async function expandMenuIfCollapsed(page: Page, label: string) {
+export async function expandMenuIfCollapsed(page: Page, label: string, labelsubmenu: string) {
   // Parent expandable menu item
   const parentMenu = page.locator(`a.modulesFlyout-LinkGroup[aria-label="${label}"]`);
 
@@ -40,7 +40,7 @@ export async function expandMenuIfCollapsed(page: Page, label: string) {
   }
 
   // Sub-menu item inside the expanded section
-  const subLink = page.locator(`div.modulesFlyout-link[aria-label="${label}"] > a.modulesFlyout-linkText`);
+  const subLink = page.locator(`div.modulesFlyout-link[aria-label="${labelsubmenu}"] > a.modulesFlyout-linkText`);
   await subLink.waitFor({ state: 'visible' });
   await subLink.click();
 }

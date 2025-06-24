@@ -55,6 +55,11 @@ export class FixedAssetsPage {
 
         return this.page.locator('[data-dyn-controlname="Physical"] input');
     }
+
+    get enterJournalFixedAssetName() {
+
+        return this.page.locator('[data-dyn-controlname="JournalName"] input');
+    }
     get enterFixedAssetSorting() {
 
         return this.page.locator('[data-dyn-controlname="Sorting_SortingId"] input');
@@ -202,17 +207,51 @@ export class FixedAssetsPage {
         return this.page.locator('[data-dyn-columnname="YearClosed"]');
     }
 
+    get enterJournalFADescription() {
+        return this.page.locator('[data-dyn-controlname="LedgerJournalTable_Name"] input[id*="LedgerJournalTable"]');
+
+    }
     get journalVoucherRow() {
         return this.page.locator('[data-dyn-controlname="LedgerTrans_AmountCur"] input');
     }
 
+    get fixedAssetJournalLine() {
+        return this.page.locator('[data-dyn-controlname="JournalLines"]');
+    }
     get capexToggle() {
         return this.page.locator("//span[starts-with(@id, 'PurchReqCreate_') and contains(@id, '_Capex_toggle')]");
+    }
+    get journalDate() {
+        return this.page.locator("[data-dyn-controlname='LedgerJournalTrans_TransDate'] input");
     }
 
     get selectCapexNumber() {
         return this.page.locator('[role="gridcell"] [data-dyn-controlname="SysGen_AssetId"]');
     }
+
+    get selectAccountNumberJournal() {
+
+        return this.page.locator('[data-dyn-controlname="LedgerJournalTrans_AccountNum"] input');
+    }
+
+    get selectAccountNumberJournalFromGrid() {
+        return this.page.locator('[data-dyn-controlname="AssetTable_Name"] input');
+    }
+
+    get debitAmountJournal() {
+        return this.page.locator('[data-dyn-controlname="LedgerJournalTrans_AmountCurDebit"] input');
+    }
+
+    get validateButton() {
+
+        return this.page.locator('[data-dyn-controlname="buttonCheckJournal"]');
+    }
+
+    get validateButtonUnderMainMenu() {
+
+        return this.page.locator('//button//span[text()="Validate" and substring(@id, string-length(@id) - string-length("_CheckJournal_label") + 1) = "_CheckJournal_label"]');
+    }
+
     // Method to fill the requisition details
 
     async fillRequisitionName() {
@@ -283,6 +322,15 @@ export class FixedAssetsPage {
         // await this.selectFixedAssetGroupFromGrid.waitFor({ state: 'visible', timeout: 10000 });
         // await this.selectFixedAssetGroupFromGrid.click();
     }
+    async selectFixedAssetJournalName(fixedAssetJournal: string) {
+        await this.enterJournalFixedAssetName.first().scrollIntoViewIfNeeded;
+        await this.enterJournalFixedAssetName.first().click();
+        await this.enterJournalFixedAssetName.first().type(fixedAssetJournal, { delay: 300 });
+        await this.enterJournalFixedAssetName.first().press('Enter');
+        // await this.selectFixedAssetGroupFromGrid.waitFor({ state: 'visible', timeout: 10000 });
+        // await this.selectFixedAssetGroupFromGrid.click();
+    }
+
     async selectFixedAssetLocation(fixedLocation: string) {
         await this.enterFixedAssetLoc.scrollIntoViewIfNeeded();
         await this.enterFixedAssetLoc.click();
@@ -649,7 +697,6 @@ export class FixedAssetsPage {
         const randomString = Math.random().toString(36).substring(2, 6).toUpperCase();
         const randomNumber = Math.floor(Math.random() * 10000);
         const requisitionTitle = `Test-${randomString}${randomNumber}`;
-
         await this.requisitionName.fill(requisitionTitle);
         return requisitionTitle;
     }
@@ -666,4 +713,64 @@ export class FixedAssetsPage {
         await waitForWithRetry(this.actionsGroupBackButtonFAPage, this.page, 5, 4000, 2000);
         await this.actionsGroupBackButtonFAPage.click();
     }
+
+    async enterJournalFixedAssetDescription(journalDescription: string) {
+        await this.enterJournalFADescription.first().scrollIntoViewIfNeeded();
+        await this.enterJournalFADescription.first().fill(journalDescription);
+        await this.page.waitForTimeout(2000);
+    }
+
+    async clickFixedAssetJournalLine() {
+        await waitForWithRetry(this.fixedAssetJournalLine, this.page, 5, 4000, 2000);
+        await this.fixedAssetJournalLine.click();
+    }
+
+    async enterJournalDate(date: string) {
+        await this.journalDate.scrollIntoViewIfNeeded();
+        await this.journalDate.fill(date);
+        await this.journalDate.press('Enter');
+        await this.page.waitForTimeout(2000);
+    }
+
+    async enterAndSelectAccountNumberJournal(accountNumber: string) {
+        await this.selectAccountNumberJournal.scrollIntoViewIfNeeded();
+        await this.selectAccountNumberJournal.fill(accountNumber);
+        await this.selectAccountNumberJournalFromGrid.waitFor({ state: 'visible', timeout: 100000 });
+        await this.selectAccountNumberJournalFromGrid.press('Enter');
+        await this.page.waitForTimeout(2000);
+    }
+
+    async enterDebitAmountJournal(quantity: string) {
+        const input = this.debitAmountJournal;
+
+        await input.scrollIntoViewIfNeeded();
+        await input.waitFor({ state: 'visible' });
+        await input.click({ force: true }); // Focus the field
+
+        // Clear it (double-click + backspace as backup)
+        await input.click({ clickCount: 3 });
+        await this.page.keyboard.press('Backspace');
+
+        // Type one character at a time using keyboard
+        for (const char of quantity) {
+            await this.page.keyboard.type(char);
+            await this.page.waitForTimeout(50); // tiny delay between characters
+        }
+
+        // Optional: blur the input to trigger any model update
+        await this.page.keyboard.press('Tab');
+
+        await this.page.waitForTimeout(2000);
+    }
+
+    async clickValidateButton() {
+
+        await waitForWithRetry(this.validateButton, this.page, 5, 4000, 2000);
+
+        await this.validateButton.click();
+        await waitForWithRetry(this.validateButtonUnderMainMenu, this.page, 5, 4000, 2000);
+        await this.validateButtonUnderMainMenu.click();
+
+    }
+
 }
