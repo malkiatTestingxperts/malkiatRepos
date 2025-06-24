@@ -1,6 +1,8 @@
 import { get } from 'http';
 import { NavigationPage } from '../utils/NavigationPage';
 import { waitForWithRetry } from '../utils/waitForWithRetry';
+import { waitForElementToHide } from '../utils/waitForWithRetry';
+import { off } from 'process';
 
 export class FixedAssetsPage {
     constructor(private page: import('@playwright/test').Page) { }
@@ -234,17 +236,27 @@ export class FixedAssetsPage {
         return this.page.locator('[data-dyn-controlname="LedgerJournalTrans_AccountNum"] input');
     }
 
+    get selectTransactionType() {
+
+        return this.page.locator('[data-dyn-controlname="LedgerJournalTrans_AssetTransType"] input');
+    }
     get selectAccountNumberJournalFromGrid() {
         return this.page.locator('[data-dyn-controlname="AssetTable_Name"] input');
+    }
+
+    get selectTransactionTypeFromGrid() {
+        return this.page.locator('[class*="dyn-combobox-list"] li');
     }
 
     get debitAmountJournal() {
         return this.page.locator('[data-dyn-controlname="LedgerJournalTrans_AmountCurDebit"] input');
     }
-
+    get creditAmountJournal() {
+        return this.page.locator('[data-dyn-controlname="LedgerJournalTrans_AmountCurCredit"] input');
+    }
     get validateButton() {
 
-        return this.page.locator('[data-dyn-controlname="buttonCheckJournal"]');
+        return this.page.locator('//div[@data-dyn-controlname="buttonCheckJournal"]//button//span[normalize-space(text())="Validate"]');
     }
 
     get validateButtonUnderMainMenu() {
@@ -252,6 +264,13 @@ export class FixedAssetsPage {
         return this.page.locator('//button//span[text()="Validate" and substring(@id, string-length(@id) - string-length("_CheckJournal_label") + 1) = "_CheckJournal_label"]');
     }
 
+    get postButton() {
+        return this.page.locator('[data-dyn-controlname="PostJournal"][data-dyn-role="MenuItemButton"]');
+    }
+
+    get offsetAccount() {
+        return this.page.locator('[data-dyn-controlname="LedgerJournalTrans_OffsetAccountType"] input');
+    }
     // Method to fill the requisition details
 
     async fillRequisitionName() {
@@ -412,6 +431,16 @@ export class FixedAssetsPage {
     get actionsGroupBackButtonFAPage() {
         return this.page.locator('[data-dyn-controlname="SysCloseGroup"][id^="assettable_"]');
     }
+
+    get actionsGroupBackButtonJournalFAPage() {
+        return this.page.locator('[data-dyn-controlname="SysCloseGroup"][id^="LedgerJournalTransAsset_"]');
+    }
+
+    get processingOperationPopup() {
+        return this.page.locator('//span[@id="titleField" and contains(text(), "Processing operation")]');
+    }
+
+
 
     // async clickSubmitButtonOnWorkflowDialog() {
     //     waitForWithRetry(this.submitWorkFlowButton, this.page, 5, 4000, 2000);
@@ -740,6 +769,36 @@ export class FixedAssetsPage {
         await this.page.waitForTimeout(2000);
     }
 
+    async enterAndSelectTransactionType(transactionType: string) {
+        const input = this.selectTransactionType;
+        await input.scrollIntoViewIfNeeded();
+        await input.waitFor({ state: 'visible' });
+        await input.click({ force: true });
+        await input.click({ clickCount: 3 });
+        for (const char of transactionType) {
+            await this.page.keyboard.type(char);
+            await this.page.waitForTimeout(50); // tiny delay between characters
+        }
+        await this.selectTransactionTypeFromGrid.click();
+        await this.page.waitForTimeout(2000);
+    }
+
+    async enterAndSelectOffsetAccountType(offsetAccountType: string) {
+        const input = this.offsetAccount;
+        await input.scrollIntoViewIfNeeded();
+        await input.waitFor({ state: 'visible' });
+        await input.click({ force: true });
+        await input.click({ clickCount: 3 });
+        for (const char of offsetAccountType) {
+            await this.page.keyboard.type(char);
+            await this.page.waitForTimeout(50); // tiny delay between characters
+        }
+        await this.selectTransactionTypeFromGrid.click();
+        await this.page.waitForTimeout(2000);
+    }
+
+
+
     async enterDebitAmountJournal(quantity: string) {
         const input = this.debitAmountJournal;
 
@@ -762,15 +821,42 @@ export class FixedAssetsPage {
 
         await this.page.waitForTimeout(2000);
     }
+    async enterCreditAmountJournal(quantity: string) {
+        const input = this.creditAmountJournal;
 
+        await input.scrollIntoViewIfNeeded();
+        await input.waitFor({ state: 'visible' });
+        await input.click({ force: true }); // Focus the field
+
+        // Clear it (double-click + backspace as backup)
+        await input.click({ clickCount: 3 });
+        await this.page.keyboard.press('Backspace');
+
+        // Type one character at a time using keyboard
+        for (const char of quantity) {
+            await this.page.keyboard.type(char);
+            await this.page.waitForTimeout(50); // tiny delay between characters
+        }
+
+        // Optional: blur the input to trigger any model update
+        await this.page.keyboard.press('Tab');
+
+        await this.page.waitForTimeout(2000);
+    }
     async clickValidateButton() {
-
-        await waitForWithRetry(this.validateButton, this.page, 5, 4000, 2000);
-
-        await this.validateButton.click();
+        await this.validateButton.scrollIntoViewIfNeeded();
+        await this.validateButton.click({ timeout: 10000 });
         await waitForWithRetry(this.validateButtonUnderMainMenu, this.page, 5, 4000, 2000);
         await this.validateButtonUnderMainMenu.click();
-
     }
 
+    async clickBackButtonUnderMainMenu() {
+        await waitForWithRetry(this.actionsGroupBackButtonJournalFAPage, this.page, 5, 4000, 2000);
+        await this.actionsGroupBackButtonJournalFAPage.click();
+    }
+
+    async clickPostButton() {
+        await waitForWithRetry(this.postButton, this.page, 5, 4000, 2000);
+        await this.postButton.click();
+    }
 }

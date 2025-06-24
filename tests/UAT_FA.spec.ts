@@ -10,6 +10,7 @@ import { FixedAssetsPage } from '../pages/FixedAssetsPage';
 import { setEnvVariable, readEnvVariable } from '../utils/envHelper';
 import path from 'path';
 import dotenv from 'dotenv';
+import { Console } from 'console';
 dotenv.config();
 const baseURL = process.env.BASE_URL;
 if (!baseURL) {
@@ -80,7 +81,68 @@ test.describe('UAT Fixed Asset Flow', () => {
     // await page.waitForTimeout(4000);
     // await fixedAssetsPage.clickBackButtonFAPage();
 
-    //*****************Create Journal FA */
+    //*****************Create Journal FA*/
+    // navigationPage.openModulesMenu();
+    // await clickMenuItem(page, 'Fixed assets', false);
+    // await page.waitForTimeout(5000);
+    // await expandMenuIfCollapsed(page, 'Journal entries', 'Fixed assets journal');
+    // await navigationPage.waitUntilProcessingMessageDisappears();
+    // await navigationPage.clickNewButton();
+    // await fixedAssetsPage.selectFixedAssetJournalName('FXA');
+
+    // const random4Digit2 = Math.floor(1000 + Math.random() * 9000);
+    // console.log(`Random 4-digit number: ${random4Digit2}`);
+    // await fixedAssetsPage.enterJournalFixedAssetDescription("JournalFA-" + random4Digit2);
+    // await fixedAssetsPage.clickFixedAssetJournalLine();
+    // await navigationPage.waitUntilProcessingMessageDisappears();
+
+    // var journalDate = getFormattedDateOffset(-1);
+    // console.log(`Journal Date: ${journalDate}`);
+    // await fixedAssetsPage.enterJournalDate(journalDate);
+    // await fixedAssetsPage.enterAndSelectAccountNumberJournal('CCTV ExpansionCSVU');
+    // await fixedAssetsPage.enterDebitAmountJournal('15000.00');
+    // await fixedAssetsPage.clickValidateButton();
+    // await navigationPage.waitUntilProcessingMessageDisappears();
+    // const message = await requisitionPage.checkMessageBar();
+    // expect(message).toContain("Journal is OK.");
+    // await fixedAssetsPage.clickPostButton();
+    // await fixedAssetsPage.clickValidateBackButtonUnderMainMenu();
+
+
+
+
+    // //*****************Create Journal FA Scrapping*/
+    // navigationPage.openModulesMenu();
+    // await clickMenuItem(page, 'Fixed assets', false);
+    // await page.waitForTimeout(5000);
+    // await expandMenuIfCollapsed(page, 'Journal entries', 'Fixed assets journal');
+    // await navigationPage.waitUntilProcessingMessageDisappears();
+    // await navigationPage.clickNewButton();
+    // await fixedAssetsPage.selectFixedAssetJournalName('FXA');
+
+    // const random4Digit2 = Math.floor(1000 + Math.random() * 9000);
+    // console.log(`Random 4-digit number: ${random4Digit2}`);
+    // await fixedAssetsPage.enterJournalFixedAssetDescription(random4Digit2 + "Scraping");
+    // await fixedAssetsPage.clickFixedAssetJournalLine();
+    // await navigationPage.waitUntilProcessingMessageDisappears();
+
+    // var journalDate = getFormattedDateOffset(-1);
+    // console.log(`Journal Date: ${journalDate}`);
+    // await fixedAssetsPage.enterJournalDate(journalDate);
+    // await fixedAssetsPage.enterAndSelectTransactionType('Disposal - scrap');
+    // await fixedAssetsPage.enterAndSelectAccountNumberJournal('CCTV ExpansionCSVU');
+    // await fixedAssetsPage.enterDebitAmountJournal('00.00');
+    // await fixedAssetsPage.clickValidateButton();
+    // await navigationPage.waitUntilProcessingMessageDisappears();
+    // const message = await requisitionPage.checkMessageBar();
+    // expect(message).toContain("Journal is OK.");
+    // await fixedAssetsPage.clickPostButton();
+    // await fixedAssetsPage.clickBackButtonUnderMainMenu();
+
+
+
+    //********************************Create FA Journal Disposal - Sale */
+
     navigationPage.openModulesMenu();
     await clickMenuItem(page, 'Fixed assets', false);
     await page.waitForTimeout(5000);
@@ -91,19 +153,35 @@ test.describe('UAT Fixed Asset Flow', () => {
 
     const random4Digit2 = Math.floor(1000 + Math.random() * 9000);
     console.log(`Random 4-digit number: ${random4Digit2}`);
-    await fixedAssetsPage.enterJournalFixedAssetDescription("JournalFA-" + random4Digit2);
+    await fixedAssetsPage.enterJournalFixedAssetDescription(random4Digit2 + "Sale");
     await fixedAssetsPage.clickFixedAssetJournalLine();
     await navigationPage.waitUntilProcessingMessageDisappears();
 
     var journalDate = getFormattedDateOffset(-1);
     console.log(`Journal Date: ${journalDate}`);
     await fixedAssetsPage.enterJournalDate(journalDate);
-    await fixedAssetsPage.enterAndSelectAccountNumberJournal('CCTV ExpansionCSVU');
-    await fixedAssetsPage.enterDebitAmountJournal('15000.00');
+    await fixedAssetsPage.enterAndSelectTransactionType('Disposal - sale');
+    await fixedAssetsPage.enterAndSelectAccountNumberJournal('Test-FA');
+    await fixedAssetsPage.enterCreditAmountJournal('50000');
+    await fixedAssetsPage.enterAndSelectOffsetAccountType('Ledger');
     await fixedAssetsPage.clickValidateButton();
     await navigationPage.waitUntilProcessingMessageDisappears();
     const message = await requisitionPage.checkMessageBar();
     expect(message).toContain("Journal is OK.");
+    await fixedAssetsPage.clickPostButton();
+    await fixedAssetsPage.clickBackButtonUnderMainMenu();
+
+
+
+
+
+
+
+
+
+
+
+
     // const preRquisi tionName = await requisitionPage.fillRequisitionName();
     // console.log(`Requisition Name: ${preRquisitionName}`);
     // setEnvVariable('PR_NAME', preRquisitionName);

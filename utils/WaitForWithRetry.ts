@@ -34,3 +34,12 @@ export async function waitForWithRetry(
     }
   }
 }
+
+export async function waitForElementToHide(element: Locator, timeout = 12000): Promise<boolean> {
+  try {
+    await element.waitFor({ state: 'visible', timeout });
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
