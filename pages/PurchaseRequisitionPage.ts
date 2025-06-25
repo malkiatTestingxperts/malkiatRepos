@@ -92,6 +92,11 @@ export class PurchaseRequisitionPage {
     get messageBar() {
         return this.page.locator('[class="messageBar-messageRegion"]');
     }
+
+    get messageBarToggle() {
+
+        return this.page.locator('button[data-dyn-controlname="MessageBarToggle"]');
+    }
     get enterPublicationinFinancialDimensions() {
         return this.page.locator('[data-dyn-controlname="LineDimensionEntryControl_DECValue_Publications"] input');
     }
@@ -320,8 +325,13 @@ export class PurchaseRequisitionPage {
 
     async checkMessageBar() {
         await waitForWithRetry(this.messageBar, this.page, 5, 4000, 2000);
-        const message = await this.messageBar.innerText();
+        if (await this.messageBarToggle.first().isVisible()) {
+            await this.messageBarToggle.first().click();
+            console.log("Message Bar is toggled");
+        }
+        var message = await this.messageBar.innerText();
         console.log(`Message Bar: ${message}`);
+        this.messageBarToggle.first().click();
         return message;
     }
 

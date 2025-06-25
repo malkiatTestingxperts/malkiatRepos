@@ -10,7 +10,7 @@ import { waitForWithRetry } from './waitForWithRetry';
  * @param {boolean} [isSubMenu=false] - Whether the menu item is a sub-menu.
  */
 export async function clickMenuItem(page: Page, title: string, isSubMenu = false) {
-  const locator = page.locator(`[data-dyn-title="${title}"]`);
+  const locator = page.locator(`[aria-label="Navigation menu"] [data-dyn-title="${title}"]`);
 
   await waitForWithRetry(locator, page, 5, 4000, 2000);
 

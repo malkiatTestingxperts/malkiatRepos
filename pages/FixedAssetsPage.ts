@@ -2,7 +2,9 @@ import { get } from 'http';
 import { NavigationPage } from '../utils/NavigationPage';
 import { waitForWithRetry } from '../utils/waitForWithRetry';
 import { waitForElementToHide } from '../utils/waitForWithRetry';
+import { waitForInputValue } from '../utils/waitForWithRetry';
 import { off } from 'process';
+import { Locator } from '@playwright/test';
 
 export class FixedAssetsPage {
     constructor(private page: import('@playwright/test').Page) { }
@@ -59,8 +61,12 @@ export class FixedAssetsPage {
     }
 
     get enterJournalFixedAssetName() {
-
         return this.page.locator('[data-dyn-controlname="JournalName"] input');
+    }
+
+    get selectFixedAssetInputGrid() {
+
+        return this.page.locator('[data-dyn-controlname="SysGen_JournalName"] input');
     }
     get enterFixedAssetSorting() {
 
@@ -271,8 +277,44 @@ export class FixedAssetsPage {
     get offsetAccount() {
         return this.page.locator('[data-dyn-controlname="LedgerJournalTrans_OffsetAccountType"] input');
     }
-    // Method to fill the requisition details
 
+    get offSetAccountNumber() {
+        return this.page.locator('[data-dyn-controlname="LedgerJournalTrans_OffsetAccount"] input');
+
+    }
+
+    get bookId() {
+
+        return this.page.locator('[data-dyn-controlname="Grid"][data-dyn-role="ReactList"]');
+    }
+
+
+    get actionsGroupSaveButton() {
+        return this.page.locator('button[data-dyn-controlname="SystemDefinedSaveButton"][id^="AssetBook_"]');
+    }
+
+    get actionsGroupBackButtonBooksPage() {
+        return this.page.locator('[data-dyn-controlname="SysCloseGroup"][id^="AssetBook_"]');
+    }
+
+    get actionsGroupBackButtonFAPage() {
+        return this.page.locator('[data-dyn-controlname="SysCloseGroup"][id^="assettable_"]');
+    }
+
+    get actionsGroupBackButtonJournalFAPage() {
+        return this.page.locator('[data-dyn-controlname="SysCloseGroup"][id^="LedgerJournalTransAsset_"]');
+    }
+
+    get processingOperationPopup() {
+        return this.page.locator('//span[@id="titleField" and contains(text(), "Processing operation")]');
+    }
+
+
+
+
+
+
+    // Method's Fixed Asset Details
     async fillRequisitionName() {
         const randomString = Math.random().toString(36).substring(2, 6).toUpperCase();
         const randomNumber = Math.floor(Math.random() * 10000);
@@ -342,13 +384,16 @@ export class FixedAssetsPage {
         // await this.selectFixedAssetGroupFromGrid.click();
     }
     async selectFixedAssetJournalName(fixedAssetJournal: string) {
-        await this.enterJournalFixedAssetName.first().scrollIntoViewIfNeeded;
-        await this.enterJournalFixedAssetName.first().click();
-        await this.enterJournalFixedAssetName.first().type(fixedAssetJournal, { delay: 300 });
-        await this.enterJournalFixedAssetName.first().press('Enter');
-        // await this.selectFixedAssetGroupFromGrid.waitFor({ state: 'visible', timeout: 10000 });
-        // await this.selectFixedAssetGroupFromGrid.click();
+        const input = this.enterJournalFixedAssetName.first();
+        await input.click({ clickCount: 3 });
+        for (const char of fixedAssetJournal) {
+            await this.page.keyboard.type(char);
+            await this.page.waitForTimeout(50);
+        }
+        await this.selectFixedAssetInputGrid.first().waitFor({ state: 'visible', timeout: 100000 });
+        this.selectFixedAssetInputGrid.first().click();
     }
+
 
     async selectFixedAssetLocation(fixedLocation: string) {
         await this.enterFixedAssetLoc.scrollIntoViewIfNeeded();
@@ -420,34 +465,6 @@ export class FixedAssetsPage {
 
     }
 
-    get actionsGroupSaveButton() {
-        return this.page.locator('button[data-dyn-controlname="SystemDefinedSaveButton"][id^="AssetBook_"]');
-    }
-
-    get actionsGroupBackButtonBooksPage() {
-        return this.page.locator('[data-dyn-controlname="SysCloseGroup"][id^="AssetBook_"]');
-    }
-
-    get actionsGroupBackButtonFAPage() {
-        return this.page.locator('[data-dyn-controlname="SysCloseGroup"][id^="assettable_"]');
-    }
-
-    get actionsGroupBackButtonJournalFAPage() {
-        return this.page.locator('[data-dyn-controlname="SysCloseGroup"][id^="LedgerJournalTransAsset_"]');
-    }
-
-    get processingOperationPopup() {
-        return this.page.locator('//span[@id="titleField" and contains(text(), "Processing operation")]');
-    }
-
-
-
-    // async clickSubmitButtonOnWorkflowDialog() {
-    //     waitForWithRetry(this.submitWorkFlowButton, this.page, 5, 4000, 2000);
-    //     await this.submitWorkFlowButton.click();
-    //     await waitForWithRetry(this.page.locator('[data-dyn-controlname="MainGroup"]'), this.page, 5, 4000, 2000);
-    //     await this.page.locator('[data-dyn-controlname="MainGroup"]').waitFor({ state: 'hidden', timeout: 90000 });
-    // }
     async clickSubmitButton() {
         await waitForWithRetry(this.submitButton, this.page, 5, 4000, 2000);
         await this.submitButton.click();
@@ -821,6 +838,15 @@ export class FixedAssetsPage {
 
         await this.page.waitForTimeout(2000);
     }
+
+    async enteroffsetAccountNumber(offSet: string) {
+        await this.offSetAccountNumber.scrollIntoViewIfNeeded();
+        await this.offSetAccountNumber.clear();
+        await this.offSetAccountNumber.fill(offSet);
+        await this.offSetAccountNumber.press('Enter');
+        await this.page.waitForTimeout(2000);
+    }
+
     async enterCreditAmountJournal(quantity: string) {
         const input = this.creditAmountJournal;
 
@@ -843,12 +869,27 @@ export class FixedAssetsPage {
 
         await this.page.waitForTimeout(2000);
     }
+
     async clickValidateButton() {
         await this.validateButton.scrollIntoViewIfNeeded();
-        await this.validateButton.click({ timeout: 10000 });
-        await waitForWithRetry(this.validateButtonUnderMainMenu, this.page, 5, 4000, 2000);
-        await this.validateButtonUnderMainMenu.click();
+        const maxRetries = 5;
+        for (let i = 0; i < maxRetries; i++) {
+            const isDropdownVisible = await this.validateButtonUnderMainMenu.isVisible();
+            if (isDropdownVisible) break;
+
+            try {
+                await this.validateButton.first().click({ timeout: 5000 });
+            } catch (error) {
+                console.warn(`Attempt ${i + 1} to click validateButton failed:`, error);
+            }
+        }
+        if (!await this.validateButtonUnderMainMenu.first().isVisible()) {
+            throw new Error('Validate dropdown did not appear after clicking');
+        }
+        await this.validateButtonUnderMainMenu.first().scrollIntoViewIfNeeded();
+        await this.validateButtonUnderMainMenu.first().click();
     }
+
 
     async clickBackButtonUnderMainMenu() {
         await waitForWithRetry(this.actionsGroupBackButtonJournalFAPage, this.page, 5, 4000, 2000);
@@ -858,5 +899,12 @@ export class FixedAssetsPage {
     async clickPostButton() {
         await waitForWithRetry(this.postButton, this.page, 5, 4000, 2000);
         await this.postButton.click();
+    }
+
+    async clickAndWaitForBookIdToAppear() {
+        await this.page.waitForTimeout(4000);
+        await this.bookId.scrollIntoViewIfNeeded();
+        await this.bookId.first().click();
+
     }
 }

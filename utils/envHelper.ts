@@ -3,8 +3,7 @@ import fs from 'fs';
 import path from 'path';
 
 export function setEnvVariable(key: string, value: string) {
-    const envPath = path.resolve(__dirname, '.env');
-
+    const envPath = path.resolve(process.cwd(), '.env');
     // Read current .env content if it exists
     let envContent = '';
     if (fs.existsSync(envPath)) {
@@ -23,7 +22,7 @@ export function setEnvVariable(key: string, value: string) {
 }
 
 export function readEnvVariable(key: string): string | undefined {
-    const envPath = path.resolve(__dirname, '.env');
+    const envPath = path.resolve(process.cwd(), '.env');
     if (!fs.existsSync(envPath)) return;
 
     const lines = fs.readFileSync(envPath, 'utf-8').split('\n');

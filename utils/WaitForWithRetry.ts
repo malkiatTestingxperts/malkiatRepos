@@ -43,3 +43,16 @@ export async function waitForElementToHide(element: Locator, timeout = 12000): P
     return false;
   }
 }
+
+export async function waitForInputValue(locator: Locator, page: Page, retries = 5, delay = 300, expectedValue: string): Promise<string> {
+  for (let i = 0; i < retries; i++) {
+    await locator.click();
+    await locator.page().waitForTimeout(delay);
+    const value = (await locator.inputValue()).trim();
+    if (value === expectedValue)
+      console.log("****************" + value);
+    return value;
+  }
+  throw new Error(`Expected input value "${expectedValue}" not found after ${retries} retries.`);
+}
+
