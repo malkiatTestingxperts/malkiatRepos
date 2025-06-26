@@ -288,9 +288,30 @@ export class FixedAssetsPage {
         return this.page.locator('[data-dyn-controlname="Grid"][data-dyn-role="ReactList"]');
     }
 
+    get valuationAssetButton() {
+        return this.page.locator('button[data-dyn-controlname="AssetHub"]');
+
+    }
+
+    get disposalSaleValue() {
+        return this.page.locator('[data-dyn-controlname="actualDisposalSaleValue"]');
+
+    }
+
+    get headerBalancesOnValuationPage() {
+        return this.page.locator('[data-dyn-controlname="BalancesHeader1"]');
+    }
+
+    get backButtonOnValuationPage() {
+        return this.page.locator('[data-dyn-controlname="SystemDefinedButtonsActionPane"] button[data-dyn-controlname="SystemDefinedCloseButton"]');
+    }
 
     get actionsGroupSaveButton() {
         return this.page.locator('button[data-dyn-controlname="SystemDefinedSaveButton"][id^="AssetBook_"]');
+    }
+
+    get dimesionsInSecondGrid() {
+        return this.page.locator('[data-dyn-controlname="StatusComboBox"]');
     }
 
     get actionsGroupBackButtonBooksPage() {
@@ -906,5 +927,25 @@ export class FixedAssetsPage {
         await this.bookId.scrollIntoViewIfNeeded();
         await this.bookId.first().click();
 
+    }
+
+    async clickValuationAssetButton() {
+        await waitForWithRetry(this.valuationAssetButton, this.page, 5, 4000, 2000);
+        await this.valuationAssetButton.click();
+    }
+
+    async getDisposalSaleValue() {
+        await waitForWithRetry(this.headerBalancesOnValuationPage, this.page, 5, 4000, 2000);
+        let values = this.disposalSaleValue.allInnerTexts();
+        return values;
+    }
+
+    async clickBackButtonOnValuationPage() {
+        await waitForWithRetry(this.backButtonOnValuationPage, this.page, 5, 4000, 2000);
+        await this.backButtonOnValuationPage.click();
+    }
+
+    async clickDimesionsInSecondGrid() {
+        await this.dimesionsInSecondGrid.nth(1).click();
     }
 }

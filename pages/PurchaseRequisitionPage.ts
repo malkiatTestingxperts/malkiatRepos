@@ -322,18 +322,40 @@ export class PurchaseRequisitionPage {
         await this.page.waitForTimeout(12000);
     }
 
-
     async checkMessageBar() {
         await waitForWithRetry(this.messageBar, this.page, 5, 4000, 2000);
-        if (await this.messageBarToggle.first().isVisible()) {
-            await this.messageBarToggle.first().click();
-            console.log("Message Bar is toggled");
+
+        const toggle = this.messageBarToggle.first();
+        if (await toggle.isVisible()) {
+            try {
+                await toggle.click();
+                console.log("Message Bar is toggled");
+            } catch (e) {
+                console.warn("Toggle button was visible but could not be clicked:", e);
+            }
+        } else {
+            console.log("Message Bar Toggle is not visible, skipping toggle.");
         }
-        var message = await this.messageBar.innerText();
-        console.log(`Message Bar: ${message}`);
-        this.messageBarToggle.first().click();
+
+        let message = "";
+        try {
+            message = await this.messageBar.innerText();
+            console.log(`Message Bar: ${message}`);
+        } catch (e) {
+            console.warn("Unable to read message bar:", e);
+        }
+
+        if (await toggle.isVisible()) {
+            try {
+                await toggle.click();
+            } catch (e) {
+                console.warn("Toggle could not be closed:", e);
+            }
+        }
+
         return message;
     }
+
 
     async getSpanByLabel(labelText: string) {
         const span = this.clickWorkFlowRequiredButton(labelText);
