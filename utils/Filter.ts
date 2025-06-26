@@ -30,6 +30,7 @@ export async function selectQuickFilter(page: Page, filterValue: string, fieldNa
 }
 
 
+
 export async function checkMatchingRow(page: Page, checkboxLocator: string) {
     // Locate the row that contains the Name "Test-SNPJ2890"
     const rowLocator = page.locator('div[role="row"]', {
@@ -39,3 +40,27 @@ export async function checkMatchingRow(page: Page, checkboxLocator: string) {
     // Click the checkbox within that row
     await rowLocator.locator('div[role="checkbox"]').first().click();
 }
+
+export async function checkRowWithMachedText(
+    page: Page,
+    expectedValue: string,
+    fieldName: string,
+    rowIndex: number = 0
+) {
+    const cleanValue = expectedValue.trim(); // remove any hidden \r or \n
+
+    const rowLocator = page.locator('div[role="row"]').filter({
+        has: page.locator(`input[aria-label="${fieldName}"][value="${cleanValue}"]`)
+    });
+
+    const count = await rowLocator.count();
+    if (count <= rowIndex) {
+        throw new Error(`Expected at least ${rowIndex + 1} matching rows, but found ${count}`);
+    }
+
+    const targetRow = rowLocator.nth(rowIndex);
+    const checkbox = targetRow.locator('div[role="checkbox"]');
+
+    await checkbox.click();
+}
+

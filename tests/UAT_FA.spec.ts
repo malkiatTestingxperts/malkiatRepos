@@ -1,7 +1,7 @@
 // PurchaseRequisitionTest.spec.ts
 import { test, expect } from '@playwright/test';
 import { NavigationPage } from '../utils/NavigationPage';
-import { selectQuickFilter, checkMatchingRow } from '../utils/Filter';
+import { selectQuickFilter, checkRowWithMachedText } from '../utils/Filter';
 import { clickMenuItem } from '../utils/Menu';
 import { expandMenuIfCollapsed } from '../utils/Menu';
 import { getFormattedDateOffset } from '../utils/DateHelper';
@@ -63,7 +63,9 @@ test.describe('UAT Fixed Asset Flow', () => {
       await fixedAssetsPage.selectFixedAssetGroup('Operational ');
       const random5Digit = Math.floor(10000 + Math.random() * 90000);
       console.log(`Random 4-digit number: ${random5Digit}`);
-      await fixedAssetsPage.enterCapexNumber(random5Digit.toString());
+      let capexNumber = random5Digit.toString() + i
+      setEnvVariable('CAPEX_NUMBER' + i, capexNumber);
+      await fixedAssetsPage.enterCapexNumber(capexNumber);
 
       const randomString = Math.random().toString(36).substring(2, 6).toUpperCase();
       const fixeAssetDescription = `CCTV Expansion${randomString}` + i;
@@ -136,152 +138,127 @@ test.describe('UAT Fixed Asset Flow', () => {
     }
   });
 
-  // test('Create Fixed Asset Journal Scrap', async ({ page }) => {
-  //   //*****************Create Journal FA Scrapping*/
-  //   const navigationPage = new NavigationPage(page);
-  //   const requisitionPage = new PurchaseRequisitionPage(page);
-  //   const fixedAssetsPage = new FixedAssetsPage(page);
-  //   const fixedAssetName = readEnvVariable('FIXED_ASSET_NAME1');
-  //   navigationPage.openModulesMenu();
-  //   await clickMenuItem(page, 'Fixed assets', false);
-  //   await page.waitForTimeout(5000);
-  //   await expandMenuIfCollapsed(page, 'Journal entries', 'Fixed assets journal');
-  //   await navigationPage.waitUntilProcessingMessageDisappears();
-  //   await navigationPage.clickNewButton();
-  //   await fixedAssetsPage.selectFixedAssetJournalName('FXA');
+  test('Create Fixed Asset Journal Scrap', async ({ page }) => {
+    //*****************Create Journal FA Scrapping*/
+    const navigationPage = new NavigationPage(page);
+    const requisitionPage = new PurchaseRequisitionPage(page);
+    const fixedAssetsPage = new FixedAssetsPage(page);
+    const fixedAssetName = readEnvVariable('FIXED_ASSET_NAME1');
+    navigationPage.openModulesMenu();
+    await clickMenuItem(page, 'Fixed assets', false);
+    await page.waitForTimeout(5000);
+    await expandMenuIfCollapsed(page, 'Journal entries', 'Fixed assets journal');
+    await navigationPage.waitUntilProcessingMessageDisappears();
+    await navigationPage.clickNewButton();
+    await fixedAssetsPage.selectFixedAssetJournalName('FXA');
 
-  //   const random4Digit2 = Math.floor(1000 + Math.random() * 9000);
-  //   console.log(`Random 4-digit number: ${random4Digit2}`);
-  //   await fixedAssetsPage.enterJournalFixedAssetDescription(random4Digit2 + "Scraping");
-  //   await fixedAssetsPage.clickFixedAssetJournalLine();
-  //   await navigationPage.waitUntilProcessingMessageDisappears();
-  //   if (!fixedAssetName) {
-  //     throw new Error('FIXED_ASSET_NAME1 environment variable is not set');
-  //   }
-  //   var journalDate = getFormattedDateOffset(-0);
-  //   console.log(`Journal Date: ${journalDate}`);
-  //   await fixedAssetsPage.enterJournalDate(journalDate);
-  //   await fixedAssetsPage.enterAndSelectTransactionType('Disposal - scrap');
-  //   await fixedAssetsPage.enterAndSelectAccountNumberJournal(fixedAssetName);
-  //   await fixedAssetsPage.enterDebitAmountJournal('00');
-  //   await fixedAssetsPage.clickAndWaitForBookIdToAppear();
-  //   await fixedAssetsPage.enterAndSelectOffsetAccountType('Ledger');
-  //   await fixedAssetsPage.clickValidateButton();
-  //   await navigationPage.waitUntilProcessingMessageDisappears();
-  //   const message = await requisitionPage.checkMessageBar();
-  //   expect(message).toContain("Journal is OK.");
-  //   await fixedAssetsPage.clickPostButton();
-  //   await fixedAssetsPage.clickBackButtonUnderMainMenu();
-  // });
-
-
-  // // //********************************Create FA Journal Disposal - Sale */
-  // test('Create Fixed Asset Journal Sale', async ({ page }) => {
-  //   const navigationPage = new NavigationPage(page);
-  //   const requisitionPage = new PurchaseRequisitionPage(page);
-  //   const fixedAssetsPage = new FixedAssetsPage(page);
-  //   const fixedAssetName = readEnvVariable('FIXED_ASSET_NAME2');
-  //   navigationPage.openModulesMenu();
-  //   await clickMenuItem(page, 'Fixed assets', false);
-  //   await page.waitForTimeout(5000);
-  //   await expandMenuIfCollapsed(page, 'Journal entries', 'Fixed assets journal');
-  //   await navigationPage.waitUntilProcessingMessageDisappears();
-  //   await navigationPage.clickNewButton();
-  //   await fixedAssetsPage.selectFixedAssetJournalName('FXA');
-
-  //   const random4Digit2 = Math.floor(1000 + Math.random() * 9000);
-  //   console.log(`Random 4-digit number: ${random4Digit2}`);
-  //   await fixedAssetsPage.enterJournalFixedAssetDescription(random4Digit2 + "Sale");
-  //   await fixedAssetsPage.clickFixedAssetJournalLine();
-  //   await navigationPage.waitUntilProcessingMessageDisappears();
-
-  //   var journalDate = getFormattedDateOffset(-0);
-  //   console.log(`Journal Date: ${journalDate}`);
-  //   await fixedAssetsPage.enterJournalDate(journalDate);
-  //   if (!fixedAssetName) {
-  //     throw new Error('FIXED_ASSET_NAME environment variable is not set');
-  //   }
-  //   await fixedAssetsPage.enterAndSelectTransactionType('Disposal - sale');
-  //   await fixedAssetsPage.enterAndSelectAccountNumberJournal(fixedAssetName);
-  //   await fixedAssetsPage.enterCreditAmountJournal('100');
-  //   await fixedAssetsPage.clickAndWaitForBookIdToAppear();
-  //   await fixedAssetsPage.enterAndSelectOffsetAccountType('Ledger');
-
-  //   await fixedAssetsPage.enteroffsetAccountNumber('630003-HDQ-QHO-NA');
-
-  //   await fixedAssetsPage.clickValidateButton();
-  //   await navigationPage.waitUntilProcessingMessageDisappears();
-  //   const message = await requisitionPage.checkMessageBar();
-  //   const cleaned = message.replace(/\s+/g, ' ').trim();
-  //   expect(cleaned).toContain("Operation completed Journal is OK.");
-  //   await fixedAssetsPage.clickPostButton();
-  //   const message2 = await requisitionPage.checkMessageBar();
-  //   const cleanedw = message2.replace(/\s+/g, ' ').trim();
-  //   expect(cleanedw).toContain("Operation completed Number of vouchers posted to the journal: 1 Operation completed");
-  //   await fixedAssetsPage.clickBackButtonUnderMainMenu();
+    const random4Digit2 = Math.floor(1000 + Math.random() * 9000);
+    console.log(`Random 4-digit number: ${random4Digit2}`);
+    await fixedAssetsPage.enterJournalFixedAssetDescription(random4Digit2 + "Scraping");
+    await fixedAssetsPage.clickFixedAssetJournalLine();
+    await navigationPage.waitUntilProcessingMessageDisappears();
+    if (!fixedAssetName) {
+      throw new Error('FIXED_ASSET_NAME1 environment variable is not set');
+    }
+    var journalDate = getFormattedDateOffset(-0);
+    console.log(`Journal Date: ${journalDate}`);
+    await fixedAssetsPage.enterJournalDate(journalDate);
+    await fixedAssetsPage.enterAndSelectTransactionType('Disposal - scrap');
+    await fixedAssetsPage.enterAndSelectAccountNumberJournal(fixedAssetName);
+    await fixedAssetsPage.enterDebitAmountJournal('00');
+    await fixedAssetsPage.clickAndWaitForBookIdToAppear();
+    await fixedAssetsPage.enterAndSelectOffsetAccountType('Ledger');
+    await fixedAssetsPage.clickValidateButton();
+    await navigationPage.waitUntilProcessingMessageDisappears();
+    const message = await requisitionPage.checkMessageBar();
+    expect(message).toContain("Journal is OK.");
+    await fixedAssetsPage.clickPostButton();
+    await fixedAssetsPage.clickBackButtonUnderMainMenu();
+  });
 
 
+  // //********************************Create FA Journal Disposal - Sale */
+  test('Create Fixed Asset Journal Sale', async ({ page }) => {
+    const navigationPage = new NavigationPage(page);
+    const requisitionPage = new PurchaseRequisitionPage(page);
+    const fixedAssetsPage = new FixedAssetsPage(page);
+    const fixedAssetName = readEnvVariable('FIXED_ASSET_NAME2');
+    navigationPage.openModulesMenu();
+    await clickMenuItem(page, 'Fixed assets', false);
+    await page.waitForTimeout(5000);
+    await expandMenuIfCollapsed(page, 'Journal entries', 'Fixed assets journal');
+    await navigationPage.waitUntilProcessingMessageDisappears();
+    await navigationPage.clickNewButton();
+    await fixedAssetsPage.selectFixedAssetJournalName('FXA');
 
+    const random4Digit2 = Math.floor(1000 + Math.random() * 9000);
+    console.log(`Random 4-digit number: ${random4Digit2}`);
+    await fixedAssetsPage.enterJournalFixedAssetDescription(random4Digit2 + "Sale");
+    await fixedAssetsPage.clickFixedAssetJournalLine();
+    await navigationPage.waitUntilProcessingMessageDisappears();
 
-  // });
+    var journalDate = getFormattedDateOffset(-0);
+    console.log(`Journal Date: ${journalDate}`);
+    await fixedAssetsPage.enterJournalDate(journalDate);
+    if (!fixedAssetName) {
+      throw new Error('FIXED_ASSET_NAME environment variable is not set');
+    }
+    await fixedAssetsPage.enterAndSelectTransactionType('Disposal - sale');
+    await fixedAssetsPage.enterAndSelectAccountNumberJournal(fixedAssetName);
+    await fixedAssetsPage.enterCreditAmountJournal('100');
+    await fixedAssetsPage.clickAndWaitForBookIdToAppear();
+    await fixedAssetsPage.enterAndSelectOffsetAccountType('Ledger');
+
+    await fixedAssetsPage.enteroffsetAccountNumber('630003-HDQ-QHO-NA');
+
+    await fixedAssetsPage.clickValidateButton();
+    await navigationPage.waitUntilProcessingMessageDisappears();
+    const message = await requisitionPage.checkMessageBar();
+    const cleaned = message.replace(/\s+/g, ' ').trim();
+    expect(cleaned).toContain("Operation completed Journal is OK.");
+    await fixedAssetsPage.clickPostButton();
+    const message2 = await requisitionPage.checkMessageBar();
+    const cleanedw = message2.replace(/\s+/g, ' ').trim();
+    expect(cleanedw).toContain("Operation completed Number of vouchers posted to the journal: 1 Operation completed");
+    await fixedAssetsPage.clickBackButtonUnderMainMenu();
 
 
 
-  //************************Validate both sale and disposed************ */
+
+  });
 
 
-  // test('Valuations Validations for Sale and Scrap FA', async ({ page }) => {
-  //   const navigationPage = new NavigationPage(page);
-  //   const requisitionPage = new PurchaseRequisitionPage(page);
-  //   const fixedAssetsPage = new FixedAssetsPage(page);
-  //   const fixedAssetNameSale = readEnvVariable('FIXED_ASSET_NAME2');
-  //   const fixedAssetNameScrap = readEnvVariable('FIXED_ASSET_NAME1');
-  //   if (!fixedAssetNameSale || !fixedAssetNameScrap) {
-  //     throw new Error('Either FIXED_ASSET_NAME_SALE or FIXED_ASSET_NAME_SCRAP must be set');
-  //   }
-  //   navigationPage.openModulesMenu();
-  //   await clickMenuItem(page, 'Fixed assets', false);
-  //   await page.waitForTimeout(5000);
-  //   await expandMenuIfCollapsed(page, 'Fixed assets', 'Fixed assets');
-  //   await navigationPage.waitUntilProcessingMessageDisappears();
 
-  //   await selectQuickFilter(page, fixedAssetNameSale, 'Name');
-  //   await fixedAssetsPage.clickValuationAssetButton();
-  //   let values = await fixedAssetsPage.getDisposalSaleValue();
-  //   expect(values).toEqual(["-100.00", "-100.00"]);
-  //   await fixedAssetsPage.clickBackButtonOnValuationPage();
+  //************************ Validate both sale and disposed ************ */
 
-  //   await selectQuickFilter(page, fixedAssetNameScrap, 'Name');
-  //   await fixedAssetsPage.clickValuationAssetButton();
-  //   let valuesScrap = await fixedAssetsPage.getDisposalSaleValue();
-  //   expect(valuesScrap).toEqual(["0.00", "0.00"]);
 
-  // //********************************Splitting functionality */
-  // test('Verify the splitting functionality', async ({ page }) => {
-  //   const navigationPage = new NavigationPage(page);
-  //   const requisitionPage = new PurchaseRequisitionPage(page);
-  //   const fixedAssetsPage = new FixedAssetsPage(page);
-  //   const fixedAssetNameSale = readEnvVariable('FIXED_ASSET_NAME2');
-  //   const fixedAssetNameScrap = readEnvVariable('FIXED_ASSET_NAME1');
-  //   if (!fixedAssetNameSale || !fixedAssetNameScrap) {
-  //     throw new Error('Either FIXED_ASSET_NAME_SALE or FIXED_ASSET_NAME_SCRAP must be set');
-  //   }
-  //   navigationPage.openModulesMenu();
-  //   await clickMenuItem(page, 'Fixed assets', false);
-  //   await page.waitForTimeout(5000);
-  //   await expandMenuIfCollapsed(page, 'Fixed assets', 'Fixed assets');
-  //   await navigationPage.waitUntilProcessingMessageDisappears();
+  test('Valuations Validations for Sale and Scrap FA', async ({ page }) => {
+    const navigationPage = new NavigationPage(page);
+    const requisitionPage = new PurchaseRequisitionPage(page);
+    const fixedAssetsPage = new FixedAssetsPage(page);
+    const fixedAssetNameSale = readEnvVariable('FIXED_ASSET_NAME2');
+    const fixedAssetNameScrap = readEnvVariable('FIXED_ASSET_NAME1');
+    if (!fixedAssetNameSale || !fixedAssetNameScrap) {
+      throw new Error('Either FIXED_ASSET_NAME_SALE or FIXED_ASSET_NAME_SCRAP must be set');
+    }
+    navigationPage.openModulesMenu();
+    await clickMenuItem(page, 'Fixed assets', false);
+    await page.waitForTimeout(5000);
+    await expandMenuIfCollapsed(page, 'Fixed assets', 'Fixed assets');
+    await navigationPage.waitUntilProcessingMessageDisappears();
 
-  //   await selectQuickFilter(page, fixedAssetNameSale, 'Name');
-  //   await fixedAssetsPage.clickValuationAssetButton();
-  //   let values = await fixedAssetsPage.getDisposalSaleValue();
-  //   expect(values).toEqual(["-100.00", "-100.00"]);
-  //   await fixedAssetsPage.clickBackButtonOnValuationPage();
+    await selectQuickFilter(page, fixedAssetNameSale, 'Name');
+    await fixedAssetsPage.clickValuationAssetButton();
+    let values = await fixedAssetsPage.getDisposalSaleValue();
+    expect(values).toEqual(["-100.00", "-100.00"]);
+    await fixedAssetsPage.clickBackButtonOnValuationPage();
 
-  //   await selectQuickFilter(page, fixedAssetNameScrap, 'Name');
-  //   await fixedAssetsPage.clickValuationAssetButton();
-  //   let valuesScrap = await fixedAssetsPage.getDisposalSaleValue();
-  //   expect(valuesScrap).toEqual(["0.00", "0.00"]);
+    await selectQuickFilter(page, fixedAssetNameScrap, 'Name');
+    await fixedAssetsPage.clickValuationAssetButton();
+    let valuesScrap = await fixedAssetsPage.getDisposalSaleValue();
+    expect(valuesScrap).toEqual(["0.00", "0.00"]);
+
+  });
 
 
 
@@ -295,249 +272,46 @@ test.describe('UAT Fixed Asset Flow', () => {
 
 
 
+  //********************************Splitting functionality */
+  test('Verify the splitting functionality', async ({ page }) => {
+    const navigationPage = new NavigationPage(page);
+    const fixedAssetsPage = new FixedAssetsPage(page);
+    const fixedAssetNameSplit = readEnvVariable('FIXED_ASSET_NAME3');
+    const fixedAssetNumber = readEnvVariable('CAPEX_NUMBER3');
 
+    if (!fixedAssetNameSplit || !fixedAssetNumber) {
+      throw new Error('Either FIXED_ASSET_NAME3 or CAPEX_NUMBER3 must be set');
+    }
+    navigationPage.openModulesMenu();
+    await clickMenuItem(page, 'Fixed assets', false);
+    await page.waitForTimeout(5000);
+    await expandMenuIfCollapsed(page, 'Fixed assets', 'Fixed assets');
+    await navigationPage.waitUntilProcessingMessageDisappears();
 
+    await selectQuickFilter(page, fixedAssetNameSplit, 'Name');
+    await fixedAssetsPage.clickCopyFixedAsset();
+    await fixedAssetsPage.enterCopyFixedAssetName(fixedAssetNumber + "(a)");
+    await fixedAssetsPage.clickCopyFixedAssetOkButton();
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  // await navigationPage.clickNewButton();
-  // await fixedAssetsPage.selectFixedAssetJournalName('FXA');
-
-  // const random4Digit2 = Math.floor(1000 + Math.random() * 9000);
-  // console.log(`Random 4-digit number: ${random4Digit2}`);
-  // await fixedAssetsPage.enterJournalFixedAssetDescription(random4Digit2 + "Sale");
-  // await fixedAssetsPage.clickFixedAssetJournalLine();
-  // await navigationPage.waitUntilProcessingMessageDisappears();
-
-  // var journalDate = getFormattedDateOffset(-0);
-  // console.log(`Journal Date: ${journalDate}`);
-  // await fixedAssetsPage.enterJournalDate(journalDate);
-  // if (!fixedAssetName) {
-  //   throw new Error('FIXED_ASSET_NAME environment variable is not set');
-  // }
-  // await fixedAssetsPage.enterAndSelectTransactionType('Disposal - sale');
-  // await fixedAssetsPage.enterAndSelectAccountNumberJournal(fixedAssetName);
-  // await fixedAssetsPage.enterCreditAmountJournal('100');
-  // await fixedAssetsPage.clickAndWaitForBookIdToAppear();
-  // await fixedAssetsPage.enterAndSelectOffsetAccountType('Ledger');
-
-  // await fixedAssetsPage.enteroffsetAccountNumber('630003-HDQ-QHO-NA');
-
-  // await fixedAssetsPage.clickValidateButton();
-  // await navigationPage.waitUntilProcessingMessageDisappears();
-  // const message = await requisitionPage.checkMessageBar();
-  // const cleaned = message.replace(/\s+/g, ' ').trim();
-  // expect(cleaned).toContain("Operation completed Journal is OK.");
-  // await fixedAssetsPage.clickPostButton();
-  // const message2 = await requisitionPage.checkMessageBar();
-  // const cleanedw = message2.replace(/\s+/g, ' ').trim();
-  // expect(cleanedw).toContain("Operation completed Number of vouchers posted to the journal: 1 Operation completed");
-  // await fixedAssetsPage.clickBackButtonUnderMainMenu();
-
-
-
-
+    await navigationPage.waitUntilProcessingMessageDisappears();
+    await checkRowWithMachedText(page, fixedAssetNumber, 'Capex number', 0);
+    await fixedAssetsPage.clickBooksButton();
+    await navigationPage.waitUntilProcessingMessageDisappears();
+    await fixedAssetsPage.clickFunctionsButton();
+    await fixedAssetsPage.clickSplitButton();
+    await fixedAssetsPage.enterToAssetId(fixedAssetNumber + " (a)");
+    await fixedAssetsPage.enterToBookId("IFRS");
+    await fixedAssetsPage.enterPercentageBox("50");
+    await fixedAssetsPage.enterJournalName("FXA-OP");
+    await fixedAssetsPage.clickOkButtonFromFromGrid();
+    await page.waitForTimeout(5000);
+    await fixedAssetsPage.clickDimesionsInSecondGrid();
+    await fixedAssetsPage.clickFunctionsButton();
+    await fixedAssetsPage.clickSplitButton();
+    await fixedAssetsPage.enterToAssetId(fixedAssetNumber + " (a)");
+    await fixedAssetsPage.enterToBookId("UK");
+    await fixedAssetsPage.enterPercentageBox("50");
+    await fixedAssetsPage.enterJournalName("FXA");
+    await fixedAssetsPage.clickOkButtonFromFromGrid();
+  });
 });
-
-
-
-// const preRquisi tionName = await requisitionPage.fillRequisitionName();
-// console.log(`Requisition Name: ${preRquisitionName}`);
-// setEnvVariable('PR_NAME', preRquisitionName);
-//   await requisitionPage.clickCapexToggle();
-//   await requisitionPage.submitRequisition();
-//   await navigationPage.waitUntilProcessingMessageDisappears();
-//   const actualTitle = await requisitionPage.getHeaderTitle();
-//   expect(actualTitle).toContain(preRquisitionName);
-
-//   await requisitionPage.setAndSelectBusinessJustificationReason('Business Justification');
-//   const justificationDetails = `** Capex PR ${preRquisitionName}`;
-//   console.log('Filling justification:', justificationDetails);
-//   await requisitionPage.enterBusinessJustificationHeaderDetails(justificationDetails);
-
-//   await requisitionPage.clickAddNewPRLineButton();
-//   await navigationPage.waitUntilProcessingMessageDisappears();
-
-
-//   await requisitionPage.selectItemName('101100');
-
-//   await requisitionPage.selectSupplier('TT118');
-//   await requisitionPage.enterPurchaseQuantity('100');
-//   await requisitionPage.selectCapexNum('2350');
-//   await requisitionPage.clickFinancialDimensions();
-//   await requisitionPage.enterBusinessUnit('HDQ');
-//   await requisitionPage.enterCostCenter('FPC');
-//   await requisitionPage.enterPublications('NA');
-//   await navigationPage.clickSaveButton();
-//   await navigationPage.waitUntilProcessingMessageDisappears();
-//   await page.waitForTimeout(2000);
-//   await navigationPage.clickBackButton();
-//   await selectQuickFilter(page, preRquisitionName, 'Name');
-//   await page.waitForTimeout(2000);
-//   await checkMatchingRow(page, preRquisitionName);
-//   await requisitionPage.clickWorkflow()
-//   await requisitionPage.getSpanByLabel("Submit");
-//   const message = await requisitionPage.checkMessageBar();
-//   expect(message).toBe("Operation completed");
-
-//   await requisitionPage.clickSubmitButton()
-//   // await requisitionPage.clickSubmitButtonOnWorkflowDialog();
-//   await navigationPage.waitUntilProcessingMessageDisappears();
-
-// });
-
-
-
-// test('Create Good Receipt For Capex PR', async ({ page }) => {
-//   const navigationPage = new NavigationPage(page);
-//   const requisitionPage = new PurchaseRequisitionPage(page);
-//   const prName = readEnvVariable('PR_NAME');
-//   console.log(`Updated PR_NAME: ${prName}`);
-//   navigationPage.openModulesMenu();
-//   await clickMenuItem(page, 'Procurement and sourcing', false);
-//   await clickMenuItem(page, 'Purchase requisitions', true);
-//   await clickMenuItem(page, 'Purchase requisitions prepared by me', false);
-//   await navigationPage.waitUntilProcessingMessageDisappears();
-//   await expect(navigationPage.isElementVisible).toBeVisible();
-
-//   if (!prName) {
-//     throw new Error('PR_NAME environment variable is not set');
-//   }
-//   await selectQuickFilter(page, prName, 'Name');
-//   await page.waitForTimeout(2000);
-//   await checkMatchingRow(page, prName);
-//   const purchaseRequisitionId = requisitionPage.getPurchaseRequisitionId()
-//   console.log(`Purchase Requisition ID: ${purchaseRequisitionId}`);
-//   await requisitionPage.clickWorkflow()
-
-//   await requisitionPage.getSpanByLabel("Workflow history");
-//   await navigationPage.waitUntilProcessingMessageDisappears();
-//   await requisitionPage.waitForPendingStatusRowAndSelect();
-//   await requisitionPage.clickReassignWorkItem();
-//   await navigationPage.waitUntilProcessingMessageDisappears();
-//   await requisitionPage.enterUserName('ETXP001');
-//   await requisitionPage.clickActionButton();
-
-//   await requisitionPage.waitForStatusContains("Pending");
-//   await navigationPage.clickHomeButton();
-//   await navigationPage.waitUntilProcessingMessageDisappears();
-
-//   if (purchaseRequisitionId) {
-//     const approvalLink = await requisitionPage.getApprovalRequestLink(await purchaseRequisitionId + ".");
-//     await approvalLink.click();
-//     await navigationPage.waitUntilProcessingMessageDisappears();
-//   } else {
-//     throw new Error('Purchase Requisition ID is null');
-//   }
-//   await page.waitForTimeout(2000);
-//   await requisitionPage.clickWorkflow()
-//   await page.waitForTimeout(2000);
-//   await requisitionPage.getSpanByLabel("Approve");
-//   await navigationPage.waitUntilProcessingMessageDisappears();
-//   await requisitionPage.clickActionButton();
-//   await navigationPage.waitUntilProcessingMessageDisappears();
-
-
-
-//   ///********e*********Again the same code */
-
-//   navigationPage.openModulesMenu();
-//   await clickMenuItem(page, 'Procurement and sourcing', false);
-//   await clickMenuItem(page, 'Purchase requisitions', true);
-//   await clickMenuItem(page, 'Purchase requisitions prepared by me', false);
-//   await navigationPage.waitUntilProcessingMessageDisappears();
-//   await expect(navigationPage.isElementVisible).toBeVisible();
-
-//   await selectQuickFilter(page, prName, 'Name');
-//   await page.waitForTimeout(2000);
-//   await checkMatchingRow(page, prName);
-//   // const purchaseRequisitionId = requisitionPage.getPurchaseRequisitionId()
-//   // console.log(`Purchase Requisition ID: ${purchaseRequisitionId}`);
-//   await requisitionPage.clickWorkflow()
-//   await page.waitForTimeout(2000);
-//   await requisitionPage.getSpanByLabel("Workflow history");
-//   await navigationPage.waitUntilProcessingMessageDisappears();
-
-
-//   // //////*******************from here debug */
-//   await requisitionPage.waitForPendingStatusRowAndSelect();
-//   await requisitionPage.clickReassignWorkItem();
-//   await navigationPage.waitUntilProcessingMessageDisappears();
-//   await requisitionPage.enterUserName('ETXP001');
-//   await requisitionPage.clickActionButton();
-
-//   // await requisitionPage.waitForStatusContains("Pending");
-//   await navigationPage.clickHomeButton();
-//   await navigationPage.waitUntilProcessingMessageDisappears();
-
-//   if (purchaseRequisitionId) {
-//     const approvalLink = await requisitionPage.getApprovalRequestLink(await purchaseRequisitionId + ".");
-//     await approvalLink.click();
-//     await navigationPage.waitUntilProcessingMessageDisappears();
-//   } else {
-//     throw new Error('Purchase Requisition ID is null');
-//   }
-//   await page.waitForTimeout(2000);
-//   await requisitionPage.clickWorkflow()
-//   await page.waitForTimeout(2000);
-//   await requisitionPage.getSpanByLabel("Approve");
-//   await navigationPage.waitUntilProcessingMessageDisappears();
-//   await requisitionPage.clickActionButton();
-//   await navigationPage.waitUntilProcessingMessageDisappears();
-
-
-
-//   //****************************Purchase Order  */
-
-//   navigationPage.openModulesMenu();
-//   await clickMenuItem(page, 'Procurement and sourcing', false);
-//   await clickMenuItem(page, 'Purchase requisitions', true);
-//   await clickMenuItem(page, 'Purchase requisitions prepared by me', false);
-//   await navigationPage.waitUntilProcessingMessageDisappears();
-//   await expect(navigationPage.isElementVisible).toBeVisible();
-//   await selectQuickFilter(page, prName, 'Name');
-//   await page.waitForTimeout(2000);
-//   await checkMatchingRow(page, prName);
-//   await requisitionPage.clickOnPurchaseRequisition();
-//   await navigationPage.waitUntilProcessingMessageDisappears();
-
-//   await requisitionPage.waitForPOLinkInPRDetailsAndClick();
-//   await navigationPage.waitUntilProcessingMessageDisappears();
-//   await requisitionPage.clickPurchaseButton();
-//   await requisitionPage.clickConfirmPoButton();
-//   await requisitionPage.waitForDialogBoxToHide();
-//   const isOperationCompletedMessageDisplayedOnPOPage = await requisitionPage.checkMessageBar();
-//   expect(isOperationCompletedMessageDisplayedOnPOPage).toBe("Operation completed");
-//   await requisitionPage.clickReceiveButton();
-//   await requisitionPage.clickProductReceiptButton();
-//   await navigationPage.waitUntilProcessingMessageDisappears();
-//   const randomString = Math.random().toString(36).substring(2, 6).toUpperCase();
-//   const capexGRName = `capexgr${randomString}`;
-//   await requisitionPage.enterProductReceiptText(capexGRName);
-//   await requisitionPage.enterGoodRecieveQuantity('50.00');
-//   await requisitionPage.submitRequisition();
-//   await navigationPage.waitUntilProcessingMessageDisappears();
-
-//   await requisitionPage.clickJournalProductReceiptButton();
-//   await requisitionPage.clickVouchersButton();
-//   await navigationPage.waitUntilProcessingMessageDisappears();
-//   await requisitionPage.waitForJournalVoucherRowsOnGoodReceipt();
-//   const matchedQuantity = await requisitionPage.isAmountInputWithValuePresent('-50.00');
-//   console.log(`Matched Quantity: ${matchedQuantity}`);
-//   expect(matchedQuantity).toBe(true);
-
-// });
-
-//});

@@ -17,6 +17,10 @@ export class FixedAssetsPage {
         return this.page.locator('button[data-dyn-controlname="OK"]');
     }
 
+    get okButtonSplitPopUp() {
+        return this.page.locator('button[data-dyn-controlname="Ok"]');
+    }
+
     get purchaseRequisitionFilter() {
         return this.page.locator('input[name="PurchReqTableQuickFilter_Input"]');
     }
@@ -270,6 +274,10 @@ export class FixedAssetsPage {
         return this.page.locator('//button//span[text()="Validate" and substring(@id, string-length(@id) - string-length("_CheckJournal_label") + 1) = "_CheckJournal_label"]');
     }
 
+    get copyFAOkButton() {
+        return this.page.locator('button[data-dyn-controlname="OkButton"]');
+    }
+
     get postButton() {
         return this.page.locator('[data-dyn-controlname="PostJournal"][data-dyn-role="MenuItemButton"]');
     }
@@ -314,8 +322,16 @@ export class FixedAssetsPage {
         return this.page.locator('[data-dyn-controlname="StatusComboBox"]');
     }
 
+    get copyFixedAsset() {
+        return this.page.locator('button[data-dyn-controlname="AssetCopy"]');
+    }
+
     get actionsGroupBackButtonBooksPage() {
         return this.page.locator('[data-dyn-controlname="SysCloseGroup"][id^="AssetBook_"]');
+    }
+
+    get inputCopyFixedAssetName() {
+        return this.page.locator('[data-dyn-controlname="Fld1_1"] input');
     }
 
     get actionsGroupBackButtonFAPage() {
@@ -330,9 +346,36 @@ export class FixedAssetsPage {
         return this.page.locator('//span[@id="titleField" and contains(text(), "Processing operation")]');
     }
 
+    get functionsButton() {
+        return this.page.locator('[data-dyn-role="MenuButton"][data-dyn-controlname="Functions"]');
+    }
 
+    get splitButton() {
+        return this.page.locator('button[data-dyn-controlname="AssetSplit"]');
+    }
 
+    get toAssetId() {
+        return this.page.locator('[data-dyn-controlname="ToAssetId"] input');
+    }
 
+    get toAssetIdFromGrid() {
+        return this.page.locator('[data-dyn-controlname="Sel"] input');
+    }
+    get toBookId() {
+        return this.page.locator('[data-dyn-controlname="ToBookId"] input');
+    }
+
+    get toBookIdFromGrid() {
+        return this.page.locator('[data-dyn-controlname="AssetBookTable_BookId"] input');
+    }
+
+    get percentageBox() {
+        return this.page.locator('[data-dyn-controlname="Percent"] input');
+    }
+
+    get journalName() {
+        return this.page.locator('[data-dyn-controlname="JournalName"] input');
+    }
 
 
     // Method's Fixed Asset Details
@@ -947,5 +990,89 @@ export class FixedAssetsPage {
 
     async clickDimesionsInSecondGrid() {
         await this.dimesionsInSecondGrid.nth(1).click();
+    }
+
+    async clickCopyFixedAsset() {
+        await waitForWithRetry(this.copyFixedAsset, this.page, 5, 4000, 2000);
+        await this.copyFixedAsset.click();
+    }
+
+    async enterCopyFixedAssetName(copyName: string) {
+        await this.inputCopyFixedAssetName.scrollIntoViewIfNeeded();
+        await this.inputCopyFixedAssetName.fill(copyName);
+
+    }
+
+    async clickCopyFixedAssetOkButton() {
+        await waitForWithRetry(this.copyFAOkButton, this.page, 5, 4000, 2000);
+        await this.copyFAOkButton.click();
+    }
+
+    async clickFunctionsButton() {
+        await waitForWithRetry(this.functionsButton, this.page, 5, 4000, 2000);
+        await this.functionsButton.click();
+    }
+
+    async clickSplitButton() {
+        await waitForWithRetry(this.splitButton, this.page, 5, 4000, 2000);
+        await this.splitButton.click();
+    }
+
+    async enterToAssetId(toAssetId: string) {
+        const input = this.toAssetId;
+        await input.scrollIntoViewIfNeeded();
+        await input.waitFor({ state: 'visible' });
+        await input.click({ force: true });
+        await input.click({ clickCount: 3 });
+        for (const char of toAssetId) {
+            await this.page.keyboard.type(char);
+            await this.page.waitForTimeout(1500);
+        }
+        await this.toAssetIdFromGrid.click();
+    }
+
+    async enterToBookId(toBookId: string) {
+        const input = this.toBookId;
+        await input.scrollIntoViewIfNeeded();
+        await input.waitFor({ state: 'visible' });
+        await input.click({ force: true });
+        await input.click({ clickCount: 3 });
+        for (const char of toBookId) {
+            await this.page.keyboard.type(char);
+            await this.page.waitForTimeout(1500); // tiny delay between characters
+        }
+        await this.toBookIdFromGrid.click();
+        await this.page.waitForTimeout(2000);
+    }
+
+    async enterPercentageBox(percentage: string) {
+        const input = this.percentageBox;
+        await input.scrollIntoViewIfNeeded();
+        await input.waitFor({ state: 'visible' });
+        await input.click({ force: true });
+        await input.fill('');
+        await this.page.keyboard.press('Backspace');
+        for (const char of percentage) {
+            await this.page.keyboard.type(char);
+            await this.page.waitForTimeout(50);
+        }
+    }
+
+    async enterJournalName(journalName: string) {
+        const input = this.journalName;
+        await input.scrollIntoViewIfNeeded();
+        await input.waitFor({ state: 'visible' });
+        await input.click({ force: true });
+        await input.click({ clickCount: 3 });
+        for (const char of journalName) {
+            await this.page.keyboard.type(char);
+            await this.page.waitForTimeout(1500); // tiny delay between characters
+        }
+        await this.selectFixedAssetInputGrid.click();
+        await this.page.waitForTimeout(2000);
+    }
+
+    async clickOkButtonFromFromGrid() {
+        await this.okButtonSplitPopUp.click();
     }
 }

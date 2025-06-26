@@ -5,6 +5,7 @@ import { selectQuickFilter, checkMatchingRow } from '../utils/Filter';
 import { clickMenuItem } from '../utils/Menu';
 import { PurchaseRequisitionPage } from '../pages/PurchaseRequisitionPage';
 import { setEnvVariable, readEnvVariable } from '../utils/envHelper';
+import { expandMenuIfCollapsed } from '../utils/Menu';
 import path from 'path';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -45,8 +46,7 @@ test.describe('UAT Purchase Requisition Flow', () => {
 
     navigationPage.openModulesMenu();
     await clickMenuItem(page, 'Procurement and sourcing', false);
-    await clickMenuItem(page, 'Purchase requisitions', true);
-    await clickMenuItem(page, 'Purchase requisitions prepared by me', false);
+    await expandMenuIfCollapsed(page, 'Purchase requisitions', 'Purchase requisitions prepared by me');
     await navigationPage.waitUntilProcessingMessageDisappears();
     await expect(navigationPage.isElementVisible).toBeVisible();
     await navigationPage.clickNewButton();
@@ -100,8 +100,7 @@ test.describe('UAT Purchase Requisition Flow', () => {
     console.log(`Updated PR_NAME: ${prName}`);
     navigationPage.openModulesMenu();
     await clickMenuItem(page, 'Procurement and sourcing', false);
-    await clickMenuItem(page, 'Purchase requisitions', true);
-    await clickMenuItem(page, 'Purchase requisitions prepared by me', false);
+    await expandMenuIfCollapsed(page, 'Purchase requisitions', 'Purchase requisitions prepared by me');
     await navigationPage.waitUntilProcessingMessageDisappears();
     await expect(navigationPage.isElementVisible).toBeVisible();
 
@@ -148,8 +147,7 @@ test.describe('UAT Purchase Requisition Flow', () => {
 
     navigationPage.openModulesMenu();
     await clickMenuItem(page, 'Procurement and sourcing', false);
-    await clickMenuItem(page, 'Purchase requisitions', true);
-    await clickMenuItem(page, 'Purchase requisitions prepared by me', false);
+    await expandMenuIfCollapsed(page, 'Purchase requisitions', 'Purchase requisitions prepared by me');
     await navigationPage.waitUntilProcessingMessageDisappears();
     await expect(navigationPage.isElementVisible).toBeVisible();
 
@@ -196,8 +194,7 @@ test.describe('UAT Purchase Requisition Flow', () => {
 
     navigationPage.openModulesMenu();
     await clickMenuItem(page, 'Procurement and sourcing', false);
-    await clickMenuItem(page, 'Purchase requisitions', true);
-    await clickMenuItem(page, 'Purchase requisitions prepared by me', false);
+    await expandMenuIfCollapsed(page, 'Purchase requisitions', 'Purchase requisitions prepared by me');
     await navigationPage.waitUntilProcessingMessageDisappears();
     await expect(navigationPage.isElementVisible).toBeVisible();
     await selectQuickFilter(page, prName, 'Name');
