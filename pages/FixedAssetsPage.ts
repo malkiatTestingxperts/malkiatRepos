@@ -403,6 +403,31 @@ export class FixedAssetsPage {
         return this.page.locator('[class*="sort-descending"][data-dyn-controlname="LedgerJournalTable_JournalNum"]');
     }
 
+    get checkBoxSummariseDepriciation() {
+        return this.page.locator('[class="toggle-box"][id*="Dialog"]');
+    }
+
+    get buttonFilterDepreciation() {
+
+        return this.page.locator('button[data-dyn-controlname="QuerySelectButton"]');
+    }
+
+    get filterBookField() {
+
+        return this.page.locator('[data-dyn-controlname="RangeValue"] input');
+    }
+
+    get filterAddBookButton() {
+        return this.page.locator('.//div[@data-dyn-controlname="RangeValue"]/div/div');
+    }
+
+    get filterBookCriteriaOkButton() {
+        return this.page.locator('[data-dyn-controlname="OkCancel"] button[data-dyn-controlname="OkButton"]');
+    }
+
+    get filterBookMainDialogOkButton() {
+        return this.page.locator('[data-dyn-controlname="BottomButtonGrp"] button[data-dyn-controlname="OkButton"]');
+    }
 
     // Method's Fixed Asset Details
     async fillRequisitionName() {
@@ -517,6 +542,7 @@ export class FixedAssetsPage {
     }
 
     async enterBusinessUnit(businessUnit: string) {
+        await this.page.waitForTimeout(5000);
         const field = this.enterBusinessUnitinFinancialDimensions;
 
         await field.waitFor({ state: 'visible' });
@@ -563,7 +589,7 @@ export class FixedAssetsPage {
 
 
     async checkMessageBar() {
-        await waitForWithRetry(this.messageBar, this.page, 5, 4000, 2000);
+        await waitForWithRetry(this.messageBar, this.page, 5, 25000, 2000);
         const message = await this.messageBar.innerText();
         console.log(`Message Bar: ${message}`);
         return message;
@@ -1100,6 +1126,7 @@ export class FixedAssetsPage {
 
     async clickOkButtonFromFromGrid() {
         await this.okButtonSplitPopUp.click();
+        await this.page.waitForTimeout(5000);
     }
 
     async clickCheckBoxOnMyUserCreated() {
@@ -1144,5 +1171,40 @@ export class FixedAssetsPage {
         await this.page.waitForTimeout(5000);
         this.page.locator('[role="checkbox"][title="Select or unselect row"]').nth(index).click();
     }
+
+    async clickCheckBoxSummariseDepreciation() {
+        try {
+            await waitForWithRetry(this.checkBoxSummariseDepriciation, this.page, 5, 4000, 2000);
+
+            const isChecked = await this.checkBoxSummariseDepriciation.getAttribute('aria-checked');
+
+            if (isChecked === 'false') {
+                await this.checkBoxSummariseDepriciation.scrollIntoViewIfNeeded();
+                await this.checkBoxSummariseDepriciation.click();
+                console.log("Summarise DepreciationCheckbox was unchecked, now clicked.");
+            } else {
+                console.log("Summarise Depreciation Checkbox is already checked, skipping click.");
+            }
+        } catch (error: any) {
+            console.error(`Error while attempting to click Summarise Depreciation checkbox: ${error.message}`);
+            throw error;
+        }
+    }
+
+    async clickDepreciationFilterButton() {
+        await waitForWithRetry(this.buttonFilterDepreciation, this.page, 5, 4000, 2000);
+        await this.buttonFilterDepreciation.click();
+    }
+
+    async enterFilterBookField(criteria: string) {
+        await this.filterBookField.nth(3).scrollIntoViewIfNeeded();
+        await this.filterBookField.nth(3).click({ clickCount: 3 });
+        await this.filterBookField.nth(3).fill('');
+        await this.filterBookField.nth(3).type(criteria, { delay: 500 });
+        await this.filterBookCriteriaOkButton.click();
+        await this.filterBookMainDialogOkButton.click();
+
+    }
+
 }
 

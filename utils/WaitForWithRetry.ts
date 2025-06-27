@@ -6,7 +6,7 @@ export async function waitForWithRetry(
   locator: Locator,
   page: Page,
   retries = 3,
-  timeout = 5000,
+  timeout = 25000,
   delayBetweenRetries = 1000,
   label = 'element',
   elemenState = String

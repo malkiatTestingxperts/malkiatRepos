@@ -2,8 +2,8 @@
 import { test, expect } from '@playwright/test';
 import { NavigationPage } from '../utils/NavigationPage';
 import { selectQuickFilter, checkMatchingRow } from '../utils/Filter';
-import { clickMenuItem } from '../utils/Menu';
-import { expandMenuIfCollapsed } from '../utils/Menu';
+import { clickMenuItem } from '../utils/MainMenu';
+import { expandMenuIfCollapsed } from '../utils/MainMenu';
 import { PurchaseRequisitionPage } from '../pages/PurchaseRequisitionPage';
 import { setEnvVariable, readEnvVariable } from '../utils/envHelper';
 import path from 'path';
