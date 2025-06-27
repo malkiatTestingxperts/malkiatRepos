@@ -377,6 +377,32 @@ export class FixedAssetsPage {
         return this.page.locator('[data-dyn-controlname="JournalName"] input');
     }
 
+    get checkBoxOnMyUserCreated() {
+        return this.page.locator('[data-dyn-controlname="ShowUserCreatedOnly"] [class="checkBox"]');
+    }
+
+    get dropDownLookupButton() {
+        return this.page.locator('[data-dyn-controlname="AllOpenPostedField"] [class="lookupButton"]');
+    }
+
+    get dropDownComboBoxOption() {
+        return this.page.locator("[class='comboBox-list sysPopup'] [role='option']");
+    }
+
+    get sortJournalBatchNumberButton() {
+
+        return this.page.locator('[data-dyn-controlname="LedgerJournalTable_JournalNum"] [class*="dyn-headerCellLabel"]');
+    }
+
+    get descendingOrderButton() {
+
+        return this.page.locator('[data-dyn-controlname="Descending_LedgerJournalTable_JournalNum"]');
+    }
+
+    get isDescendingOrderApplied() {
+        return this.page.locator('[class*="sort-descending"][data-dyn-controlname="LedgerJournalTable_JournalNum"]');
+    }
+
 
     // Method's Fixed Asset Details
     async fillRequisitionName() {
@@ -1075,4 +1101,48 @@ export class FixedAssetsPage {
     async clickOkButtonFromFromGrid() {
         await this.okButtonSplitPopUp.click();
     }
+
+    async clickCheckBoxOnMyUserCreated() {
+        try {
+            await waitForWithRetry(this.checkBoxOnMyUserCreated, this.page, 5, 4000, 2000);
+
+            const isChecked = await this.checkBoxOnMyUserCreated.getAttribute('aria-checked');
+
+            if (isChecked === 'false') {
+                await this.checkBoxOnMyUserCreated.scrollIntoViewIfNeeded();
+                await this.checkBoxOnMyUserCreated.click();
+                console.log("Checkbox was unchecked, now clicked.");
+            } else {
+                console.log("Checkbox is already checked, skipping click.");
+            }
+        } catch (error: any) {
+            console.error(`Error while attempting to click checkbox: ${error.message}`);
+            throw error;
+        }
+    }
+
+    async clickAndSelectOptionFromDropDownForFixedAssetJournal(option: string) {
+        await waitForWithRetry(this.dropDownLookupButton, this.page, 5, 4000, 2000);
+        await this.dropDownLookupButton.click();
+        await this.page.waitForTimeout(2000);
+        this.page.getByRole('option', { name: option }).click();
+    }
+    async sortJournalBatchNumberWithDescendingOrder() {
+        const isDescendingVisible = await this.isDescendingOrderApplied.isVisible().catch(() => false);
+        if (isDescendingVisible) {
+            console.log("Descending order is already applied, skipping sort.");
+            return;
+        }
+        await waitForWithRetry(this.sortJournalBatchNumberButton, this.page, 5, 4000, 2000);
+        await this.sortJournalBatchNumberButton.click();
+        await waitForWithRetry(this.descendingOrderButton, this.page, 5, 4000, 2000);
+        await this.descendingOrderButton.click();
+        console.log("Descending sort applied.");
+    }
+
+    async selectJournalNumberFromList(index: number) {
+        await this.page.waitForTimeout(5000);
+        this.page.locator('[role="checkbox"][title="Select or unselect row"]').nth(index).click();
+    }
 }
+
