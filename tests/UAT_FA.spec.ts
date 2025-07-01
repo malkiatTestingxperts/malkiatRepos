@@ -7,6 +7,7 @@ import { expandMenuIfCollapsed } from '../utils/MainMenu';
 import { DateHelper } from '../utils/DateHelper';
 import { PurchaseRequisitionPage } from '../pages/PurchaseRequisitionPage';
 import { FixedAssetsPage } from '../pages/FixedAssetsPage';
+import { ReadPdf, DeletePdf } from '../utils/FileReader';
 import { PageMenus } from '../utils/PageMenus';
 import { setEnvVariable, readEnvVariable } from '../utils/envHelper';
 import path from 'path';
@@ -82,7 +83,7 @@ test.describe('UAT Fixed Asset Flow', () => {
       // await page.waitForTimeout(9000);
       await fixedAssetsPage.clickBooksButton()
       await navigationPage.waitUntilProcessingMessageDisappears();
-      // await requisitionPage.clickFinancialDimensions();
+      //await requisitionPage.clickFinancialDimensions();
       await fixedAssetsPage.enterBusinessUnit('HDQ');
       await fixedAssetsPage.enterCostCenter('QHO');
       await fixedAssetsPage.enterPublications('NA');
@@ -331,9 +332,9 @@ test.describe('UAT Fixed Asset Flow', () => {
     const navigationPage = new NavigationPage(page);
     const fixedAssetsPage = new FixedAssetsPage(page);
     const fixedAssetNameSplit = readEnvVariable('FIXED_ASSET_NAME4');
-    const fixedAssetNumber = readEnvVariable('CAPEX_NUMBER3');
+    const fixedAssetNumber = readEnvVariable('CAPEX_NUMBER4');
     if (!fixedAssetNameSplit || !fixedAssetNumber) {
-      throw new Error('Either FIXED_ASSET_NAME3 or CAPEX_NUMBER3 must be set');
+      throw new Error('Either FIXED_ASSET_NAME4 or CAPEX_NUMBER4 must be set');
     }
     navigationPage.openModulesMenu();
     await clickMenuItem(page, 'Fixed assets', false);
@@ -353,8 +354,8 @@ test.describe('UAT Fixed Asset Flow', () => {
 
 
 
-  //********************************Proposal Depriciation */
-  test('Verify Proposal Depriciation Functionality', async ({ page }) => {
+  //********************************Proposal Depriciation UK */
+  test('Verify Proposal Depriciation Functionality For UK', async ({ page }) => {
     const navigationPage = new NavigationPage(page);
     const fixedAssetsPage = new FixedAssetsPage(page);
     const requisitionPage = new PurchaseRequisitionPage(page);
@@ -382,15 +383,77 @@ test.describe('UAT Fixed Asset Flow', () => {
     await menusOption.clickMenuSubMenuOptionOnSpecificPage("Proposals", "Depreciation proposal");
     await navigationPage.waitUntilProcessingMessageDisappears();
     await fixedAssetsPage.clickCheckBoxSummariseDepreciation();
-    await dateHelper.setDateInput(-10);
+    await dateHelper.setDateInput(-4);
     await fixedAssetsPage.clickDepreciationFilterButton();
     await navigationPage.waitUntilProcessingMessageDisappears();
-    await fixedAssetsPage.enterFilterBookField('UK');
-    const message = await fixedAssetsPage.checkMessageBar();
-    expect(message).toContain("Operation completed");
+    await verifyDepriciationProposal(page, 'UK');
+  });
+
+  //********************************Proposal Depriciation IFRS */
+  test('Verify Proposal Depriciation Functionality For IFRS', async ({ page }) => {
+    const navigationPage = new NavigationPage(page);
+    const fixedAssetsPage = new FixedAssetsPage(page);
+    const requisitionPage = new PurchaseRequisitionPage(page);
+    const dateHelper = new DateHelper(page);
+    const menusOption = new PageMenus(page);
+    const fixedAssetNameSplit = readEnvVariable('FIXED_ASSET_NAME3');
+    const fixedAssetNumber = readEnvVariable('CAPEX_NUMBER3');
+
+    if (!fixedAssetNameSplit || !fixedAssetNumber) {
+      throw new Error('Either FIXED_ASSET_NAME3 or CAPEX_NUMBER3 must be set');
+    }
+    navigationPage.openModulesMenu();
+    await clickMenuItem(page, 'Fixed assets', false);
+    await page.waitForTimeout(5000);
+    await expandMenuIfCollapsed(page, 'Journal entries', 'Fixed assets journal');
+    await navigationPage.waitUntilProcessingMessageDisappears();
+    await navigationPage.clickNewButton();
+    await fixedAssetsPage.selectFixedAssetJournalName('FXA');
+
+    const random4Digit3 = Math.floor(1000 + Math.random() * 9000);
+    console.log(`Random 4-digit number: ${random4Digit3}`);
+    await fixedAssetsPage.enterJournalFixedAssetDescription(random4Digit3 + "ProposalCheck");
+    await fixedAssetsPage.clickFixedAssetJournalLine();
+    await navigationPage.waitUntilProcessingMessageDisappears();
+    await menusOption.clickMenuSubMenuOptionOnSpecificPage("Proposals", "Depreciation proposal");
+    await navigationPage.waitUntilProcessingMessageDisappears();
+    await fixedAssetsPage.clickCheckBoxSummariseDepreciation();
+    await dateHelper.setDateInput(-4);
+    await fixedAssetsPage.clickDepreciationFilterButton();
+    await navigationPage.waitUntilProcessingMessageDisappears();
+    await verifyDepriciationProposal(page, 'IFRS');
   });
 
 
+  //********************************Reports */
+  test('Verify Fixed Assets Balance Report', async ({ page }) => {
+    const navigationPage = new NavigationPage(page);
+    const fixedAssetsPage = new FixedAssetsPage(page);
+    const requisitionPage = new PurchaseRequisitionPage(page);
+    const dateHelper = new DateHelper(page);
+    const menusOption = new PageMenus(page);
+    const fixedAssetNameSplit = readEnvVariable('FIXED_ASSET_NAME3');
+    const fixedAssetNumber = readEnvVariable('CAPEX_NUMBER4');
+    if (!fixedAssetNameSplit || !fixedAssetNumber) {
+      throw new Error('Either FIXED_ASSET_NAME3 or CAPEX_NUMBER3 must be set');
+    }
+    navigationPage.openModulesMenu();
+    await clickMenuItem(page, 'Fixed assets', false);
+    await page.waitForTimeout(5000);
+    await expandMenuIfCollapsed(page, 'Inquiries and reports', 'Fixed asset balances');
+    await navigationPage.waitUntilProcessingMessageDisappears();
+    await fixedAssetsPage.clickButtonRecordsToInclude();
+    await fixedAssetsPage.clickDepreciationFilterButton();
+    let arrayAssetNumberToPass = fixedAssetNumber + ".." + fixedAssetNumber + "(a)";
+    await fixedAssetsPage.enterFilterInBalanceReport(1, arrayAssetNumberToPass);
+    await fixedAssetsPage.fixedAssetBalanceReportPage();
+    const pdfText = await ReadPdf(page);
+    const expectedValues = ["7,500", "15,000"];
+    for (const expected of expectedValues) {
+      expect(pdfText).toContain(expected);
+    }
+    await DeletePdf(page, "D:\\fgh_automation\\test-data\\downloaded.pdf");
+  });
 
 
 
@@ -435,9 +498,8 @@ test.describe('UAT Fixed Asset Flow', () => {
   // await fixedAssetsPage.enterPercentageBox("50");
   // await fixedAssetsPage.enterJournalName("FXA");
   // await fixedAssetsPage.clickOkButtonFromFromGrid();
+
 });
-
-
 async function postFixedAssetJournalAndVerify(page: Page) {
   const navigationPage = new NavigationPage(page);
   const fixedAssetsPage = new FixedAssetsPage(page);
@@ -451,6 +513,18 @@ async function postFixedAssetJournalAndVerify(page: Page) {
   const cleaned = message.replace(/\s+/g, ' ').trim();
   expect(cleaned).toContain("Operation completed Number of vouchers posted to the journal: 2");
   await fixedAssetsPage.clickBackButtonUnderMainMenu();
+
+}
+
+async function verifyDepriciationProposal(page: Page, type: string) {
+  const navigationPage = new NavigationPage(page);
+  const fixedAssetsPage = new FixedAssetsPage(page);
+  await fixedAssetsPage.enterFilterBookField(3, type);
+  const message = await fixedAssetsPage.checkMessageBar();
+  expect(message).toContain("Operation completed");
+  await fixedAssetsPage.clickPostButton();
+  const message2 = await fixedAssetsPage.checkMessageBar();
+  expect(message2).toContain("Operation completed");
 }
 
 

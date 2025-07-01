@@ -5,6 +5,7 @@ import { waitForElementToHide } from '../utils/waitForWithRetry';
 import { waitForInputValue } from '../utils/waitForWithRetry';
 import { off } from 'process';
 import { Locator } from '@playwright/test';
+import path from 'path';
 
 export class FixedAssetsPage {
     constructor(private page: import('@playwright/test').Page) { }
@@ -428,6 +429,27 @@ export class FixedAssetsPage {
     get filterBookMainDialogOkButton() {
         return this.page.locator('[data-dyn-controlname="BottomButtonGrp"] button[data-dyn-controlname="OkButton"]');
     }
+
+    get buttonRecordsToInclude() {
+        return this.page.locator('[data-dyn-controlname="Query"] [aria-label="Records to include"]');
+    }
+
+    get fixedAssetDownloadReportButton() {
+        return this.page.locator('//button[@id="download"]');
+    }
+
+    get balanceReportOkButton() {
+
+        return this.page.locator('//div[@data-dyn-controlname="BottomButtonGrp"]//span[contains(text(),"OK")]');
+    }
+
+    get reportMainDialogOkButton() {
+
+        return this.page.locator("//span[contains(text(),'OK')]");
+    }
+
+
+
 
     // Method's Fixed Asset Details
     async fillRequisitionName() {
@@ -1196,15 +1218,47 @@ export class FixedAssetsPage {
         await this.buttonFilterDepreciation.click();
     }
 
-    async enterFilterBookField(criteria: string) {
-        await this.filterBookField.nth(3).scrollIntoViewIfNeeded();
-        await this.filterBookField.nth(3).click({ clickCount: 3 });
-        await this.filterBookField.nth(3).fill('');
-        await this.filterBookField.nth(3).type(criteria, { delay: 500 });
+    async enterFilterBookField(index: number, criteria: string) {
+        await this.filterBookField.nth(index).scrollIntoViewIfNeeded();
+        await this.filterBookField.nth(index).click({ clickCount: 3 });
+        await this.filterBookField.nth(index).fill('');
+        await this.filterBookField.nth(index).type(criteria, { delay: 500 });
         await this.filterBookCriteriaOkButton.click();
         await this.filterBookMainDialogOkButton.click();
-
     }
 
+    async enterFilterInBalanceReport(index: number, criteria: string) {
+        const inputField = this.filterBookField.nth(index);
+        await inputField.scrollIntoViewIfNeeded();
+        await inputField.click({ clickCount: 2 }); // Select all
+        await inputField.clear(); // Clear existing value
+        await inputField.fill(criteria);
+        await this.page.waitForTimeout(2000);
+        await this.filterBookCriteriaOkButton.click();
+        await waitForWithRetry(this.balanceReportOkButton, this.page, 5, 4000, 2000);
+        await this.balanceReportOkButton.click();
+    }
+
+    async clickButtonRecordsToInclude() {
+        await waitForWithRetry(this.buttonRecordsToInclude, this.page, 5, 4000, 2000);
+        await this.buttonRecordsToInclude.click();
+    }
+
+    async fixedAssetBalanceReportPage(filename = 'downloaded.pdf') {
+        await this.page.setViewportSize({ width: 1400, height: 800 });
+        const frameElementHandle = await this.page.waitForSelector('iframe[src*="viewer.html"]', { timeout: 30000 });
+        const frame = await frameElementHandle.contentFrame();
+        if (!frame) {
+            throw new Error("Frame with viewer.html not found");
+        }
+        await frame.waitForSelector('//div[@class="textLayer"]/span[contains(text(),"Fixed asset balances")]', { timeout: 40000 });
+        const [download] = await Promise.all([
+            this.page.waitForEvent('download'),
+            frame.click('#download'),
+        ]);
+        const filePath = path.join("D:\\fgh_automation\\test-data\\", filename);
+        await download.saveAs(filePath);
+        await this.page.waitForTimeout(4000);
+    }
 }
 
