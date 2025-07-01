@@ -32,14 +32,22 @@ export async function selectQuickFilter(page: Page, filterValue: string, fieldNa
 
 
 export async function checkMatchingRow(page: Page, checkboxLocator: string) {
+    const cleanedValue = checkboxLocator.trim();
     // Locate the row that contains the Name "Test-SNPJ2890"
     const rowLocator = page.locator('div[role="row"]', {
-        has: page.locator(`input[aria-label="Name"][value="${checkboxLocator}"]`)
+        has: page.locator(`input[aria-label="Name"][value="${cleanedValue}"]`)
     });
 
     // Click the checkbox within that row
     await rowLocator.locator('div[role="checkbox"]').first().click();
 }
+
+// export async function checkMatchingRow(page: Page, checkboxLocator: string) {
+//     const cleanedValue = checkboxLocator.trim();
+//     const rowLocator = page.locator(`xpath=//div[@role="row"][.//input[@aria-label="Name" and @value="${cleanedValue}"]]`);
+//     await rowLocator.locator('div[role="checkbox"]').first().click();
+// }
+
 
 export async function checkRowWithMachedText(
     page: Page,

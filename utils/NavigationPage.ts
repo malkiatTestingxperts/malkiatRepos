@@ -35,7 +35,7 @@ export class NavigationPage {
     }
 
     async openModulesMenu() {
-        await waitForWithRetry(this.mainModules, this.page, 5, 4000, 2000);
+        await waitForWithRetry(this.mainModules, this.page, 5, 40000, 2000);
         await this.mainModules.click();
     }
 

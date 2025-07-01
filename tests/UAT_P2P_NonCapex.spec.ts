@@ -1,7 +1,7 @@
 // PurchaseRequisitionTest.spec.ts
 import { test, expect } from '@playwright/test';
 import { NavigationPage } from '../utils/NavigationPage';
-import { selectQuickFilter, checkMatchingRow } from '../utils/Filter';
+import { selectQuickFilter, checkMatchingRow, checkRowWithMachedText } from '../utils/Filter';
 import { clickMenuItem } from '../utils/MainMenu';
 import { PurchaseRequisitionPage } from '../pages/PurchaseRequisitionPage';
 import { setEnvVariable, readEnvVariable } from '../utils/envHelper';
@@ -110,10 +110,11 @@ test.describe('UAT Purchase Requisition Flow', () => {
     await selectQuickFilter(page, prName, 'Name');
     await page.waitForTimeout(2000);
     await checkMatchingRow(page, prName);
+    //await checkRowWithMachedText(page, prName, 'Name', 0);
     const purchaseRequisitionId = requisitionPage.getPurchaseRequisitionId()
     console.log(`Purchase Requisition ID: ${purchaseRequisitionId}`);
-    await requisitionPage.clickWorkflow()
-
+    await requisitionPage.clickWorkflow();
+    //await requisitionPage.clickMoreButtonUnderMainMenuWorkflow();
     await requisitionPage.getSpanByLabel("Workflow history");
     await navigationPage.waitUntilProcessingMessageDisappears();
     await requisitionPage.waitForPendingStatusRowAndSelect();
@@ -231,4 +232,21 @@ test.describe('UAT Purchase Requisition Flow', () => {
 
   });
 
+  // //*******************************Fixed Asset Summary  */
+  // test('Verify FGH PR to PO Report', async ({ page }) => {
+  //   await page.setViewportSize({ width: 1280, height: 800 });
+  //   await page.waitForSelector('body');
+  //   // await page.evaluate(() => {
+  //   //   document.body.style.zoom = "85%";
+  //   // });
+  //   const navigationPage = new NavigationPage(page);
+  //   const requisitionPage = new PurchaseRequisitionPage(page);
+  //   navigationPage.openModulesMenu();
+  //   await clickMenuItem(page, 'Procurement and sourcing', false);
+  //   await page.waitForTimeout(5000);
+  //   await requisitionPage.selctReportPRToPO();
+  //   await navigationPage.waitUntilProcessingMessageDisappears();
+  //   let countOfRecords = await requisitionPage.getNoOfPORecordsOnPRToPoReport();
+  //   expect(countOfRecords).toBeGreaterThan(0);
+  // });
 });

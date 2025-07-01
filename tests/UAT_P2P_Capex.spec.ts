@@ -121,7 +121,7 @@ test.describe('UAT Purchase Requisition Capex Flow', () => {
     const purchaseRequisitionId = requisitionPage.getPurchaseRequisitionId()
     console.log(`Purchase Requisition ID: ${purchaseRequisitionId}`);
     await requisitionPage.clickWorkflow()
-
+    //  await requisitionPage.clickMoreButtonUnderMainMenuWorkflow();
     await requisitionPage.getSpanByLabel("Workflow history");
     await navigationPage.waitUntilProcessingMessageDisappears();
     await requisitionPage.waitForPendingStatusRowAndSelect();
@@ -239,7 +239,5 @@ test.describe('UAT Purchase Requisition Capex Flow', () => {
     const matchedQuantity = await requisitionPage.isAmountInputWithValuePresent('-50.00');
     console.log(`Matched Quantity: ${matchedQuantity}`);
     expect(matchedQuantity).toBe(true);
-
   });
-
 });
