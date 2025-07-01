@@ -429,7 +429,7 @@ test.describe('UAT Fixed Asset Flow', () => {
   //*******************************Fixed Asset Balance  */
   // test('Verify Fixed Assets Balance Report', async ({ page }) => {
   //   const navigationPage = new NavigationPage(page);
-  //   const fixedAssetsPage = new FixedAssetsPage(page);
+  //const fixedAssetsPage = new FixedAssetsPage(page);
   //   const requisitionPage = new PurchaseRequisitionPage(page);
   //   const dateHelper = new DateHelper(page);
   //   const menusOption = new PageMenus(page);
@@ -447,7 +447,7 @@ test.describe('UAT Fixed Asset Flow', () => {
   //   await fixedAssetsPage.clickDepreciationFilterButton();
   //   let arrayAssetNumberToPass = fixedAssetNumber + ".." + fixedAssetNumber + "(a)";
   //   await fixedAssetsPage.enterFilterInBalanceReport(1, arrayAssetNumberToPass);
-  //   await fixedAssetsPage.fixedAssetBalanceReportPage();
+  // await fixedAssetsPage.fixedAssetBalanceReportPage("Fixed asset balances");;
   //   const pdfText = await ReadPdf(page);
   //   const expectedValues = ["7,500", "15,000"];
   //   for (const expected of expectedValues) {
@@ -459,8 +459,39 @@ test.describe('UAT Fixed Asset Flow', () => {
 
 
 
-  //*******************************Fixed Asset Summary  */
-  test('Verify Fixed Assets Summary Report', async ({ page }) => {
+  // //*******************************Fixed Asset Summary  */
+  // test('Verify Fixed Assets Summary Report', async ({ page }) => {
+  //   const navigationPage = new NavigationPage(page);
+  //   const fixedAssetsPage = new FixedAssetsPage(page);
+  //   const requisitionPage = new PurchaseRequisitionPage(page);
+  //   const dateHelper = new DateHelper(page);
+  //   const menusOption = new PageMenus(page);
+  //   const fixedAssetNameSplit = readEnvVariable('FIXED_ASSET_NAME3');
+  //   const fixedAssetNumber = readEnvVariable('CAPEX_NUMBER4');
+  //   if (!fixedAssetNameSplit || !fixedAssetNumber) {
+  //     throw new Error('Either FIXED_ASSET_NAME3 or CAPEX_NUMBER3 must be set');
+  //   }
+  //   navigationPage.openModulesMenu();
+  //   await clickMenuItem(page, 'Fixed assets', false);
+  //   await page.waitForTimeout(5000);
+  //   await expandMenuIfCollapsed(page, 'Inquiries and reports', 'FGH Fixed asset summary');
+  //   await navigationPage.waitUntilProcessingMessageDisappears();
+  //   console.log('Setting date input...');
+  //   await dateHelper.setDateInput(0, 'StartDate');
+
+  //   console.log('Entering asset book ID...');
+
+  //   await dateHelper.setDateInput(0, 'EndDate');
+  //   await fixedAssetsPage.enterTransactionTypeOnAssetSummaryReport('Acquisition');
+
+  //   await fixedAssetsPage.enterSortCode1OnDetailedSummary('Grattan');
+  //   await fixedAssetsPage.enterAssetBookIdDetailedSummaryReport("UK");
+  //   await fixedAssetsPage.clickCalculateBalancesDetailedSummary();
+  // });
+
+
+  // *******************************FGH Fixed Asset Listing */
+  test('Verify FGH Fixed Assets Listing Report', async ({ page }) => {
     const navigationPage = new NavigationPage(page);
     const fixedAssetsPage = new FixedAssetsPage(page);
     const requisitionPage = new PurchaseRequisitionPage(page);
@@ -474,21 +505,20 @@ test.describe('UAT Fixed Asset Flow', () => {
     navigationPage.openModulesMenu();
     await clickMenuItem(page, 'Fixed assets', false);
     await page.waitForTimeout(5000);
-    await expandMenuIfCollapsed(page, 'Inquiries and reports', 'FGH Fixed asset summary');
+    await expandMenuIfCollapsed(page, 'Inquiries and reports', 'FGH Fixed asset listing');
     await navigationPage.waitUntilProcessingMessageDisappears();
-    console.log('Setting date input...');
-    await dateHelper.setDateInput(0, 'StartDate');
-
-    console.log('Entering asset book ID...');
-
-    await dateHelper.setDateInput(0, 'EndDate');
-    await fixedAssetsPage.enterTransactionTypeOnAssetSummaryReport('Acquisition');
-
-    await fixedAssetsPage.enterSortCode1OnDetailedSummary('Grattan');
-    await fixedAssetsPage.enterAssetBookIdDetailedSummaryReport("UK");
-    await fixedAssetsPage.clickCalculateBalancesDetailedSummary();
+    await fixedAssetsPage.clickButtonRecordsToInclude();
+    await fixedAssetsPage.clickDepreciationFilterButton();
+    let arrayAssetNumberToPass = fixedAssetNumber + ".." + fixedAssetNumber + "(a)";
+    await fixedAssetsPage.enterFilterInBalanceReport(1, arrayAssetNumberToPass);
+    await fixedAssetsPage.fixedAssetBalanceReportPage("Fixed asset listing");
+    const pdfText = await ReadPdf(page);
+    const expectedValues = ["7,500", "15,000"];
+    for (const expected of expectedValues) {
+      expect(pdfText).toContain(expected);
+    }
+    await DeletePdf(page, "D:\\fgh_automation\\test-data\\downloaded.pdf");
   });
-
 
 
 

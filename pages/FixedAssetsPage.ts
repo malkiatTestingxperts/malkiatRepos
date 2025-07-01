@@ -1275,14 +1275,14 @@ export class FixedAssetsPage {
         await this.buttonRecordsToInclude.click();
     }
 
-    async fixedAssetBalanceReportPage(filename = 'downloaded.pdf') {
+    async fixedAssetBalanceReportPage(report: string, filename = 'downloaded.pdf') {
         await this.page.setViewportSize({ width: 1400, height: 800 });
         const frameElementHandle = await this.page.waitForSelector('iframe[src*="viewer.html"]', { timeout: 30000 });
         const frame = await frameElementHandle.contentFrame();
         if (!frame) {
             throw new Error("Frame with viewer.html not found");
         }
-        await frame.waitForSelector('//div[@class="textLayer"]/span[contains(text(),"Fixed asset balances")]', { timeout: 40000 });
+        await frame.waitForSelector(`//div[@class="textLayer"]/span[contains(text(),"${report}")]`, { timeout: 40000 });
         const [download] = await Promise.all([
             this.page.waitForEvent('download'),
             frame.click('#download'),
