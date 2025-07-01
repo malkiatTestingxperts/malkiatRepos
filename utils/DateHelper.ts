@@ -7,10 +7,6 @@ import { waitForWithRetry } from '../utils/waitForWithRetry';
 export class DateHelper {
     constructor(private page: import('@playwright/test').Page) { }
 
-    get enteredDateInput() {
-        return this.page.locator('input[aria-controls="ui-datepicker-div"]');
-    }
-
     getFormattedDateOffset(offsetDays: number): string {
         const date = new Date();
         date.setDate(date.getDate() + offsetDays);
@@ -22,10 +18,11 @@ export class DateHelper {
         return `${month}/${day}/${year}`;
     }
 
-    async setDateInput(offsetDays: number) {
+    async setDateInput(offsetDays: number, dateForm: string) {
         const formattedDate = this.getFormattedDateOffset(offsetDays);
-        await waitForWithRetry(this.enteredDateInput, this.page, 5, 4000, 2000);
-        await this.enteredDateInput.fill(formattedDate);// Ensure the date is committed
+        this.page.locator(`input[aria-controls="ui-datepicker-div"][aria-describedby*='${dateForm}']`).scrollIntoViewIfNeeded();
+        await waitForWithRetry(this.page.locator(`input[aria-controls="ui-datepicker-div"][aria-describedby*='${dateForm}']`), this.page, 5, 4000, 2000);
+        await this.page.locator(`input[aria-controls="ui-datepicker-div"][aria-describedby*='${dateForm}']`).fill(formattedDate);// Ensure the date is committed
     }
 }
 

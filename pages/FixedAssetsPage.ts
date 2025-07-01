@@ -448,7 +448,38 @@ export class FixedAssetsPage {
         return this.page.locator("//span[contains(text(),'OK')]");
     }
 
+    get enterTransactionTypeOnAssetSummary() {
 
+        return this.page.locator("[data-dyn-controlname='AssetTransType'] input");
+    }
+
+    get selectTransactionTypeRecord() {
+        return this.page.locator("[id*='SysGen_TransName'] input");
+    }
+
+    get selectButtonOnAssetSummaryTransactionType() {
+        return this.page.locator("[data-dyn-controlname='OKButtonGroup'] button");
+    }
+
+    get assetIdSummaryBookType() {
+        return this.page.locator("[data-dyn-controlname='AssetBookId'] input");
+    }
+
+    get assetIdFromGridAssetIdSummaryBookType() {
+        return this.page.locator('[data-dyn-controlname="SysGen_BookId"] input');
+    }
+
+    get sortCode1OnDetailedSummary() {
+        return this.page.locator('[data-dyn-controlname="SortCode1"] input');
+    }
+
+    get calculateBalancesDetailedSummary() {
+        return this.page.locator('button[data-dyn-controlname="Update"]');
+    }
+
+    get amountValueOnDetailedSummary() {
+        return this.page.locator("[data-dyn-controlname='AmountValue'] input");
+    }
 
 
     // Method's Fixed Asset Details
@@ -1259,6 +1290,43 @@ export class FixedAssetsPage {
         const filePath = path.join("D:\\fgh_automation\\test-data\\", filename);
         await download.saveAs(filePath);
         await this.page.waitForTimeout(4000);
+    }
+
+    async enterTransactionTypeOnAssetSummaryReport(transactionType: string) {
+        await waitForWithRetry(this.enterTransactionTypeOnAssetSummary, this.page, 5, 10000, 2000);
+        await this.enterTransactionTypeOnAssetSummary.type(transactionType, { delay: 500 });
+        await waitForWithRetry(this.selectTransactionTypeRecord.nth(0), this.page, 5, 10000, 2000);
+        await this.selectTransactionTypeRecord.nth(0).click();
+        await waitForWithRetry(this.selectTransactionTypeRecord.nth(1), this.page, 5, 10000, 2000);
+        await this.page.keyboard.down('Shift');
+        await this.selectTransactionTypeRecord.nth(1).click();
+        await this.page.keyboard.up('Shift');
+        await this.selectButtonOnAssetSummaryTransactionType.click();
+    }
+
+    async enterAssetBookIdDetailedSummaryReport(toBookId: string) {
+        await this.assetIdSummaryBookType.scrollIntoViewIfNeeded();
+        await this.assetIdSummaryBookType.click({ clickCount: 1 });
+        for (const char of toBookId) {
+            await this.page.keyboard.type(char);
+            await this.page.waitForTimeout(900); // tiny delay between characters
+        }
+        await waitForWithRetry(this.assetIdFromGridAssetIdSummaryBookType.nth(1), this.page, 5, 10000, 2000);
+        await this.assetIdFromGridAssetIdSummaryBookType.nth(1).click();
+        await this.page.waitForTimeout(2000);
+        await this.selectButtonOnAssetSummaryTransactionType.click();
+    }
+    async enterSortCode1OnDetailedSummary(fixedAssetSorting: string) {
+        await this.sortCode1OnDetailedSummary.scrollIntoViewIfNeeded();
+        await this.sortCode1OnDetailedSummary.click();
+        await this.sortCode1OnDetailedSummary.type(fixedAssetSorting, { delay: 500 });
+        await this.sortCode1OnDetailedSummary.press('Enter');
+    }
+
+    async clickCalculateBalancesDetailedSummary() {
+        this.calculateBalancesDetailedSummary.click();
+        await waitForWithRetry(this.amountValueOnDetailedSummary, this.page, 5, 10000, 2000);
+
     }
 }
 
