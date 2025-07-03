@@ -32,6 +32,7 @@ export async function selectQuickFilter(page: Page, filterValue: string, fieldNa
 
 
 export async function checkMatchingRow(page: Page, checkboxLocator: string) {
+    await page.waitForTimeout(2000);
     const cleanedValue = checkboxLocator.trim();
     // Locate the row that contains the Name "Test-SNPJ2890"
     const rowLocator = page.locator('div[role="row"]', {

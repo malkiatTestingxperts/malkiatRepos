@@ -43,12 +43,9 @@ test.describe('UAT Purchase Requisition Capex Flow', () => {
 
     const navigationPage = new NavigationPage(page);
     const requisitionPage = new PurchaseRequisitionPage(page);
-
     navigationPage.openModulesMenu();
     await clickMenuItem(page, 'Procurement and sourcing', false);
     await expandMenuIfCollapsed(page, 'Purchase requisitions', 'Purchase requisitions prepared by me');
-    // await clickMenuItem(page, 'Purchase requisitions', true);
-    // await clickMenuItem(page, 'Purchase requisitions prepared by me', false);
     await navigationPage.waitUntilProcessingMessageDisappears();
     await expect(navigationPage.isElementVisible).toBeVisible();
     await navigationPage.clickNewButton();
@@ -60,18 +57,13 @@ test.describe('UAT Purchase Requisition Capex Flow', () => {
     await navigationPage.waitUntilProcessingMessageDisappears();
     const actualTitle = await requisitionPage.getHeaderTitle();
     expect(actualTitle).toContain(preRquisitionName);
-
     await requisitionPage.setAndSelectBusinessJustificationReason('Business Justification');
     const justificationDetails = `** Capex PR ${preRquisitionName}`;
     console.log('Filling justification:', justificationDetails);
     await requisitionPage.enterBusinessJustificationHeaderDetails(justificationDetails);
-
     await requisitionPage.clickAddNewPRLineButton();
     await navigationPage.waitUntilProcessingMessageDisappears();
-
-
     await requisitionPage.selectItemName('101100');
-
     await requisitionPage.selectSupplier('TT118');
     await requisitionPage.enterPurchaseQuantity('100');
     await requisitionPage.selectCapexNum('2350');
@@ -81,23 +73,16 @@ test.describe('UAT Purchase Requisition Capex Flow', () => {
     await requisitionPage.enterPublications('NA');
     await navigationPage.clickSaveButton();
     await navigationPage.waitUntilProcessingMessageDisappears();
-    await page.waitForTimeout(2000);
     await navigationPage.clickBackButton();
     await selectQuickFilter(page, preRquisitionName, 'Name');
-    await page.waitForTimeout(2000);
     await checkMatchingRow(page, preRquisitionName);
     await requisitionPage.clickWorkflow()
     await requisitionPage.getSpanByLabel("Submit");
     const message = await requisitionPage.checkMessageBar();
     expect(message).toBe("Operation completed");
-
     await requisitionPage.clickSubmitButton()
-    // await requisitionPage.clickSubmitButtonOnWorkflowDialog();
     await navigationPage.waitUntilProcessingMessageDisappears();
-
   });
-
-
 
   test('Create Good Receipt For Capex PR', async ({ page }) => {
     const navigationPage = new NavigationPage(page);
@@ -107,21 +92,16 @@ test.describe('UAT Purchase Requisition Capex Flow', () => {
     navigationPage.openModulesMenu();
     await clickMenuItem(page, 'Procurement and sourcing', false);
     await expandMenuIfCollapsed(page, 'Purchase requisitions', 'Purchase requisitions prepared by me');
-    // await clickMenuItem(page, 'Purchase requisitions', true);
-    // await clickMenuItem(page, 'Purchase requisitions prepared by me', false);
     await navigationPage.waitUntilProcessingMessageDisappears();
     await expect(navigationPage.isElementVisible).toBeVisible();
-
     if (!prName) {
       throw new Error('PR_NAME environment variable is not set');
     }
     await selectQuickFilter(page, prName, 'Name');
-    await page.waitForTimeout(2000);
     await checkMatchingRow(page, prName);
     const purchaseRequisitionId = requisitionPage.getPurchaseRequisitionId()
     console.log(`Purchase Requisition ID: ${purchaseRequisitionId}`);
     await requisitionPage.clickWorkflow()
-    //  await requisitionPage.clickMoreButtonUnderMainMenuWorkflow();
     await requisitionPage.getSpanByLabel("Workflow history");
     await navigationPage.waitUntilProcessingMessageDisappears();
     await requisitionPage.waitForPendingStatusRowAndSelect();
@@ -129,11 +109,9 @@ test.describe('UAT Purchase Requisition Capex Flow', () => {
     await navigationPage.waitUntilProcessingMessageDisappears();
     await requisitionPage.enterUserName('ETXP001');
     await requisitionPage.clickActionButton();
-
     await requisitionPage.waitForStatusContains("Pending");
     await navigationPage.clickHomeButton();
     await navigationPage.waitUntilProcessingMessageDisappears();
-
     if (purchaseRequisitionId) {
       const approvalLink = await requisitionPage.getApprovalRequestLink(await purchaseRequisitionId + ".");
       await approvalLink.click();
@@ -141,48 +119,29 @@ test.describe('UAT Purchase Requisition Capex Flow', () => {
     } else {
       throw new Error('Purchase Requisition ID is null');
     }
-    await page.waitForTimeout(2000);
     await requisitionPage.clickWorkflow()
-    await page.waitForTimeout(2000);
     await requisitionPage.getSpanByLabel("Approve");
     await navigationPage.waitUntilProcessingMessageDisappears();
     await requisitionPage.clickActionButton();
     await navigationPage.waitUntilProcessingMessageDisappears();
 
-
-
-    ///********e*********Again the same code */
-
     navigationPage.openModulesMenu();
     await clickMenuItem(page, 'Procurement and sourcing', false);
     await expandMenuIfCollapsed(page, 'Purchase requisitions', 'Purchase requisitions prepared by me');
-    // await clickMenuItem(page, 'Purchase requisitions', true);
-    // await clickMenuItem(page, 'Purchase requisitions prepared by me', false);
     await navigationPage.waitUntilProcessingMessageDisappears();
     await expect(navigationPage.isElementVisible).toBeVisible();
-
     await selectQuickFilter(page, prName, 'Name');
-    await page.waitForTimeout(2000);
     await checkMatchingRow(page, prName);
-    // const purchaseRequisitionId = requisitionPage.getPurchaseRequisitionId()
-    // console.log(`Purchase Requisition ID: ${purchaseRequisitionId}`);
     await requisitionPage.clickWorkflow()
-    await page.waitForTimeout(2000);
     await requisitionPage.getSpanByLabel("Workflow history");
     await navigationPage.waitUntilProcessingMessageDisappears();
-
-
-    // //////*******************from here debug */
     await requisitionPage.waitForPendingStatusRowAndSelect();
     await requisitionPage.clickReassignWorkItem();
     await navigationPage.waitUntilProcessingMessageDisappears();
     await requisitionPage.enterUserName('ETXP001');
     await requisitionPage.clickActionButton();
-
-    // await requisitionPage.waitForStatusContains("Pending");
     await navigationPage.clickHomeButton();
     await navigationPage.waitUntilProcessingMessageDisappears();
-
     if (purchaseRequisitionId) {
       const approvalLink = await requisitionPage.getApprovalRequestLink(await purchaseRequisitionId + ".");
       await approvalLink.click();
@@ -190,23 +149,16 @@ test.describe('UAT Purchase Requisition Capex Flow', () => {
     } else {
       throw new Error('Purchase Requisition ID is null');
     }
-    await page.waitForTimeout(2000);
     await requisitionPage.clickWorkflow()
-    await page.waitForTimeout(2000);
     await requisitionPage.getSpanByLabel("Approve");
     await navigationPage.waitUntilProcessingMessageDisappears();
     await requisitionPage.clickActionButton();
     await navigationPage.waitUntilProcessingMessageDisappears();
 
-
-
-    //****************************Purchase Order  */
-
+    //****************************Create Purchase Order  *****************************/
     navigationPage.openModulesMenu();
     await clickMenuItem(page, 'Procurement and sourcing', false);
     await expandMenuIfCollapsed(page, 'Purchase requisitions', 'Purchase requisitions prepared by me');
-    // await clickMenuItem(page, 'Purchase requisitions', true);
-    // await clickMenuItem(page, 'Purchase requisitions prepared by me', false);
     await navigationPage.waitUntilProcessingMessageDisappears();
     await expect(navigationPage.isElementVisible).toBeVisible();
     await selectQuickFilter(page, prName, 'Name');
@@ -214,7 +166,6 @@ test.describe('UAT Purchase Requisition Capex Flow', () => {
     await checkMatchingRow(page, prName);
     await requisitionPage.clickOnPurchaseRequisition();
     await navigationPage.waitUntilProcessingMessageDisappears();
-
     await requisitionPage.waitForPOLinkInPRDetailsAndClick();
     await navigationPage.waitUntilProcessingMessageDisappears();
     await requisitionPage.clickPurchaseButton();
@@ -231,7 +182,6 @@ test.describe('UAT Purchase Requisition Capex Flow', () => {
     await requisitionPage.enterGoodRecieveQuantity('50.00');
     await requisitionPage.submitRequisition();
     await navigationPage.waitUntilProcessingMessageDisappears();
-
     await requisitionPage.clickJournalProductReceiptButton();
     await requisitionPage.clickVouchersButton();
     await navigationPage.waitUntilProcessingMessageDisappears();

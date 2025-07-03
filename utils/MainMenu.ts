@@ -12,8 +12,7 @@ import { waitForWithRetry } from './waitForWithRetry';
 export async function clickMenuItem(page: Page, title: string, isSubMenu = false) {
   const locator = page.locator(`[aria-label="Navigation menu"] [data-dyn-title="${title}"]`);
 
-  await waitForWithRetry(locator, page, 5, 15000, 2000);
-
+  await waitForWithRetry(locator, page, 5, 15000, 2000)
   if (isSubMenu) {
     if (await locator.getAttribute('data-dyn-expanded') === 'false') {
       await expect(locator).toBeVisible();

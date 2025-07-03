@@ -108,13 +108,10 @@ test.describe('UAT Purchase Requisition Flow', () => {
       throw new Error('PR_NAME environment variable is not set');
     }
     await selectQuickFilter(page, prName, 'Name');
-    await page.waitForTimeout(2000);
     await checkMatchingRow(page, prName);
-    //await checkRowWithMachedText(page, prName, 'Name', 0);
     const purchaseRequisitionId = requisitionPage.getPurchaseRequisitionId()
     console.log(`Purchase Requisition ID: ${purchaseRequisitionId}`);
     await requisitionPage.clickWorkflow();
-    //await requisitionPage.clickMoreButtonUnderMainMenuWorkflow();
     await requisitionPage.getSpanByLabel("Workflow history");
     await navigationPage.waitUntilProcessingMessageDisappears();
     await requisitionPage.waitForPendingStatusRowAndSelect();
@@ -122,11 +119,9 @@ test.describe('UAT Purchase Requisition Flow', () => {
     await navigationPage.waitUntilProcessingMessageDisappears();
     await requisitionPage.enterUserName('ETXP001');
     await requisitionPage.clickActionButton();
-
     await requisitionPage.waitForStatusContains("Pending");
     await navigationPage.clickHomeButton();
     await navigationPage.waitUntilProcessingMessageDisappears();
-
     if (purchaseRequisitionId) {
       const approvalLink = await requisitionPage.getApprovalRequestLink(await purchaseRequisitionId + ".");
       await approvalLink.click();
@@ -134,46 +129,28 @@ test.describe('UAT Purchase Requisition Flow', () => {
     } else {
       throw new Error('Purchase Requisition ID is null');
     }
-    await page.waitForTimeout(2000);
     await requisitionPage.clickWorkflow()
-    await page.waitForTimeout(2000);
     await requisitionPage.getSpanByLabel("Approve");
     await navigationPage.waitUntilProcessingMessageDisappears();
     await requisitionPage.clickActionButton();
     await navigationPage.waitUntilProcessingMessageDisappears();
-
-
-
-    ///********e*********Again the same code */
-
     navigationPage.openModulesMenu();
     await clickMenuItem(page, 'Procurement and sourcing', false);
     await expandMenuIfCollapsed(page, 'Purchase requisitions', 'Purchase requisitions prepared by me');
     await navigationPage.waitUntilProcessingMessageDisappears();
     await expect(navigationPage.isElementVisible).toBeVisible();
-
     await selectQuickFilter(page, prName, 'Name');
-    await page.waitForTimeout(2000);
     await checkMatchingRow(page, prName);
-    // const purchaseRequisitionId = requisitionPage.getPurchaseRequisitionId()
-    // console.log(`Purchase Requisition ID: ${purchaseRequisitionId}`);
     await requisitionPage.clickWorkflow()
-    await page.waitForTimeout(2000);
     await requisitionPage.getSpanByLabel("Workflow history");
     await navigationPage.waitUntilProcessingMessageDisappears();
-
-
-    // //////*******************from here debug */
     await requisitionPage.waitForPendingStatusRowAndSelect();
     await requisitionPage.clickReassignWorkItem();
     await navigationPage.waitUntilProcessingMessageDisappears();
     await requisitionPage.enterUserName('ETXP001');
     await requisitionPage.clickActionButton();
-
-    // await requisitionPage.waitForStatusContains("Pending");
     await navigationPage.clickHomeButton();
     await navigationPage.waitUntilProcessingMessageDisappears();
-
     if (purchaseRequisitionId) {
       const approvalLink = await requisitionPage.getApprovalRequestLink(await purchaseRequisitionId + ".");
       await approvalLink.click();
@@ -181,29 +158,22 @@ test.describe('UAT Purchase Requisition Flow', () => {
     } else {
       throw new Error('Purchase Requisition ID is null');
     }
-    await page.waitForTimeout(2000);
     await requisitionPage.clickWorkflow()
-    await page.waitForTimeout(2000);
     await requisitionPage.getSpanByLabel("Approve");
     await navigationPage.waitUntilProcessingMessageDisappears();
     await requisitionPage.clickActionButton();
     await navigationPage.waitUntilProcessingMessageDisappears();
 
-
-
-    //****************************Purchase Order  */
-
+    //****************************Create Purchase Order*****************************/
     navigationPage.openModulesMenu();
     await clickMenuItem(page, 'Procurement and sourcing', false);
     await expandMenuIfCollapsed(page, 'Purchase requisitions', 'Purchase requisitions prepared by me');
     await navigationPage.waitUntilProcessingMessageDisappears();
     await expect(navigationPage.isElementVisible).toBeVisible();
     await selectQuickFilter(page, prName, 'Name');
-    await page.waitForTimeout(2000);
     await checkMatchingRow(page, prName);
     await requisitionPage.clickOnPurchaseRequisition();
     await navigationPage.waitUntilProcessingMessageDisappears();
-
     await requisitionPage.waitForPOLinkInPRDetailsAndClick();
     await navigationPage.waitUntilProcessingMessageDisappears();
     await requisitionPage.clickPurchaseButton();
@@ -216,12 +186,10 @@ test.describe('UAT Purchase Requisition Flow', () => {
     await navigationPage.waitUntilProcessingMessageDisappears();
     const randomString = Math.random().toString(36).substring(2, 6).toUpperCase();
     const gRName = `GR${randomString}`;
-
     await requisitionPage.enterProductReceiptText(gRName);
     await requisitionPage.enterGoodRecieveQuantity('100.00');
     await requisitionPage.submitRequisition();
     await navigationPage.waitUntilProcessingMessageDisappears();
-
     await requisitionPage.clickJournalProductReceiptButton();
     await requisitionPage.clickVouchersButton();
     await navigationPage.waitUntilProcessingMessageDisappears();
@@ -232,21 +200,21 @@ test.describe('UAT Purchase Requisition Flow', () => {
 
   });
 
-  // //*******************************Fixed Asset Summary  */
-  // test('Verify FGH PR to PO Report', async ({ page }) => {
-  //   await page.setViewportSize({ width: 1280, height: 800 });
-  //   await page.waitForSelector('body');
-  //   // await page.evaluate(() => {
-  //   //   document.body.style.zoom = "85%";
-  //   // });
-  //   const navigationPage = new NavigationPage(page);
-  //   const requisitionPage = new PurchaseRequisitionPage(page);
-  //   navigationPage.openModulesMenu();
-  //   await clickMenuItem(page, 'Procurement and sourcing', false);
-  //   await page.waitForTimeout(5000);
-  //   await requisitionPage.selctReportPRToPO();
-  //   await navigationPage.waitUntilProcessingMessageDisappears();
-  //   let countOfRecords = await requisitionPage.getNoOfPORecordsOnPRToPoReport();
-  //   expect(countOfRecords).toBeGreaterThan(0);
-  // });
+  //*******************************FGH PR to PO Report**********************/
+  test('Verify FGH PR to PO Report', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.waitForSelector('body');
+    // await page.evaluate(() => {
+    //   document.body.style.zoom = "85%";
+    // });
+    const navigationPage = new NavigationPage(page);
+    const requisitionPage = new PurchaseRequisitionPage(page);
+    navigationPage.openModulesMenu();
+    await clickMenuItem(page, 'Procurement and sourcing', false);
+    await page.waitForTimeout(5000);
+    await requisitionPage.selctReportPRToPO();
+    await navigationPage.waitUntilProcessingMessageDisappears();
+    let countOfRecords = await requisitionPage.getNoOfPORecordsOnPRToPoReport();
+    expect(countOfRecords).toBeGreaterThan(0);
+  });
 });

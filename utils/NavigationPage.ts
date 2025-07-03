@@ -49,6 +49,7 @@ export class NavigationPage {
         await this.actionsGroupSaveButton.click();
     }
     async clickBackButton() {
+        await this.page.waitForTimeout(2000);
         await waitForWithRetry(this.actionsGroupBackButton, this.page, 5, 4000, 2000);
         await this.actionsGroupBackButton.click();
     }
