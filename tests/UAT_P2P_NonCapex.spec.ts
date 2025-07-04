@@ -4,7 +4,7 @@ import { NavigationPage } from '../utils/NavigationPage';
 import { selectQuickFilter, checkMatchingRow, checkRowWithMachedText } from '../utils/Filter';
 import { clickMenuItem } from '../utils/MainMenu';
 import { PurchaseRequisitionPage } from '../pages/PurchaseRequisitionPage';
-import { setEnvVariable, readEnvVariable } from '../utils/envHelper';
+import { setEnvVariable, readEnvVariable } from '../utils/EnvHelper';
 import { expandMenuIfCollapsed } from '../utils/MainMenu';
 import path from 'path';
 import dotenv from 'dotenv';
@@ -38,12 +38,10 @@ test.describe('UAT Purchase Requisition Flow', () => {
     await page.close();
   });
 
-
+  //****************************Create Purchase Requisition****************************************** */
   test('Create new purchase requisition', async ({ page }) => {
-
     const navigationPage = new NavigationPage(page);
     const requisitionPage = new PurchaseRequisitionPage(page);
-
     navigationPage.openModulesMenu();
     await clickMenuItem(page, 'Procurement and sourcing', false);
     await expandMenuIfCollapsed(page, 'Purchase requisitions', 'Purchase requisitions prepared by me');
@@ -57,18 +55,15 @@ test.describe('UAT Purchase Requisition Flow', () => {
     await navigationPage.waitUntilProcessingMessageDisappears();
     const actualTitle = await requisitionPage.getHeaderTitle();
     expect(actualTitle).toContain(preRquisitionName);
-
     await requisitionPage.setAndSelectBusinessJustificationReason('Business Justification');
     const justificationDetails = `** Non-Capex PR ${preRquisitionName}`;
     console.log('Filling justification:', justificationDetails);
     await requisitionPage.enterBusinessJustificationHeaderDetails(justificationDetails);
-
     await requisitionPage.clickAddNewPRLineButton();
     await navigationPage.waitUntilProcessingMessageDisappears();
     await requisitionPage.selectItemName('101100');
     await requisitionPage.selectSupplier('TT118');
     await requisitionPage.enterPurchaseQuantity('100');
-
     await requisitionPage.clickFinancialDimensions();
     await requisitionPage.enterBusinessUnit('HDQ');
     await requisitionPage.enterCostCenter('FPC');
@@ -84,15 +79,12 @@ test.describe('UAT Purchase Requisition Flow', () => {
     await requisitionPage.getSpanByLabel("Submit");
     const message = await requisitionPage.checkMessageBar();
     expect(message).toBe("Operation completed");
-
     await requisitionPage.clickSubmitButton()
-    // await requisitionPage.clickSubmitButtonOnWorkflowDialog();
     await navigationPage.waitUntilProcessingMessageDisappears();
 
   });
 
-
-
+  //***************************************Ceate Purchase Order and GR for Purchase Requisition*********************************** */
   test('Create Good Receipt', async ({ page }) => {
     const navigationPage = new NavigationPage(page);
     const requisitionPage = new PurchaseRequisitionPage(page);
@@ -163,8 +155,6 @@ test.describe('UAT Purchase Requisition Flow', () => {
     await navigationPage.waitUntilProcessingMessageDisappears();
     await requisitionPage.clickActionButton();
     await navigationPage.waitUntilProcessingMessageDisappears();
-
-    //****************************Create Purchase Order*****************************/
     navigationPage.openModulesMenu();
     await clickMenuItem(page, 'Procurement and sourcing', false);
     await expandMenuIfCollapsed(page, 'Purchase requisitions', 'Purchase requisitions prepared by me');

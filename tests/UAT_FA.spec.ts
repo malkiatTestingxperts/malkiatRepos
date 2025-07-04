@@ -9,7 +9,7 @@ import { PurchaseRequisitionPage } from '../pages/PurchaseRequisitionPage';
 import { FixedAssetsPage } from '../pages/FixedAssetsPage';
 import { ReadPdf, DeletePdf } from '../utils/FileReader';
 import { PageMenus } from '../utils/PageMenus';
-import { setEnvVariable, readEnvVariable } from '../utils/envHelper';
+import { setEnvVariable, readEnvVariable } from '../utils/EnvHelper';
 import path from 'path';
 import dotenv from 'dotenv';
 
@@ -74,20 +74,17 @@ test.describe('UAT Fixed Asset Flow', () => {
       await fixedAssetsPage.selectFixedAssetLocation('VICAR LANE');
       await fixedAssetsPage.selectFixedAssetSorting('Grattan');
       await fixedAssetsPage.selectFixedAssetSorting2('NA');
-
       await fixedAssetsPage.clickBooksButton()
       await navigationPage.waitUntilProcessingMessageDisappears();
       await fixedAssetsPage.enterBusinessUnit('HDQ');
       await fixedAssetsPage.enterCostCenter('QHO');
       await fixedAssetsPage.enterPublications('NA');
-
       await fixedAssetsPage.clickSaveButton();
       await page.waitForTimeout(5000);
       await fixedAssetsPage.clickDimesionsInSecondGrid();
       await fixedAssetsPage.enterBusinessUnit('HDQ');
       await fixedAssetsPage.enterCostCenter('QHO');
       await fixedAssetsPage.enterPublications('NA');
-
       await fixedAssetsPage.clickSaveButton();
       await fixedAssetsPage.clickBackButtonBooksPage();
       await page.waitForTimeout(4000);
@@ -112,13 +109,11 @@ test.describe('UAT Fixed Asset Flow', () => {
       await navigationPage.waitUntilProcessingMessageDisappears();
       await navigationPage.clickNewButton();
       await fixedAssetsPage.selectFixedAssetJournalName('FXA');
-
       const random4Digit3 = Math.floor(1000 + Math.random() * 9000);
       console.log(`Random 4-digit number: ${random4Digit3}`);
       await fixedAssetsPage.enterJournalFixedAssetDescription("JournalFA-" + random4Digit3);
       await fixedAssetsPage.clickFixedAssetJournalLine();
       await navigationPage.waitUntilProcessingMessageDisappears();
-
       var journalDate = dateHelper.getFormattedDateOffset(-0);
       console.log(`Journal Date: ${journalDate}`);
       await fixedAssetsPage.enterJournalDate(journalDate);
@@ -155,7 +150,6 @@ test.describe('UAT Fixed Asset Flow', () => {
     await navigationPage.waitUntilProcessingMessageDisappears();
     await navigationPage.clickNewButton();
     await fixedAssetsPage.selectFixedAssetJournalName('FXA');
-
     const random4Digit2 = Math.floor(1000 + Math.random() * 9000);
     console.log(`Random 4-digit number: ${random4Digit2}`);
     await fixedAssetsPage.enterJournalFixedAssetDescription(random4Digit2 + "Scraping");
@@ -195,13 +189,11 @@ test.describe('UAT Fixed Asset Flow', () => {
     await navigationPage.waitUntilProcessingMessageDisappears();
     await navigationPage.clickNewButton();
     await fixedAssetsPage.selectFixedAssetJournalName('FXA');
-
     const random4Digit2 = Math.floor(1000 + Math.random() * 9000);
     console.log(`Random 4-digit number: ${random4Digit2}`);
     await fixedAssetsPage.enterJournalFixedAssetDescription(random4Digit2 + "Sale");
     await fixedAssetsPage.clickFixedAssetJournalLine();
     await navigationPage.waitUntilProcessingMessageDisappears();
-
     var journalDate = dateHelper.getFormattedDateOffset(-0);
     console.log(`Journal Date: ${journalDate}`);
     await fixedAssetsPage.enterJournalDate(journalDate);
@@ -213,9 +205,7 @@ test.describe('UAT Fixed Asset Flow', () => {
     await fixedAssetsPage.enterCreditAmountJournal('100');
     await fixedAssetsPage.clickAndWaitForBookIdToAppear();
     await fixedAssetsPage.enterAndSelectOffsetAccountType('Ledger');
-
     await fixedAssetsPage.enteroffsetAccountNumber('630003-HDQ-QHO-NA');
-
     await fixedAssetsPage.clickValidateButton();
     await navigationPage.waitUntilProcessingMessageDisappears();
     const message = await requisitionPage.checkMessageBar();
@@ -228,9 +218,7 @@ test.describe('UAT Fixed Asset Flow', () => {
     await fixedAssetsPage.clickBackButtonUnderMainMenu();
   });
 
-
-
-  //************************ Validate both sale and disposed ************ */
+  //************************ Valuations Validate both sale and disposed ************ */
   test('Valuations Validations for Sale and Scrap FA', async ({ page }) => {
     const navigationPage = new NavigationPage(page);
     const requisitionPage = new PurchaseRequisitionPage(page);
@@ -245,13 +233,11 @@ test.describe('UAT Fixed Asset Flow', () => {
     await page.waitForTimeout(5000);
     await expandMenuIfCollapsed(page, 'Fixed assets', 'Fixed assets');
     await navigationPage.waitUntilProcessingMessageDisappears();
-
     await selectQuickFilter(page, fixedAssetNameSale, 'Name');
     await fixedAssetsPage.clickValuationAssetButton();
     let values = await fixedAssetsPage.getDisposalSaleValue();
     expect(values).toEqual(["-100.00", "-100.00"]);
     await fixedAssetsPage.clickBackButtonOnValuationPage();
-
     await selectQuickFilter(page, fixedAssetNameScrap, 'Name');
     await fixedAssetsPage.clickValuationAssetButton();
     let valuesScrap = await fixedAssetsPage.getDisposalSaleValue();
@@ -273,12 +259,10 @@ test.describe('UAT Fixed Asset Flow', () => {
     await page.waitForTimeout(5000);
     await expandMenuIfCollapsed(page, 'Fixed assets', 'Fixed assets');
     await navigationPage.waitUntilProcessingMessageDisappears();
-
     await selectQuickFilter(page, fixedAssetNameSplit, 'Name');
     await fixedAssetsPage.clickCopyFixedAsset();
     await fixedAssetsPage.enterCopyFixedAssetName(fixedAssetNumber + "(a)");
     await fixedAssetsPage.clickCopyFixedAssetOkButton();
-
     await navigationPage.waitUntilProcessingMessageDisappears();
     await checkRowWithMachedText(page, fixedAssetNumber, 'Capex number', 0);
     await fixedAssetsPage.clickBooksButton();
@@ -347,7 +331,6 @@ test.describe('UAT Fixed Asset Flow', () => {
     await navigationPage.waitUntilProcessingMessageDisappears();
     await navigationPage.clickNewButton();
     await fixedAssetsPage.selectFixedAssetJournalName('FXA');
-
     const random4Digit3 = Math.floor(1000 + Math.random() * 9000);
     console.log(`Random 4-digit number: ${random4Digit3}`);
     await fixedAssetsPage.enterJournalFixedAssetDescription(random4Digit3 + "ProposalCheck");
@@ -375,7 +358,6 @@ test.describe('UAT Fixed Asset Flow', () => {
     const menusOption = new PageMenus(page);
     const fixedAssetNameSplit = readEnvVariable('FIXED_ASSET_NAME3');
     const fixedAssetNumber = readEnvVariable('CAPEX_NUMBER3');
-
     if (!fixedAssetNameSplit || !fixedAssetNumber) {
       throw new Error('Either FIXED_ASSET_NAME3 or CAPEX_NUMBER3 must be set');
     }
@@ -386,7 +368,6 @@ test.describe('UAT Fixed Asset Flow', () => {
     await navigationPage.waitUntilProcessingMessageDisappears();
     await navigationPage.clickNewButton();
     await fixedAssetsPage.selectFixedAssetJournalName('FXA');
-
     const random4Digit3 = Math.floor(1000 + Math.random() * 9000);
     console.log(`Random 4-digit number: ${random4Digit3}`);
     await fixedAssetsPage.enterJournalFixedAssetDescription(random4Digit3 + "ProposalCheck");
@@ -450,19 +431,14 @@ test.describe('UAT Fixed Asset Flow', () => {
     await navigationPage.waitUntilProcessingMessageDisappears();
     console.log('Setting date input...');
     await dateHelper.setDateInput(0, 'StartDate');
-
     console.log('Entering asset book ID...');
-
     await dateHelper.setDateInput(0, 'EndDate');
     await fixedAssetsPage.enterTransactionTypeOnAssetSummaryReport('Acquisition');
-
     await fixedAssetsPage.enterSortCode1OnDetailedSummary('Grattan');
     await fixedAssetsPage.enterAssetBookIdDetailedSummaryReport("UK");
     await fixedAssetsPage.clickCalculateBalancesDetailedSummary();
     const isVisible = await fixedAssetsPage.clickCalculateBalancesDetailedSummary();
     expect(isVisible).toBeTruthy();
-    // const balanceAmount = await fixedAssetsPage.getBalance();
-    // expect(balanceAmount).toContain("15,000.00");
   });
 
 
@@ -470,9 +446,6 @@ test.describe('UAT Fixed Asset Flow', () => {
   test('Verify FGH Fixed Assets Listing Report', async ({ page }) => {
     const navigationPage = new NavigationPage(page);
     const fixedAssetsPage = new FixedAssetsPage(page);
-    const requisitionPage = new PurchaseRequisitionPage(page);
-    const dateHelper = new DateHelper(page);
-    const menusOption = new PageMenus(page);
     const fixedAssetNameSplit = readEnvVariable('FIXED_ASSET_NAME3');
     const fixedAssetNumber = readEnvVariable('CAPEX_NUMBER4');
     if (!fixedAssetNameSplit || !fixedAssetNumber) {

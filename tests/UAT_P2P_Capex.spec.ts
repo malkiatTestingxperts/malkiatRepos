@@ -1,11 +1,10 @@
-// PurchaseRequisitionTest.spec.ts
 import { test, expect } from '@playwright/test';
 import { NavigationPage } from '../utils/NavigationPage';
 import { selectQuickFilter, checkMatchingRow } from '../utils/Filter';
 import { clickMenuItem } from '../utils/MainMenu';
 import { expandMenuIfCollapsed } from '../utils/MainMenu';
 import { PurchaseRequisitionPage } from '../pages/PurchaseRequisitionPage';
-import { setEnvVariable, readEnvVariable } from '../utils/envHelper';
+import { setEnvVariable, readEnvVariable } from '../utils/EnvHelper';
 import path from 'path';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -38,9 +37,8 @@ test.describe('UAT Purchase Requisition Capex Flow', () => {
     await page.close();
   });
 
-
+  //*************************************Create Purchase Requisition********************************** */
   test('Create new purchase requisition with Capex', async ({ page }) => {
-
     const navigationPage = new NavigationPage(page);
     const requisitionPage = new PurchaseRequisitionPage(page);
     navigationPage.openModulesMenu();
@@ -84,6 +82,7 @@ test.describe('UAT Purchase Requisition Capex Flow', () => {
     await navigationPage.waitUntilProcessingMessageDisappears();
   });
 
+  //*************************Ceate Purchase Order and Good Receipt for Purchase Requisition*********************************************** */
   test('Create Good Receipt For Capex PR', async ({ page }) => {
     const navigationPage = new NavigationPage(page);
     const requisitionPage = new PurchaseRequisitionPage(page);
@@ -124,7 +123,6 @@ test.describe('UAT Purchase Requisition Capex Flow', () => {
     await navigationPage.waitUntilProcessingMessageDisappears();
     await requisitionPage.clickActionButton();
     await navigationPage.waitUntilProcessingMessageDisappears();
-
     navigationPage.openModulesMenu();
     await clickMenuItem(page, 'Procurement and sourcing', false);
     await expandMenuIfCollapsed(page, 'Purchase requisitions', 'Purchase requisitions prepared by me');
@@ -154,8 +152,6 @@ test.describe('UAT Purchase Requisition Capex Flow', () => {
     await navigationPage.waitUntilProcessingMessageDisappears();
     await requisitionPage.clickActionButton();
     await navigationPage.waitUntilProcessingMessageDisappears();
-
-    //****************************Create Purchase Order  *****************************/
     navigationPage.openModulesMenu();
     await clickMenuItem(page, 'Procurement and sourcing', false);
     await expandMenuIfCollapsed(page, 'Purchase requisitions', 'Purchase requisitions prepared by me');
