@@ -19,7 +19,7 @@ export class NavigationPage {
     }
 
     get actionsGroupNewButton() {
-        return this.page.locator('[data-dyn-controlname="SystemDefinedNewButton"]');
+        return this.page.locator('button[data-dyn-controlname="SystemDefinedNewButton"]');
     }
 
     get actionsGroupSaveButton() {

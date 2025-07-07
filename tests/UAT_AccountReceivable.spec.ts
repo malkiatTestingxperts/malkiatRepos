@@ -48,6 +48,7 @@ test.describe('UAT Fixed Asset Flow', () => {
     const navigationPage = new NavigationPage(page);
     const supplierVendorPage = new SupplierVendorPage(page);
     const fixedAssetsPage = new FixedAssetsPage(page);
+    const requisitionPage = new PurchaseRequisitionPage(page);
     const supplierAddress = readEnvVariable('SUPPLIER_ADDRESS');
     if (!supplierAddress) {
       throw new Error('SUPPLIER_ADDRESS environment variable is not set');
@@ -79,6 +80,9 @@ test.describe('UAT Fixed Asset Flow', () => {
     await navigationPage.waitUntilProcessingMessageDisappears();
     await navigationPage.clickSaveButton();
     await supplierVendorPage.clickSupplierBackButton();
+
+
+
     navigationPage.openModulesMenu();
     await clickMenuItem(page, 'Purchase ledger', false);
     await page.waitForTimeout(5000);
@@ -110,24 +114,120 @@ test.describe('UAT Fixed Asset Flow', () => {
     await fixedAssetsPage.enterPublications('NA');
     await navigationPage.clickSaveButton();
 
+
     await supplierVendorPage.clickBankAccountsOption();
-    await navigationPage.clickNewButton();
+    await supplierVendorPage.clickNewButton();
+    await navigationPage.waitUntilProcessingMessageDisappears();
     await supplierVendorPage.enterBankAccountsType("Pay");
     await supplierVendorPage.enterbankAccountsName(supplierNameFromEnv);
     await supplierVendorPage.enterRoutingNumber("207775");
     await supplierVendorPage.enterBankAccountNumber("50422827");
-    await navigationPage.clickSaveButton();
+    await supplierVendorPage.clickSaveButton();
+    await requisitionPage.clickWorkflow();
+    await requisitionPage.getSpanByLabel("Submit");
 
+    await requisitionPage.clickSubmitButton()
+
+
+    const message = await requisitionPage.checkMessageBar();
+    const cleaned = message.replace(/\s+/g, ' ').trim();
+    expect(cleaned).toContain("Submitted to workflow Supplier bank account approval is not active until a new record is created");
+    await supplierVendorPage.clickBankAccountsBackButton();
+    await supplierVendorPage.clickSupplierBackButton();
   });
+
+  //*********************************Create Invoice Credit Journal***************************** */
+  test('Create Invoice Credit Journal', async ({ page }) => {
+    const navigationPage = new NavigationPage(page);
+    const supplierVendorPage = new SupplierVendorPage(page);
+    const fixedAssetsPage = new FixedAssetsPage(page);
+    const requisitionPage = new PurchaseRequisitionPage(page);
+    const dateHelper = new DateHelper(page);
+    const supplierNameFromEnv = readEnvVariable('SUPPLIER_NUMBER');
+    if (!supplierNameFromEnv) {
+      throw new Error('SUPPLIER_ADDRESS environment variable is not set');
+    }
+
+    navigationPage.openModulesMenu();
+    await clickMenuItem(page, 'Purchase ledger', false);
+    await page.waitForTimeout(5000);
+    await expandMenuIfCollapsed(page, 'Invoices', 'Invoice journal');
+    await navigationPage.waitUntilProcessingMessageDisappears();
+    await navigationPage.clickNewButton();
+    await fixedAssetsPage.selectFixedAssetJournalName('VII');
+    const random4Digit3 = Math.floor(1000 + Math.random() * 9000);
+    console.log(`Random 4-digit number: ${random4Digit3}`);
+    await fixedAssetsPage.enterJournalFixedAssetDescription("Credit-" + random4Digit3);
+    await fixedAssetsPage.clickFixedAssetJournalLine();
+    await navigationPage.waitUntilProcessingMessageDisappears();
+    await supplierVendorPage.enterAndSelectAccountNumberJournal(supplierNameFromEnv);
+    var journalDate = dateHelper.getFormattedDateOffset(-0);
+    console.log(`Journal Date: ${journalDate}`);
+    await supplierVendorPage.enterInvoiceDate(journalDate);
+    const random4Digi4 = Math.floor(1000 + Math.random() * 9000);
+    console.log(`Random 4-digit number: ${random4Digi4}`);
+    await supplierVendorPage.enterInvoiceName("Test" + random4Digi4.toString());
+    const descprtion = generateRandomPostcode();
+    await supplierVendorPage.enterDescriptionInvoiceLine("Test_" + descprtion);
+    await fixedAssetsPage.enterCreditAmountJournal('1500.00');
+    await supplierVendorPage.enterAndSelectVatGroup("UK");
+    await supplierVendorPage.enterAndSelectVatGroup2("STD");
+    await fixedAssetsPage.enterAndSelectOffsetAccountType('Ledger');
+    await fixedAssetsPage.enteroffsetAccountNumber('505030-WHS-BIM-NA');
+    await fixedAssetsPage.clickPostButton();
+    const message = await requisitionPage.checkMessageBar();
+    const cleaned = message.replace(/\s+/g, ' ').trim();
+    expect(cleaned).toContain("Operation completed Number of vouchers posted to the journal: 1");
+    await fixedAssetsPage.clickBackButtonUnderMainMenu();
+  })
+
+
+  //*********************************Create Invoice Journal Debit***************************** */
+  test('Create Invoice Journal Debit', async ({ page }) => {
+    const navigationPage = new NavigationPage(page);
+    const supplierVendorPage = new SupplierVendorPage(page);
+    const fixedAssetsPage = new FixedAssetsPage(page);
+    const requisitionPage = new PurchaseRequisitionPage(page);
+    const dateHelper = new DateHelper(page);
+    const supplierNameFromEnv = readEnvVariable('SUPPLIER_NUMBER');
+    if (!supplierNameFromEnv) {
+      throw new Error('SUPPLIER_ADDRESS environment variable is not set');
+    }
+
+    navigationPage.openModulesMenu();
+    await clickMenuItem(page, 'Purchase ledger', false);
+    await page.waitForTimeout(5000);
+    await expandMenuIfCollapsed(page, 'Invoices', 'Invoice journal');
+    await navigationPage.waitUntilProcessingMessageDisappears();
+    await navigationPage.clickNewButton();
+    await fixedAssetsPage.selectFixedAssetJournalName('VII');
+    const random4Digit3 = Math.floor(1000 + Math.random() * 9000);
+    console.log(`Random 4-digit number: ${random4Digit3}`);
+    await fixedAssetsPage.enterJournalFixedAssetDescription("Debit-" + random4Digit3);
+    await fixedAssetsPage.clickFixedAssetJournalLine();
+    await navigationPage.waitUntilProcessingMessageDisappears();
+    await supplierVendorPage.enterAndSelectAccountNumberJournal(supplierNameFromEnv);
+    var journalDate = dateHelper.getFormattedDateOffset(-0);
+    console.log(`Journal Date: ${journalDate}`);
+    await supplierVendorPage.enterInvoiceDate(journalDate);
+    const random4Digi4 = Math.floor(1000 + Math.random() * 9000);
+    console.log(`Random 4-digit number: ${random4Digi4}`);
+    await supplierVendorPage.enterInvoiceName("Test" + random4Digi4.toString());
+
+    const descprtion = generateRandomPostcode();
+    await supplierVendorPage.enterDescriptionInvoiceLine("Test_" + descprtion);
+    await fixedAssetsPage.enterDebitAmountJournal('500.00');
+    await supplierVendorPage.enterAndSelectVatGroup("UK");
+    await supplierVendorPage.enterAndSelectVatGroup2("STD");
+    await fixedAssetsPage.enterAndSelectOffsetAccountType('Ledger');
+    await fixedAssetsPage.enteroffsetAccountNumber('505030-WHS-BIM-NA');
+    await fixedAssetsPage.clickPostButton();
+    const message = await requisitionPage.checkMessageBar();
+    const cleaned = message.replace(/\s+/g, ' ').trim();
+    expect(cleaned).toContain("Operation completed Number of vouchers posted to the journal: 1");
+    await fixedAssetsPage.clickBackButtonUnderMainMenu();
+  })
 });
-
-
-
-
-
-
-
-
 
 
 
