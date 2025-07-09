@@ -343,7 +343,6 @@ test.describe('UAT Fixed Asset Flow', () => {
     await fixedAssetsPage.clickDepreciationFilterButton();
     await navigationPage.waitUntilProcessingMessageDisappears();
     await verifyDepriciationProposal(page, 'UK');
-    await page.waitForTimeout(65000);
     await fixedAssetsPage.clickPostButton();
     const message2 = await fixedAssetsPage.checkMessageBar();
     expect(message2).toContain("Operation completed");

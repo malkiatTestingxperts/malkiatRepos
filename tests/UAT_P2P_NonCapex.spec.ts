@@ -164,7 +164,9 @@ test.describe('UAT Purchase Requisition Flow', () => {
     await checkMatchingRow(page, prName);
     await requisitionPage.clickOnPurchaseRequisition();
     await navigationPage.waitUntilProcessingMessageDisappears();
-    await requisitionPage.waitForPOLinkInPRDetailsAndClick();
+    const poNumber = await requisitionPage.waitForPOLinkInPRDetailsAndClick();
+    console.log(`Found and clicked PO number: ${poNumber}`);
+    setEnvVariable('PO_NUMBER', poNumber);
     await navigationPage.waitUntilProcessingMessageDisappears();
     await requisitionPage.clickPurchaseButton();
     await requisitionPage.clickConfirmPoButton();
