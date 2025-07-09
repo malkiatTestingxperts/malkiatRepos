@@ -322,6 +322,13 @@ export class CustomerPage {
         return this.page.locator('button[data-dyn-controlname="ButtonCustPostInvoiceJob"]');
     }
 
+    get quantity() {
+        return this.page.locator('[data-dyn-controlname="CustInvoiceLine_Quantity"] input');
+    }
+
+    get unitPrice() {
+        return this.page.locator('[data-dyn-controlname="CustInvoiceLine_UnitPrice"] input');
+    }
 
 
 
@@ -1298,11 +1305,15 @@ export class CustomerPage {
         await this.selectFreeTaxCustomerFromGrid.click();
     }
 
-    async enterDescription(desc: string, accountnum: number, index: number, vat: string) {
+    async enterDescription(desc: string, accountnum: number, index: number, vat: string, quantity: number, unit: number) {
         await this.description.nth(index).fill(desc);
         await this.mainAccount.nth(index).fill(accountnum.toString());
         await this.page.keyboard.press('Tab');
         await this.vatGroup.nth(index).fill(vat);
+        await this.page.keyboard.press('Tab');
+        await this.quantity.nth(index).fill(quantity.toString());
+        await this.unitPrice.nth(index).fill(unit.toString());
+
     }
 
     async addButtonAddLine() {

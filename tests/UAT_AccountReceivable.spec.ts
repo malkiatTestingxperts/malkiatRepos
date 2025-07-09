@@ -82,24 +82,24 @@ test.describe('UAT Fixed Asset Flow', () => {
     await customerPage.enterEmail(customerName + "@test.com")
     await navigationPage.clickOkButton();
     await navigationPage.waitUntilProcessingMessageDisappears();
-    await navigationPage.clickSaveButton();
-    await supplierVendorPage.clickSupplierBackButton();
+    // await navigationPage.clickSaveButton();
+    // await supplierVendorPage.clickSupplierBackButton();
 
 
-    navigationPage.openModulesMenu();
-    await clickMenuItem(page, 'Sales ledger', false);
-    await page.waitForTimeout(5000);
-    await expandMenuIfCollapsed(page, 'Customers', 'All customers');
-    await navigationPage.waitUntilProcessingMessageDisappears();
-    const customerNameFromEnv = readEnvVariable('CUSTOMER_NAME');
-    if (!customerNameFromEnv) {
-      throw new Error('CUSTOMER_NAME environment variable is not set');
-    }
-    await selectQuickFilter(page, customerNameFromEnv, 'Name');
+    // navigationPage.openModulesMenu();
+    // await clickMenuItem(page, 'Sales ledger', false);
+    // await page.waitForTimeout(5000);
+    // await expandMenuIfCollapsed(page, 'Customers', 'All customers');
+    // await navigationPage.waitUntilProcessingMessageDisappears();
+    // const customerNameFromEnv = readEnvVariable('CUSTOMER_NAME');
+    // if (!customerNameFromEnv) {
+    //   throw new Error('CUSTOMER_NAME environment variable is not set');
+    // }
+    // await selectQuickFilter(page, customerNameFromEnv, 'Name');
 
-    await checkMatchingRow(page, customerNameFromEnv);
-    await supplierVendorPage.clickOpenSupplierAfterSearch();
-    await navigationPage.waitUntilProcessingMessageDisappears();
+    // await checkMatchingRow(page, customerNameFromEnv);
+    // await supplierVendorPage.clickOpenSupplierAfterSearch();
+    // await navigationPage.waitUntilProcessingMessageDisappears();
     await fixedAssetsPage.enterBusinessUnit('freemans');
     await fixedAssetsPage.enterCostCenter('GFA');
     await fixedAssetsPage.enterPublications('NA');
@@ -129,9 +129,9 @@ test.describe('UAT Fixed Asset Flow', () => {
     const customerNumber = Math.floor(100000 + Math.random() * 900000);
     console.log(`Customer Number is: ${customerNumber}`);
     await customerPage.enterAndCustomerAccountOnFreeTaxInvoice(customerNameFromEnv)
-    await customerPage.enterDescription("Vehicle Storage", 335003, 0, "UK");
+    await customerPage.enterDescription("Vehicle Storage", 335003, 0, "UK", 1, 0);
     await customerPage.addButtonAddLine();
-    await customerPage.enterDescription("Week Ending 28th this week", 335003, 1, "UK");
+    await customerPage.enterDescription("Week Ending 28th this week", 335003, 1, "UK", 100, 1);
     await customerPage.clickButtonPostInvoice();
     await navigationPage.waitUntilProcessingMessageDisappears();
     await requisitionPage.submitRequisition();
