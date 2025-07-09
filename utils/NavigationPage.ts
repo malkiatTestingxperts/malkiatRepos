@@ -38,6 +38,11 @@ export class NavigationPage {
         return this.page.locator('button[data-dyn-controlname="OKButton"]');
     }
 
+
+    get actionsGroupNewCustomerButton() {
+        return this.page.locator('button[data-dyn-controlname="NewCustomer"]');
+    }
+
     async openModulesMenu() {
         await waitForWithRetry(this.mainModules, this.page, 5, 40000, 2000);
         await this.mainModules.click();
@@ -47,6 +52,12 @@ export class NavigationPage {
         await waitForWithRetry(this.actionsGroupNewButton, this.page, 5, 4000, 2000);
         await this.actionsGroupNewButton.click();
     }
+
+    async clickNewCustomer() {
+        await waitForWithRetry(this.actionsGroupNewCustomerButton, this.page, 5, 4000, 2000);
+        await this.actionsGroupNewCustomerButton.click();
+    }
+
 
     async clickSaveButton() {
         await waitForWithRetry(this.actionsGroupSaveButton, this.page, 5, 4000, 2000);
@@ -74,4 +85,5 @@ export class NavigationPage {
         await waitForWithRetry(this.oKButton, this.page, 5, 4000, 2000);
         await this.oKButton.click();
     }
+
 }

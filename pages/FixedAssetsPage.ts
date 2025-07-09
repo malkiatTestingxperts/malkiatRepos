@@ -340,7 +340,7 @@ export class FixedAssetsPage {
     }
 
     get actionsGroupBackButtonJournalFAPage() {
-        return this.page.locator('[data-dyn-controlname="SysCloseGroup"][id^="LedgerJournalTransAsset_"]');
+        return this.page.locator('[data-dyn-controlname="SysCloseGroup"][id^="LedgerJournalTrans"]');
     }
 
     get processingOperationPopup() {
@@ -551,6 +551,7 @@ export class FixedAssetsPage {
         // await this.selectFixedAssetGroupFromGrid.waitFor({ state: 'visible', timeout: 10000 });
         // await this.selectFixedAssetGroupFromGrid.click();
     }
+
     async selectFixedAssetJournalName(fixedAssetJournal: string) {
         const input = this.enterJournalFixedAssetName.first();
         await input.click({ clickCount: 3 });
@@ -597,11 +598,10 @@ export class FixedAssetsPage {
     async enterBusinessUnit(businessUnit: string) {
         await this.page.waitForTimeout(5000);
         const field = this.enterBusinessUnitinFinancialDimensions;
-
         await field.waitFor({ state: 'visible' });
-        await field.fill(''); // Clear any prefilled value
-        await field.type(businessUnit, { delay: 100 }); // Or use fill() if no delay needed
-
+        await field.fill('');
+        await this.page.waitForTimeout(800);
+        await field.type(businessUnit, { delay: 100 });
         await this.page.locator('[data-dyn-controlname="DimensionEntryControl_DECValue_BusinessUnit"] .lookupButton').click();
         await this.selectValueInFinancialDimensions.waitFor({ state: 'visible', timeout: 10000 });
         await this.selectValueInFinancialDimensions.click();
@@ -622,7 +622,6 @@ export class FixedAssetsPage {
         await this.enterPublicationinFinancialDimensions.clear();
         await this.enterPublicationinFinancialDimensions.fill(publication);
         await this.page.waitForTimeout(5000);
-        //await this.page.locator("[data-dyn-controlname='LineDimensionEntryControl_DECValue_Publications'] [class='lookupButton']").click();
         await this.clickPublication(publication).waitFor({ state: 'visible', timeout: 10000 });
         await this.clickPublication(publication).click();
     }
@@ -1179,7 +1178,7 @@ export class FixedAssetsPage {
 
     async clickOkButtonFromFromGrid() {
         await this.okButtonSplitPopUp.click();
-        await this.page.waitForTimeout(5000);
+        await this.page.waitForTimeout(9000);
     }
 
     async clickCheckBoxOnMyUserCreated() {
@@ -1282,7 +1281,7 @@ export class FixedAssetsPage {
         if (!frame) {
             throw new Error("Frame with viewer.html not found");
         }
-        await frame.waitForSelector(`//div[@class="textLayer"]/span[contains(text(),"${report}")]`, { timeout: 40000 });
+        await frame.waitForSelector(`//div[@class="textLayer"]/span[contains(text(),"${report}")]`, { timeout: 50000 });
         const [download] = await Promise.all([
             this.page.waitForEvent('download'),
             frame.click('#download'),
@@ -1324,9 +1323,14 @@ export class FixedAssetsPage {
     }
 
     async clickCalculateBalancesDetailedSummary() {
-        this.calculateBalancesDetailedSummary.click();
+        await this.calculateBalancesDetailedSummary.click();
         await waitForWithRetry(this.amountValueOnDetailedSummary, this.page, 5, 10000, 2000);
+        return this.amountValueOnDetailedSummary.isVisible();
+    }
 
+    async getBalance() {
+
+        return this.amountValueOnDetailedSummary.inputValue();
     }
 }
 

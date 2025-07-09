@@ -105,6 +105,10 @@ export class PurchaseRequisitionPage {
         return this.page.locator('[data-dyn-controlname="PurchReqTable_PurchReqId"] input');
     }
 
+    get moreButtonUnderMainMenuWorkflow() {
+
+        return this.page.locator('[data-dyn-controlname="OverflowActions"] button');
+    }
     clickWorkFlowRequiredButton(labelText: string) {
         return this.page.locator(`//span[@class='button-label' and text()='${labelText}']`);
     }
@@ -198,6 +202,20 @@ export class PurchaseRequisitionPage {
     get selectCapexNumber() {
         return this.page.locator('[role="gridcell"] [data-dyn-controlname="SysGen_AssetId"]');
     }
+
+    get pRToPoReportTitle() {
+        return this.page.locator('//span[contains(text(),"PR to PO report")]');
+    }
+    get noOfPORecordsOnPRToPoReport() {
+        return this.page.locator('[data-dyn-controlname*="PRTOPOReportView_PurchId"] input');
+    }
+
+    get pRToPOReport() {
+
+        return this.page.locator('div.modulesFlyout-link[aria-label="FGH PR to PO report"] > a.modulesFlyout-linkText');
+    }
+
+
     // Method to fill the requisition details
 
     async fillRequisitionName() {
@@ -299,23 +317,24 @@ export class PurchaseRequisitionPage {
         await this.enterPublicationinFinancialDimensions.clear();
         await this.enterPublicationinFinancialDimensions.fill(publication);
         await this.page.waitForTimeout(5000);
-        //await this.page.locator("[data-dyn-controlname='LineDimensionEntryControl_DECValue_Publications'] [class='lookupButton']").click();
         await this.clickPublication(publication).waitFor({ state: 'visible', timeout: 10000 });
         await this.clickPublication(publication).click();
     }
 
     async clickWorkflow() {
+        await this.page.waitForTimeout(2000);
         waitForWithRetry(this.selectWorkflowButton, this.page, 5, 4000, 2000);
         await this.selectWorkflowButton.scrollIntoViewIfNeeded();
         await this.selectWorkflowButton.click();
-
+        await this.page.waitForTimeout(2000);
     }
-    // async clickSubmitButtonOnWorkflowDialog() {
-    //     waitForWithRetry(this.submitWorkFlowButton, this.page, 5, 4000, 2000);
-    //     await this.submitWorkFlowButton.click();
-    //     await waitForWithRetry(this.page.locator('[data-dyn-controlname="MainGroup"]'), this.page, 5, 4000, 2000);
-    //     await this.page.locator('[data-dyn-controlname="MainGroup"]').waitFor({ state: 'hidden', timeout: 90000 });
-    // }
+
+    async clickMoreButtonUnderMainMenuWorkflow() {
+        waitForWithRetry(this.moreButtonUnderMainMenuWorkflow, this.page, 5, 4000, 2000);
+        await this.moreButtonUnderMainMenuWorkflow.scrollIntoViewIfNeeded();
+        await this.moreButtonUnderMainMenuWorkflow.click();
+    }
+
     async clickSubmitButton() {
         await waitForWithRetry(this.submitButton, this.page, 5, 4000, 2000);
         await this.submitButton.click();
@@ -433,7 +452,7 @@ export class PurchaseRequisitionPage {
         await this.rowHavingPendingStatus.click();
     }
 
-    async waitForPendingStatusRowAndSelect(maxRetries = 20, interval = 3000) {
+    async waitForPendingStatusRowAndSelect(maxRetries = 40, interval = 2000) {
         const refreshButton = this.page.locator("//button[starts-with(@id, 'WorkflowStatus') and contains(@id, 'SystemDefinedRefreshButton') and @aria-label='Refresh']");
 
         for (let i = 0; i < maxRetries; i++) {
@@ -458,18 +477,19 @@ export class PurchaseRequisitionPage {
 
         for (let i = 0; i < maxRetries; i++) {
             if (await this.purchaseOrderInPRDetails.isVisible()) {
+                const poNumberText = await this.purchaseOrderInPRDetails.textContent();
                 await this.purchaseOrderInPRDetails.click();
-                return true;
-            }
-            else {
+                return poNumberText?.trim() || '';
+            } else {
                 console.log(`Attempt ${i + 1}: PO not found, refreshing...`);
                 await refreshButton.click();
-                await this.page.waitForTimeout(interval); // wait between retries
+                await this.page.waitForTimeout(interval);
             }
         }
 
         throw new Error(`PO not found after ${maxRetries} refresh attempts.`);
     }
+
 
     async clickOnPurchaseRequisition() {
 
@@ -612,4 +632,19 @@ export class PurchaseRequisitionPage {
         await this.requisitionName.fill(requisitionTitle);
         return requisitionTitle;
     }
+
+    async getNoOfPORecordsOnPRToPoReport() {
+
+        await waitForWithRetry(this.pRToPoReportTitle, this.page, 5, 15000, 2000);
+        const cells = this.noOfPORecordsOnPRToPoReport;
+        const cellCount = await cells.count();
+        return cellCount;
+    }
+
+    async selctReportPRToPO() {
+        await waitForWithRetry(this.pRToPOReport, this.page, 5, 15000, 2000);
+        this.pRToPOReport.click();
+
+    }
+
 }
