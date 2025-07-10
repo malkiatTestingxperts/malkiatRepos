@@ -307,7 +307,7 @@ test.describe('UAT Fixed Asset Flow', () => {
     await navigationPage.waitUntilProcessingMessageDisappears();
     await supplierVendorPage.clickMatchProductReceipt();
     await navigationPage.waitUntilProcessingMessageDisappears();
-    await supplierVendorPage.checkMatchProductReceipt();
+    await supplierVendorPage.checkMatchProductReceipt("CheckBoxMatched", 0);
     await supplierVendorPage.clickOkButtonAfterCheckingTheMatchingLine();
     await supplierVendorPage.clickButtonUpdateMatchStatus();
     const matchStatus = await supplierVendorPage.getMatchStatus();

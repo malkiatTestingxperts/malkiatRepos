@@ -330,6 +330,18 @@ export class CustomerPage {
         return this.page.locator('[data-dyn-controlname="CustInvoiceLine_UnitPrice"] input');
     }
 
+    get saveSettlementTransactions() {
+        return this.page.locator('[data-dyn-controlname="CustInvoiceLine_UnitPrice"] input');
+    }
+
+    get paymentSettlement() {
+        return this.page.locator('button[data-dyn-controlname="ButtonSettlement"]');
+    }
+
+    get savePaymentSettlement() {
+        return this.page.locator('button[data-dyn-controlname="Save"]');
+    }
+
 
 
 
@@ -1294,7 +1306,7 @@ export class CustomerPage {
         await this.page.keyboard.press('Tab');
     }
 
-    async enterAndCustomerAccountOnFreeTaxInvoice(account: string) {
+    async enterAndAddCustomerAccountOnFreeTaxInvoice(account: string) {
         await this.customerAccountNameOnFreeTaxInvoice.scrollIntoViewIfNeeded();
         await this.customerAccountNameOnFreeTaxInvoice.click({ clickCount: 1 });
         for (const char of account) {
@@ -1325,4 +1337,13 @@ export class CustomerPage {
         await this.buttonPostInvoice.click();
     }
 
+    async clickPaymentSettlement() {
+        await waitForWithRetry(this.paymentSettlement, this.page, 5, 15000, 2000)
+        await this.paymentSettlement.click();
+    }
+
+    async clickSaveSettlement() {
+        await waitForWithRetry(this.savePaymentSettlement, this.page, 5, 15000, 2000)
+        await this.savePaymentSettlement.click();
+    }
 }

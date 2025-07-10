@@ -1119,36 +1119,49 @@ export class SupplierVendorPage {
         await waitForWithRetry(this.invoiceMatchProductReceipt, this.page, 5, 15000, 2000)
     }
 
-    async checkMatchProductReceipt() {
+    async checkMatchProductReceipt(boxToCheck: string, index: number) {
         try {
+            // Try both possible selector formats
+            const locators = [
+                this.page.locator(`[data-dyn-controlname="${boxToCheck}"][role="checkbox"]`),
+                this.page.locator(`[data-dyn-controlname="${boxToCheck}"] [role="checkbox"]`)
+            ];
 
-            await waitForWithRetry(this.invoiceMatchProductReceipt, this.page, 5, 4000, 2000);
+            const checkboxToCheck = locators[index];
 
-            const isChecked = await this.invoiceMatchProductReceipt.getAttribute('aria-checked');
+            // Wait for the checkbox to appear
+            await checkboxToCheck.waitFor({ state: 'visible', timeout: 5000 });
+
+            // Check if it's already checked
+            const isChecked = await checkboxToCheck.getAttribute('aria-checked');
+
             if (isChecked !== 'true') {
-                await this.invoiceMatchProductReceipt.scrollIntoViewIfNeeded();
-                await this.invoiceMatchProductReceipt.waitFor({ state: 'visible' });
+                await checkboxToCheck.scrollIntoViewIfNeeded();
+                await checkboxToCheck.focus();
 
-                await this.invoiceMatchProductReceipt.focus();
+                // First try using the keyboard
                 await this.page.keyboard.press('Space');
                 await this.page.waitForTimeout(1000);
 
-                const afterClickState = await this.invoiceMatchProductReceipt.getAttribute('aria-checked');
-                if (afterClickState === 'true') {
-                    console.log("Checkbox was successfully checked.");
-                } else {
-                    await this.invoiceMatchProductReceipt.click({ force: true });
+                // Verify if it got checked
+                const afterClickState = await checkboxToCheck.getAttribute('aria-checked');
+                if (afterClickState !== 'true') {
+                    // If not, try force clicking it
+                    await checkboxToCheck.click({ force: true });
                 }
 
-                await this.page.waitForTimeout(2000);
+                console.log("Checkbox was checked.");
             } else {
-                console.log("Checkbox is already checked, skipping click.");
+                console.log("Checkbox is already checked, skipping.");
             }
+
+            await this.page.waitForTimeout(1000);
         } catch (error: any) {
-            console.error(`Error while attempting to click checkbox: ${error.message}`);
+            console.error(`Error while attempting to check checkbox: ${error.message}`);
             throw error;
         }
     }
+
 
     async clickOkButtonAfterCheckingTheMatchingLine() {
         await this.okButtonAfterCheckingTheMatchingLine.scrollIntoViewIfNeeded();
@@ -1228,5 +1241,7 @@ export class SupplierVendorPage {
     async waitNotificationMessageToHide() {
         await this.notificationMessage.waitFor({ state: 'hidden', timeout: 10000 });
     }
+
+
 
 }
