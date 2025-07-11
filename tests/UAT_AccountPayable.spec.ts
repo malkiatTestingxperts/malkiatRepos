@@ -7,7 +7,6 @@ import { DateHelper } from '../utils/DateHelper';
 import { PurchaseRequisitionPage } from '../pages/PurchaseRequisitionPage';
 import { SupplierVendorPage } from '../pages/SupplierVendorPage';
 import { FixedAssetsPage } from '../pages/FixedAssetsPage';
-import { ReadPdf, DeletePdf } from '../utils/FileReader';
 import { PageMenus } from '../utils/PageMenus';
 import { setEnvVariable, readEnvVariable } from '../utils/EnvHelper';
 import path from 'path';
@@ -286,11 +285,6 @@ test.describe('UAT Fixed Asset Flow', () => {
     await page.setViewportSize({ width: 1536, height: 864 });
     const navigationPage = new NavigationPage(page);
     const supplierVendorPage = new SupplierVendorPage(page);
-    const fixedAssetsPage = new FixedAssetsPage(page);
-    const requisitionPage = new PurchaseRequisitionPage(page);
-    const dateHelper = new DateHelper(page);
-    const menusOption = new PageMenus(page);
-
     const invoiceName = readEnvVariable('INVOICE_NAME');
     if (!invoiceName) {
       throw new Error('SUPPLIER_ADDRESS environment variable is not set');
@@ -325,7 +319,6 @@ test.describe('UAT Fixed Asset Flow', () => {
     const navigationPage = new NavigationPage(page);
     const supplierVendorPage = new SupplierVendorPage(page);
     const fixedAssetsPage = new FixedAssetsPage(page);
-    const requisitionPage = new PurchaseRequisitionPage(page);
     const dateHelper = new DateHelper(page);
     const menusOption = new PageMenus(page);
 

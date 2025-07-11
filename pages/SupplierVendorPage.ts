@@ -1123,15 +1123,13 @@ export class SupplierVendorPage {
         try {
             // Try both possible selector formats
             const locators = [
-                this.page.locator(`[data-dyn-controlname="${boxToCheck}"][role="checkbox"]`),
+                this.page.locator(`[data-dyn-controlname="${boxToCheck}"] [role="checkbox"]`),
                 this.page.locator(`[data-dyn-controlname="${boxToCheck}"] [role="checkbox"]`)
             ];
 
             const checkboxToCheck = locators[index];
 
-            // Wait for the checkbox to appear
-            await checkboxToCheck.waitFor({ state: 'visible', timeout: 5000 });
-
+            await waitForWithRetry(checkboxToCheck, this.page, 5, 15000, 2000)
             // Check if it's already checked
             const isChecked = await checkboxToCheck.getAttribute('aria-checked');
 
