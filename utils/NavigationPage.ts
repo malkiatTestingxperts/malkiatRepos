@@ -86,4 +86,9 @@ export class NavigationPage {
         await this.oKButton.click();
     }
 
+    async clickSaveButtonSecond() {
+        await waitForWithRetry(this.actionsGroupSaveButton.nth(1), this.page, 5, 4000, 2000);
+        await this.actionsGroupSaveButton.nth(1).click();
+    }
+
 }

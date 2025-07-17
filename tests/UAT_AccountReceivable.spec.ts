@@ -8,6 +8,7 @@ import { SupplierVendorPage } from '../pages/SupplierVendorPage';
 import { CustomerPage } from '../pages/CustomerPage';
 import { FixedAssetsPage } from '../pages/FixedAssetsPage';
 import { setEnvVariable, readEnvVariable } from '../utils/EnvHelper';
+import { generateRandomPostcode } from '../utils/CommonUtils';
 import path from 'path';
 import dotenv from 'dotenv';
 
@@ -16,7 +17,7 @@ const baseURL = process.env.BASE_URL;
 if (!baseURL) {
   throw new Error('BASE_URL environment variable is not set');
 }
-test.describe('UAT Fixed Asset Flow', () => {
+test.describe('UAT Account Receivable', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(baseURL, { waitUntil: 'domcontentloaded' });
   });
@@ -70,7 +71,7 @@ test.describe('UAT Fixed Asset Flow', () => {
     await customerPage.enterPaymentTerm("30 Days");
     await customerPage.enterAndSelectVatGroupInInvoiceLine("UK");
     const zipCode = generateRandomPostcode();
-    await customerPage.enterzipCodeSupplier(zipCode);
+    await customerPage.enterzipCodeSupplier(await zipCode);
     await customerPage.enterStreetSupplier(customerAddress);
     await customerPage.enterAndSelectCity("BRADFORD");
     await customerPage.enterPhone("01274575511");
@@ -161,23 +162,3 @@ test.describe('UAT Fixed Asset Flow', () => {
 });
 
 
-//****************Helper functions*********************************************/
-function generateRandomPostcode(): string {
-  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  const digits = '0123456789';
-
-  const part1 =
-    letters.charAt(Math.floor(Math.random() * letters.length)) +
-    letters.charAt(Math.floor(Math.random() * letters.length)) +
-    digits.charAt(Math.floor(Math.random() * digits.length)) +
-    letters.charAt(Math.floor(Math.random() * letters.length));
-
-  const part2 =
-    digits.charAt(Math.floor(Math.random() * digits.length)) +
-    letters.charAt(Math.floor(Math.random() * letters.length)) +
-    letters.charAt(Math.floor(Math.random() * letters.length));
-
-  return `${part1} ${part2}`;
-}
-
-console.log("The random zip code is: " + generateRandomPostcode()); 

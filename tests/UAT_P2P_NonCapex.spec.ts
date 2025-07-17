@@ -6,6 +6,9 @@ import { clickMenuItem } from '../utils/MainMenu';
 import { PurchaseRequisitionPage } from '../pages/PurchaseRequisitionPage';
 import { setEnvVariable, readEnvVariable } from '../utils/EnvHelper';
 import { expandMenuIfCollapsed } from '../utils/MainMenu';
+import { SupplierVendorPage } from '../pages/SupplierVendorPage';
+import { FixedAssetsPage } from '../pages/FixedAssetsPage';
+import { generateRandomPostcode } from '../utils/CommonUtils';
 import path from 'path';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -38,10 +41,108 @@ test.describe('UAT Purchase Requisition Flow', () => {
     await page.close();
   });
 
+  //*********************************Create Supplier***************************** */
+  test('Create New Supplier/Vendor', async ({ page }) => {
+    const navigationPage = new NavigationPage(page);
+    const supplierVendorPage = new SupplierVendorPage(page);
+    const fixedAssetsPage = new FixedAssetsPage(page);
+    const requisitionPage = new PurchaseRequisitionPage(page);
+    const supplierAddress = readEnvVariable('SUPPLIER_ADDRESS');
+    if (!supplierAddress) {
+      throw new Error('SUPPLIER_ADDRESS environment variable is not set');
+    }
+
+    navigationPage.openModulesMenu();
+    await clickMenuItem(page, 'Purchase ledger', false);
+    await page.waitForTimeout(5000);
+    await expandMenuIfCollapsed(page, 'Suppliers', 'All suppliers');
+    await navigationPage.waitUntilProcessingMessageDisappears();
+    await navigationPage.clickNewButton();
+    const supplierNumber = Math.floor(100000 + Math.random() * 900000);
+    console.log(`Random 4-digit number: ${supplierNumber}`);
+    console.log(`Supplier Name is: ${supplierNumber}`);
+    setEnvVariable('SUPPLIER_NUMBER', supplierNumber.toString());
+    await supplierVendorPage.enterSupplierAccountNumber(supplierNumber.toString());
+    const stringRandom = Math.random().toString(36).substring(2, 6).toUpperCase();
+    const supplierName = `Test-${stringRandom}${supplierNumber}`;
+    setEnvVariable('SUPPLIER_NAME', supplierName.toString());
+    await supplierVendorPage.enterSupplierAccountName(supplierName);
+    await supplierVendorPage.enterAndSelectGroup('DS');
+    await supplierVendorPage.clickButtonAddSupplierAddress();
+    await navigationPage.waitUntilProcessingMessageDisappears();
+    await supplierVendorPage.enterDescriptionSupplierAddress("Test Address:" + supplierName);
+    const zipCode = generateRandomPostcode();
+    await supplierVendorPage.enterzipCodeSupplier(await zipCode);
+    await supplierVendorPage.enterStreetSupplier(supplierAddress);
+    await navigationPage.clickOkButton();
+    await navigationPage.waitUntilProcessingMessageDisappears();
+    await navigationPage.clickSaveButton();
+    await supplierVendorPage.clickSupplierBackButton();
+
+
+
+    navigationPage.openModulesMenu();
+    await clickMenuItem(page, 'Purchase ledger', false);
+    await page.waitForTimeout(5000);
+    await expandMenuIfCollapsed(page, 'Suppliers', 'All suppliers');
+    await navigationPage.waitUntilProcessingMessageDisappears();
+    const supplierNameFromEnv = readEnvVariable('SUPPLIER_NAME');
+    if (!supplierNameFromEnv) {
+      throw new Error('SUPPLIER_NAME environment variable is not set');
+    }
+    await selectQuickFilter(page, supplierNameFromEnv, 'Name');
+
+    await checkMatchingRow(page, supplierNameFromEnv);
+    await supplierVendorPage.clickOpenSupplierAfterSearch();
+    await navigationPage.waitUntilProcessingMessageDisappears();
+    await supplierVendorPage.AddContactInfoInSupplier(0, 'Phone', supplierNameFromEnv, "Details: " + "Phone");
+    await supplierVendorPage.checkPrimary(0);
+    await page.waitForTimeout(5000);
+    await supplierVendorPage.AddContactInfoInSupplier(0, 'Email address', supplierNameFromEnv, "Details: " + supplierNameFromEnv + "@test.com");
+    await supplierVendorPage.checkPrimary(0);
+    await supplierVendorPage.clickPaymentOption();
+    await supplierVendorPage.enterPaymentMode("ET-DOM_B");
+    await supplierVendorPage.enterPaymentTerm("30 Days");
+    await supplierVendorPage.selectSettlementDiscount();
+    await supplierVendorPage.enterPurposeText("Purpose: " + supplierNameFromEnv);
+
+    await supplierVendorPage.clickFinancDimOption();
+    await fixedAssetsPage.enterBusinessUnit('freemans');
+    await fixedAssetsPage.enterCostCenter('GFA');
+    await fixedAssetsPage.enterPublications('NA');
+    await navigationPage.clickSaveButton();
+
+
+    await supplierVendorPage.clickBankAccountsOption();
+    await supplierVendorPage.clickNewButton();
+    await navigationPage.waitUntilProcessingMessageDisappears();
+    await supplierVendorPage.enterBankAccountsType("Pay");
+    await supplierVendorPage.enterbankAccountsName(supplierNameFromEnv);
+    await supplierVendorPage.enterRoutingNumber("207775");
+    await supplierVendorPage.enterBankAccountNumber("50422827");
+    await supplierVendorPage.clickSaveButton();
+    await requisitionPage.clickWorkflow();
+    await requisitionPage.getSpanByLabel("Submit");
+
+    await requisitionPage.clickSubmitButton()
+
+
+    const message = await requisitionPage.checkMessageBar();
+    const cleaned = message.replace(/\s+/g, ' ').trim();
+    expect(cleaned).toContain("Submitted to workflow Supplier bank account approval is not active until a new record is created");
+    await supplierVendorPage.clickBankAccountsBackButton();
+    await supplierVendorPage.clickSupplierBackButton();
+  });
+
+
   //****************************Create Purchase Requisition****************************************** */
   test('Create new purchase requisition', async ({ page }) => {
     const navigationPage = new NavigationPage(page);
     const requisitionPage = new PurchaseRequisitionPage(page);
+    const supplierNameFromEnv = readEnvVariable('SUPPLIER_NAME');
+    if (!supplierNameFromEnv) {
+      throw new Error('SUPPLIER_NAME environment variable is not set');
+    }
     navigationPage.openModulesMenu();
     await clickMenuItem(page, 'Procurement and sourcing', false);
     await expandMenuIfCollapsed(page, 'Purchase requisitions', 'Purchase requisitions prepared by me');
@@ -62,7 +163,7 @@ test.describe('UAT Purchase Requisition Flow', () => {
     await requisitionPage.clickAddNewPRLineButton();
     await navigationPage.waitUntilProcessingMessageDisappears();
     await requisitionPage.selectItemName('101100');
-    await requisitionPage.selectSupplier('TT118');
+    await requisitionPage.selectSupplier(supplierNameFromEnv);
     await requisitionPage.enterPurchaseQuantity('100');
     await requisitionPage.clickFinancialDimensions();
     await requisitionPage.enterBusinessUnit('HDQ');
