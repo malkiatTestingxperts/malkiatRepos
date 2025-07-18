@@ -1130,7 +1130,7 @@ export class SupplierVendorPage {
                 this.page.locator(`[data-dyn-controlname="${boxToCheck}"] [role="checkbox"]`)
             ];
 
-            const checkboxToCheck = locators[index];
+            const checkboxToCheck = locators[index].last();
 
             await waitForWithRetry(checkboxToCheck, this.page, 5, 15000, 2000)
             // Check if it's already checked

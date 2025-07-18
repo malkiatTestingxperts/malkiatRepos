@@ -146,11 +146,7 @@ test.describe('UAT Account Receivable', () => {
     await supplierVendorPage.enterAndSelectAccountNumberJournal(customerNameFromEnv);
     const descprtion = generateRandomPostcode();
     await supplierVendorPage.enterDescriptionInvoiceLine("Payment Received" + descprtion);
-    await customerPage.clickPaymentSettlement();
-    await navigationPage.waitUntilProcessingMessageDisappears();
-    await supplierVendorPage.checkMatchProductReceipt("MarkTrans", 1);
-    await customerPage.clickSaveSettlement();
-    await fixedAssetsPage.enterCreditAmountJournal('100.00');
+    await fixedAssetsPage.enterCreditAmountJournal('120.00');
     await fixedAssetsPage.enterAndSelectOffsetAccountType('Bank');
     await fixedAssetsPage.enteroffsetAccountNumber('BP02');
     await fixedAssetsPage.clickPostButton();

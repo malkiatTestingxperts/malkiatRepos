@@ -254,6 +254,8 @@ test.describe('UAT Account Payable', () => {
     await fixedAssetsPage.clickFixedAssetJournalLine();
     await navigationPage.waitUntilProcessingMessageDisappears();
     await supplierVendorPage.enterAndSelectAccountNumberJournal(supplierNameFromEnv);
+    await page.waitForTimeout(5000);
+    await fixedAssetsPage.enterDebitAmountJournal('100.00');
     //await supplierVendorPage.enterPaymentAmount("2");
     // await menusOption.clickMenuSubMenuOptionOnSpecificPage("buttonPaymProposal", "Create payment proposal");
 
@@ -267,16 +269,19 @@ test.describe('UAT Account Payable', () => {
     // await fixedAssetsPage.clickOkButtonFromFromGrid();
     // await supplierVendorPage.waitNotificationMessageToHide();
     await supplierVendorPage.enterPaymentStatus('Sent');
+    await page.waitForTimeout(5000);
     await customerPage.clickSettleTransactions();
     await navigationPage.waitUntilProcessingMessageDisappears();
     await supplierVendorPage.checkMatchProductReceipt("MarkTrans", 1);
+
     await customerPage.clickSaveSettlement();
+
     // await fixedAssetsPage.enterCreditAmountJournal('100.00');
 
     // await fixedAssetsPage.enterAndSelectOffsetAccountType('Bank');
     // await fixedAssetsPage.enteroffsetAccountNumber('BP02');
     // await fixedAssetsPage.clickPostButton();
-
+    // await fixedAssetsPage.enterCreditAmountJournal('90.00');
     await supplierVendorPage.clickPostButton();
     const message = await fixedAssetsPage.checkMessageBar();
     expect(message).toContain("Operation completed");
