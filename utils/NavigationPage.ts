@@ -91,4 +91,8 @@ export class NavigationPage {
         await this.actionsGroupSaveButton.nth(1).click();
     }
 
+    async clickNewButtonSecond() {
+        await waitForWithRetry(this.actionsGroupNewButton.nth(1), this.page, 5, 4000, 2000);
+        await this.actionsGroupNewButton.nth(1).click();
+    }
 }

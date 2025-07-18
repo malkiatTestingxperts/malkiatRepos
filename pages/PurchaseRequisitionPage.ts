@@ -281,7 +281,7 @@ export class PurchaseRequisitionPage {
         await this.enterSupplierNameInPRLine.scrollIntoViewIfNeeded();
         await this.enterSupplierNameInPRLine.click();
         await this.enterSupplierNameInPRLine.pressSequentially(supplierName);
-        await this.enterSupplierNameInPRLine.press('Enter');
+        // await this.enterSupplierNameInPRLine.press('Enter');
         await this.selectSupplierNameInPRLine.waitFor({ state: 'visible', timeout: 10000 });
         await this.selectSupplierNameInPRLine.click();
     }
@@ -342,7 +342,7 @@ export class PurchaseRequisitionPage {
     }
 
     async checkMessageBar() {
-        await waitForWithRetry(this.messageBar, this.page, 5, 4000, 2000);
+        await waitForWithRetry(this.messageBar, this.page, 5, 40000, 2000);
 
         const toggle = this.messageBarToggle.first();
         if (await toggle.isVisible()) {

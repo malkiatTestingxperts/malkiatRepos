@@ -338,6 +338,10 @@ export class CustomerPage {
         return this.page.locator('button[data-dyn-controlname="ButtonSettlement"]');
     }
 
+    get settleTransactions() {
+        return this.page.locator('button[data-dyn-controlname="buttonSettlement"]');
+    }
+
     get savePaymentSettlement() {
         return this.page.locator('button[data-dyn-controlname="Save"]');
     }
@@ -1345,5 +1349,11 @@ export class CustomerPage {
     async clickSaveSettlement() {
         await waitForWithRetry(this.savePaymentSettlement, this.page, 5, 15000, 2000)
         await this.savePaymentSettlement.click();
+    }
+
+    async clickSettleTransactions() {
+        await waitForWithRetry(this.settleTransactions, this.page, 5, 15000, 2000)
+        await this.settleTransactions.scrollIntoViewIfNeeded();
+        await this.settleTransactions.click({ clickCount: 2 });
     }
 }

@@ -2,21 +2,35 @@ import { get } from 'http';
 import { NavigationPage } from '../utils/NavigationPage';
 import { waitForWithRetry } from '../utils/waitForWithRetry';
 
-export class SupplierVendorPage {
+export class GeneralLedgerPage {
 
     constructor(private page: import('@playwright/test').Page) { }
 
-    get supplierAccount() {
-        return this.page.locator("[data-dyn-controlname='Identification_AccountNum'] input");
+    get mainAccount() {
+        return this.page.locator("[data-dyn-controlname='DetailAccountNum'] input");
     }
 
-    get supplierAccountName() {
-        return this.page.locator("[data-dyn-controlname='OrgGroup'] input");
+    get mainAccountName() {
+        return this.page.locator("[data-dyn-controlname='DetailAccountName'] input");
     }
 
 
-    get enterGroup() {
-        return this.page.locator('[data-dyn-controlname="Posting"] input');
+    get customerAccountName() {
+        return this.page.locator("[data-dyn-controlname='Org_Name'] input");
+    }
+
+    get customerAccountNameOnFreeTaxInvoice() {
+        return this.page.locator("[data-dyn-controlname='CVHeader_OrderAccount'] input");
+    }
+
+
+    get enterLedger() {
+        return this.page.locator('[data-dyn-controlname="Ledger_Type"] input');
+
+    }
+
+    get enterStarCode() {
+        return this.page.locator('[data-dyn-controlname="Ledger_Category"] input');
 
     }
 
@@ -69,7 +83,7 @@ export class SupplierVendorPage {
     }
 
     get paymentTerm() {
-        return this.page.locator('input[name="Payment_PaymTermId"]');
+        return this.page.locator('input[name="DynamicDetail_PaymTermId"]');
     }
 
     get paymentTermOption() {
@@ -122,6 +136,13 @@ export class SupplierVendorPage {
     get selectAccountNumberJournal() {
 
         return this.page.locator('[data-dyn-controlname="LedgerJournalTrans_AccountNum"] input');
+    }
+
+    get debitAmountJournal() {
+        return this.page.locator('[data-dyn-controlname="LedgerJournalTrans_AmountCurDebit"] input');
+    }
+    get creditAmountJournal() {
+        return this.page.locator('[data-dyn-controlname="LedgerJournalTrans_AmountCurCredit"] input');
     }
 
     get selectAccountNumberJournalFromGrid() {
@@ -282,8 +303,60 @@ export class SupplierVendorPage {
         return this.page.locator('[class="notificationPopup-message"]');
     }
 
-    get generatePayment() {
-        return this.page.locator('button[data-dyn-controlname="buttonCreatePayment"]');
+    get city() {
+        return this.page.locator('[data-dyn-controlname="LogisticsPostalAddress_City"] input');
+    }
+
+    get phone() {
+        return this.page.locator('[data-dyn-controlname="LogisticsElectronicAddressBP_Locator"] input');
+    }
+
+    get email() {
+        return this.page.locator('[data-dyn-controlname="LogisticsElectronicAddressEmail_Locator"] input');
+    }
+
+    get selectFreeTaxCustomerFromGrid() {
+        return this.page.locator('[data-dyn-controlname="CustTable_AccountNum"] input');
+    }
+
+    get description() {
+        return this.page.locator('[data-dyn-controlname="CustInvoiceLine_Description"] input');
+    }
+
+    get vatGroup() {
+        return this.page.locator('[data-dyn-controlname="CustInvoiceLine_TaxGroup"] input');
+    }
+
+    get buttonAddLine() {
+        return this.page.locator('button[data-dyn-controlname="NewInvoiceLine"]');
+    }
+
+    get buttonPostInvoice() {
+        return this.page.locator('button[data-dyn-controlname="ButtonCustPostInvoiceJob"]');
+    }
+
+    get quantity() {
+        return this.page.locator('[data-dyn-controlname="CustInvoiceLine_Quantity"] input');
+    }
+
+    get unitPrice() {
+        return this.page.locator('[data-dyn-controlname="CustInvoiceLine_UnitPrice"] input');
+    }
+
+    get saveSettlementTransactions() {
+        return this.page.locator('[data-dyn-controlname="CustInvoiceLine_UnitPrice"] input');
+    }
+
+    get paymentSettlement() {
+        return this.page.locator('button[data-dyn-controlname="ButtonSettlement"]');
+    }
+
+    get settleTransactions() {
+        return this.page.locator('button[data-dyn-controlname="buttonSettlement"]');
+    }
+
+    get savePaymentSettlement() {
+        return this.page.locator('button[data-dyn-controlname="Save"]');
     }
 
 
@@ -303,12 +376,14 @@ export class SupplierVendorPage {
 
 
 
-
+    get selectGroupFromDisplayedGridStar() {
+        return this.page.locator('[data-dyn-controlname="SysGen_AccountCategory"] input');
+    }
 
 
 
     get selectGroupFromDisplayedGrid() {
-        return this.page.locator('[data-dyn-controlname="Sel"] input');
+        return this.page.locator('[id*="Ledger_Type"][role="option"]');
     }
 
     get purchaseRequisitionFilter() {
@@ -513,19 +588,123 @@ export class SupplierVendorPage {
         return this.page.locator('div.modulesFlyout-link[aria-label="FGH PR to PO report"] > a.modulesFlyout-linkText');
     }
 
-    async enterSupplierAccountNumber(supplierNumber: string) {
-        await waitForWithRetry(this.supplierAccount, this.page, 5, 4000, 2000);
-        await this.supplierAccount.fill(supplierNumber);
+    get addNewLine() {
+
+        return this.page.locator('button[data-dyn-controlname="NewLine"]');
     }
 
-    async enterSupplierAccountName(supplierName: string) {
-        await waitForWithRetry(this.supplierAccountName, this.page, 5, 4000, 2000);
-        await this.supplierAccountName.fill(supplierName);
+    get closeButton() {
+
+        return this.page.locator('button[data-dyn-controlname="Close"]');
+    }
+    get dimensionValues() {
+
+        return this.page.locator('button[data-dyn-controlname="DimensionValueDetails"]');
+    }
+    get dimensionGroupValues() {
+
+        return this.page.locator('[data-dyn-controlname="GroupValue"] input');
     }
 
-    async enterAndSelectGroup(groupName: string) {
-        await this.enterGroup.scrollIntoViewIfNeeded();
-        await this.enterGroup.click({ clickCount: 1 });
+    get dimensionGroupValuesDescription() {
+
+        return this.page.locator('[data-dyn-controlname="GroupDescription"] input');
+    }
+
+    get actionsGroupNewButtonStructures() {
+        return this.page.locator('button[data-dyn-controlname="NewHierarchyButton"]');
+    }
+
+    get structuresDesc() {
+        return this.page.locator('[data-dyn-controlname="ruleStructureName"] input');
+    }
+
+    get structuresDescDetails() {
+        return this.page.locator('[data-dyn-controlname="ruleStructureDescription"] input');
+    }
+
+    get segmentButton() {
+        return this.page.locator('button[data-dyn-controlname="AddSegmentButton"]');
+    }
+
+    get segmentButtonOption() {
+        return this.page.locator('[data-dyn-controlname="DimensionList"] [role="option"]');
+    }
+
+    get addSegmentAfterSelecting() {
+        return this.page.locator('button[data-dyn-controlname="AddButton"]');
+    }
+
+    get addCriteria() {
+        return this.page.locator('button[data-dyn-controlname="AddConstraintCriteriaRowButton"]');
+    }
+
+    get addCriteriaInformation() {
+        return this.page.locator('[class="public_fixedDataTableCell_cellContent"] input');
+    }
+
+    get validateButton() {
+        return this.page.locator('button[data-dyn-controlname="ValidateHierarchyButton"]');
+    }
+
+    get activateButton() {
+        return this.page.locator('button[data-dyn-controlname="ActivateHierarchyButton"]');
+    }
+
+    get ledgerCalenderPeriod() {
+        return this.page.locator('[data-dyn-controlname="FiscalCalendarPeriod_Name1"] input');
+    }
+
+    get editLedger() {
+        return this.page.locator('button[data-dyn-controlname="SystemDefinedViewEditButton"]');
+    }
+
+    get editLedgerPeriodStatus() {
+        return this.page.locator('input[id*="FiscalCalendar"][aria-label="Period status"]');
+    }
+
+    get selectDesiredStatus() {
+        return this.page.locator('[class*="dyn-combobox-list"] li');
+    }
+
+    get reversalOption() {
+        return this.page.locator('button[data-dyn-controlname="TransactionReversalDialog"]');
+    }
+
+    get reversalOptionUnderMainMenu() {
+        return this.page.locator('//button//span[contains(text(),"Reverse")]');
+    }
+
+    get enterFilterFD() {
+
+        return this.page.locator('[data-dyn-controlname="QuickFilter_Input"] input');
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    async enterCustomerAccountName(customer: string) {
+        await waitForWithRetry(this.customerAccountName, this.page, 5, 4000, 2000);
+        await this.customerAccountName.fill(customer);
+    }
+
+    async enterAndSelectLedger(groupName: string) {
+        await this.enterLedger.scrollIntoViewIfNeeded();
+        await this.enterLedger.click({ clickCount: 1 });
         for (const char of groupName) {
             await this.page.keyboard.type(char);
             await this.page.waitForTimeout(900); // tiny delay between characters
@@ -1067,23 +1246,14 @@ export class SupplierVendorPage {
         await this.selectApproverAfterFilter.first().click();
     }
 
-    async enterAndSelectVatGroupInInvoiceLine(vatGroup: string, index: number) {
-        const fields = this.page.locator(
-            '[data-dyn-controlname="LedgerJournalTrans_TaxGroup"] input, [data-dyn-controlname="LedgerJournalTrans_TaxItemGroup1"] input'
-        );
+    async enterAndSelectVatGroupInInvoiceLine(vatGroup: string) {
+        const field = this.page.locator(
+            '[data-dyn-controlname="DynamicDetail_TaxGroup"] input');
 
-        const count = await fields.count();
-
-        if (index >= count) {
-            throw new Error(`Index ${index} is out of bounds. Only ${count} fields found.`);
-        }
-
-        const targetField = fields.nth(index);
-
-        await targetField.waitFor({ state: 'visible', timeout: 10000 });
-        await targetField.click({ clickCount: 2 });
-        await targetField.fill('');
-        await targetField.type(vatGroup, { delay: 100 });
+        await field.waitFor({ state: 'visible', timeout: 10000 });
+        await field.click({ clickCount: 2 });
+        await field.fill('');
+        await field.type(vatGroup, { delay: 100 });
         await this.page.keyboard.press('Tab');
     }
 
@@ -1122,47 +1292,36 @@ export class SupplierVendorPage {
         await waitForWithRetry(this.invoiceMatchProductReceipt, this.page, 5, 15000, 2000)
     }
 
-    async checkMatchProductReceipt(boxToCheck: string, index: number) {
+    async checkMatchProductReceipt() {
         try {
-            // Try both possible selector formats
-            const locators = [
-                this.page.locator(`[data-dyn-controlname="${boxToCheck}"] [role="checkbox"]`),
-                this.page.locator(`[data-dyn-controlname="${boxToCheck}"] [role="checkbox"]`)
-            ];
 
-            const checkboxToCheck = locators[index];
+            await waitForWithRetry(this.invoiceMatchProductReceipt, this.page, 5, 4000, 2000);
 
-            await waitForWithRetry(checkboxToCheck, this.page, 5, 15000, 2000)
-            // Check if it's already checked
-            const isChecked = await checkboxToCheck.getAttribute('aria-checked');
-
+            const isChecked = await this.invoiceMatchProductReceipt.getAttribute('aria-checked');
             if (isChecked !== 'true') {
-                await checkboxToCheck.scrollIntoViewIfNeeded();
-                await checkboxToCheck.focus();
+                await this.invoiceMatchProductReceipt.scrollIntoViewIfNeeded();
+                await this.invoiceMatchProductReceipt.waitFor({ state: 'visible' });
 
-                // First try using the keyboard
+                await this.invoiceMatchProductReceipt.focus();
                 await this.page.keyboard.press('Space');
                 await this.page.waitForTimeout(1000);
 
-                // Verify if it got checked
-                const afterClickState = await checkboxToCheck.getAttribute('aria-checked');
-                if (afterClickState !== 'true') {
-                    // If not, try force clicking it
-                    await checkboxToCheck.click({ force: true });
+                const afterClickState = await this.invoiceMatchProductReceipt.getAttribute('aria-checked');
+                if (afterClickState === 'true') {
+                    console.log("Checkbox was successfully checked.");
+                } else {
+                    await this.invoiceMatchProductReceipt.click({ force: true });
                 }
 
-                console.log("Checkbox was checked.");
+                await this.page.waitForTimeout(2000);
             } else {
-                console.log("Checkbox is already checked, skipping.");
+                console.log("Checkbox is already checked, skipping click.");
             }
-
-            await this.page.waitForTimeout(1000);
         } catch (error: any) {
-            console.error(`Error while attempting to check checkbox: ${error.message}`);
+            console.error(`Error while attempting to click checkbox: ${error.message}`);
             throw error;
         }
     }
-
 
     async clickOkButtonAfterCheckingTheMatchingLine() {
         await this.okButtonAfterCheckingTheMatchingLine.scrollIntoViewIfNeeded();
@@ -1190,11 +1349,41 @@ export class SupplierVendorPage {
         await this.submitworkflowInvoicePoolMatching.click();
     }
 
-    async clickSubmitButton() {
-        await waitForWithRetry(this.submitButton, this.page, 5, 4000, 2000);
-        await this.submitButton.click();
-        await this.page.waitForTimeout(12000);
+    async enterMainAccount(account: string) {
+        await waitForWithRetry(this.mainAccount, this.page, 5, 4000, 2000);
+        await this.mainAccount.click();
+        await this.mainAccount.fill(account);
     }
+
+    async enterMainAccountName(account: string) {
+        await waitForWithRetry(this.mainAccountName, this.page, 5, 4000, 2000);
+        await this.mainAccountName.click();
+        await this.mainAccountName.fill(account);
+    }
+
+    async enterAndSelectLedgerTypeGroup(groupName: string) {
+        await this.enterLedger.scrollIntoViewIfNeeded();
+        await this.enterLedger.click({ clickCount: 1 });
+        await this.enterLedger.fill(''); // Clear any prefilled value
+        for (const char of groupName) {
+            await this.page.keyboard.type(char);
+            await this.page.waitForTimeout(300); // tiny delay between characters
+        }
+        await waitForWithRetry(this.selectGroupFromDisplayedGrid, this.page, 5, 10000, 2000);
+        await this.selectGroupFromDisplayedGrid.click();
+    }
+
+    async enterAndSelectStarCode(groupName: string) {
+        await this.enterStarCode.scrollIntoViewIfNeeded();
+        await this.enterStarCode.click({ clickCount: 1 });
+        for (const char of groupName) {
+            await this.page.keyboard.type(char);
+            await this.page.waitForTimeout(900); // tiny delay between characters
+        }
+        await waitForWithRetry(this.selectGroupFromDisplayedGridStar, this.page, 5, 10000, 2000);
+        await this.selectGroupFromDisplayedGridStar.click();
+    }
+
 
     async enterInvoiceFilter(invoice: string) {
         const field = this.invoiceFilterText;
@@ -1243,6 +1432,226 @@ export class SupplierVendorPage {
         await this.notificationMessage.waitFor({ state: 'hidden', timeout: 10000 });
     }
 
+    async enterAndSelectCity(city: string) {
+        const field = this.city;
+
+        await field.waitFor({ state: 'visible', timeout: 10000 });
+        await field.click({ clickCount: 2 });
+        await field.fill('');
+        await field.type(city, { delay: 100 });
+        await this.page.keyboard.press('Tab');
+    }
+
+    async enterPhone(city: string) {
+        const field = this.phone;
+        await field.waitFor({ state: 'visible', timeout: 10000 });
+        await field.click({ clickCount: 2 });
+        await field.fill('');
+        await field.type(city, { delay: 100 });
+        await this.page.keyboard.press('Tab');
+    }
+
+    async enterEmail(city: string) {
+        const field = this.email;
+        await field.waitFor({ state: 'visible', timeout: 10000 });
+        await field.click({ clickCount: 2 });
+        await field.fill('');
+        await field.type(city, { delay: 100 });
+        await this.page.keyboard.press('Tab');
+    }
+
+    async enterAndAddCustomerAccountOnFreeTaxInvoice(account: string) {
+        await this.customerAccountNameOnFreeTaxInvoice.scrollIntoViewIfNeeded();
+        await this.customerAccountNameOnFreeTaxInvoice.click({ clickCount: 1 });
+        for (const char of account) {
+            await this.page.keyboard.type(char);
+            await this.page.waitForTimeout(900); // tiny delay between characters
+        }
+        await waitForWithRetry(this.selectFreeTaxCustomerFromGrid, this.page, 5, 10000, 2000);
+        await this.selectFreeTaxCustomerFromGrid.click();
+    }
+
+    async enterDescription(desc: string, accountnum: number, index: number, vat: string, quantity: number, unit: number) {
+        await this.description.nth(index).fill(desc);
+        await this.mainAccount.nth(index).fill(accountnum.toString());
+        await this.page.keyboard.press('Tab');
+        await this.vatGroup.nth(index).fill(vat);
+        await this.page.keyboard.press('Tab');
+        await this.quantity.nth(index).fill(quantity.toString());
+        await this.unitPrice.nth(index).fill(unit.toString());
+
+    }
+
+    async addButtonAddLine() {
+        await this.buttonAddLine.click();
+        await this.description.nth(1).waitFor({ state: 'hidden', timeout: 10000 });
+    }
+
+    async clickButtonPostInvoice() {
+        await this.buttonPostInvoice.click();
+    }
+
+    async clickPaymentSettlement() {
+        await waitForWithRetry(this.paymentSettlement, this.page, 5, 15000, 2000)
+        await this.paymentSettlement.click();
+    }
+
+    async clickSaveSettlement() {
+        await waitForWithRetry(this.savePaymentSettlement, this.page, 5, 15000, 2000)
+        await this.savePaymentSettlement.click();
+    }
+
+    async clickSettleTransactions() {
+        await waitForWithRetry(this.settleTransactions, this.page, 5, 15000, 2000)
+        await this.settleTransactions.scrollIntoViewIfNeeded();
+        await this.settleTransactions.click({ clickCount: 2 });
+    }
+
+    async enterAndSelectAccountNumber(index: number, accountNumber: string) {
+        await this.selectAccountNumberJournal.nth(index).scrollIntoViewIfNeeded();
+        await this.selectAccountNumberJournal.nth(index).fill('');
+        await this.selectAccountNumberJournal.nth(index).fill(accountNumber);
+        await this.page.keyboard.press('Tab');
+        // await this.selectAccountNumberJournalFromGrid.waitFor({ state: 'visible', timeout: 100000 });
+        // await this.selectAccountNumberJournalFromGrid.press('Enter');
+        await this.page.waitForTimeout(2000);
+    }
+
+    async enterCreditAmountJournal(quantity: string) {
+        const input = this.creditAmountJournal.nth(0);
+
+        await input.scrollIntoViewIfNeeded();
+        await input.waitFor({ state: 'visible' });
+        await input.click({ force: true }); // Focus the field
+
+        // Clear it (double-click + backspace as backup)
+        await input.click({ clickCount: 3 });
+        await this.page.keyboard.press('Backspace');
+
+        // Type one character at a time using keyboard
+        for (const char of quantity) {
+            await this.page.keyboard.type(char);
+            await this.page.waitForTimeout(50); // tiny delay between characters
+        }
+
+        // Optional: blur the input to trigger any model update
+        await this.page.keyboard.press('Tab');
+
+        await this.page.waitForTimeout(2000);
+    }
 
 
+    async clickAddNewLine() {
+
+        await this.addNewLine.click();
+    }
+
+    async clickCloseButton() {
+
+        await waitForWithRetry(this.closeButton, this.page, 5, 15000, 2000)
+        await this.closeButton.click();
+    }
+
+    async clickDimensionValues() {
+
+        await waitForWithRetry(this.dimensionValues, this.page, 5, 15000, 2000)
+        await this.dimensionValues.click();
+    }
+
+    async enterDimensionGroupValues(value: string) {
+        await this.dimensionGroupValues.fill(value);
+        await this.dimensionGroupValuesDescription.fill(value);
+
+    }
+
+    async clickNewButtonStructure(rule: string, detail: string) {
+        await waitForWithRetry(this.actionsGroupNewButtonStructures, this.page, 5, 4000, 2000);
+        await this.actionsGroupNewButtonStructures.click();
+        await this.structuresDesc.fill(rule);
+        await this.structuresDescDetails.fill(detail);
+    }
+
+    async clickSegmentButton(index: number) {
+        await this.segmentButton.click();
+        await this.segmentButtonOption.nth(index).click();
+        await this.addSegmentAfterSelecting.click();
+        await this.page.waitForTimeout(5000);
+
+    }
+
+    async clickAddCriteriaButton(index: number, info: string) {
+        await waitForWithRetry(this.addCriteriaInformation.nth(index), this.page, 5, 4000, 2000);
+        await this.addCriteriaInformation.nth(index).click();
+        await this.addCriteriaInformation.nth(index).fill('');
+        await this.addCriteriaInformation.nth(index).fill(info);
+    }
+
+    async clickValidateButton() {
+        await this.validateButton.click();
+    }
+
+    async clickActivateButton() {
+        await this.activateButton.click();
+    }
+
+    async editAndSaveLedgerCalender(valueToMatch: string) {
+        this.editLedger.click();
+
+        const inputs = this.ledgerCalenderPeriod;
+        const count = await inputs.count();
+
+        for (let i = 0; i < count; i++) {
+            const input = inputs.nth(i);
+            const value = await input.getAttribute('value');
+            if (value === valueToMatch) {
+                await input.click();
+                break;
+            }
+        }
+        this.editLedgerPeriodStatus.click();
+        await this.page.waitForTimeout(3000);
+        this.editLedgerPeriodStatus.clear();
+        this.editLedgerPeriodStatus.type("On hold", { delay: 300 });
+        await waitForWithRetry(this.selectDesiredStatus, this.page, 5, 4000, 2000);
+        this.page.keyboard.press('Tab');
+    }
+
+    async validateLedgerAfterEdit(valueN: string, valueToMatch: string) {
+        const inputs = this.ledgerCalenderPeriod;
+        const count = await inputs.count();
+        for (let i = 0; i < count; i++) {
+            const input = inputs.nth(i);
+            const value = await input.getAttribute('value');
+            if (value === valueN) {
+                await input.click();
+                await this.page.waitForTimeout(500);
+            }
+            const updatedValue = await this.editLedgerPeriodStatus.getAttribute('value');
+            if (updatedValue === valueToMatch) {
+                console.log("************" + updatedValue)
+                return true;
+            }
+        }
+    }
+
+
+    async clickReversalOption() {
+
+        this.reversalOption.click();
+        await waitForWithRetry(this.reversalOptionUnderMainMenu.nth(1), this.page, 5, 4000, 2000);
+        await this.reversalOptionUnderMainMenu.nth(1).click();
+    }
+
+    async enterFilterValueForFD(valueMatch: string) {
+
+        await this.enterFilterFD.nth(1).click();
+        await this.enterFilterFD.nth(1).fill(valueMatch);
+        await waitForWithRetry(this.page.locator("//span[contains(text(),'Description')]"), this.page, 5, 4000, 2000);
+        await this.page.locator("//span[contains(text(),'Description')]").click();
+        await waitForWithRetry(this.page.locator("[data-dyn-controlname='GridValue'] input").nth(0), this.page, 5, 4000, 2000);
+        await this.page.waitForTimeout(6000);
+        const value = this.page.locator("[data-dyn-controlname='GridValue'] input").nth(0).getAttribute('value');
+        return value;
+    }
 }
+
