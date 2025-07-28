@@ -359,28 +359,9 @@ export class GeneralLedgerPage {
         return this.page.locator('button[data-dyn-controlname="Save"]');
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     get selectGroupFromDisplayedGridStar() {
         return this.page.locator('[data-dyn-controlname="SysGen_AccountCategory"] input');
     }
-
-
 
     get selectGroupFromDisplayedGrid() {
         return this.page.locator('[id*="Ledger_Type"][role="option"]');
@@ -680,23 +661,7 @@ export class GeneralLedgerPage {
         return this.page.locator('[data-dyn-controlname="QuickFilter_Input"] input');
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    //********************************Methods for the GL*************************************
     async enterCustomerAccountName(customer: string) {
         await waitForWithRetry(this.customerAccountName, this.page, 5, 4000, 2000);
         await this.customerAccountName.fill(customer);

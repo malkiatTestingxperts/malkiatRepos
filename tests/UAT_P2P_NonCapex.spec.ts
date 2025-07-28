@@ -1,4 +1,3 @@
-// PurchaseRequisitionTest.spec.ts
 import { test, expect } from '@playwright/test';
 import { NavigationPage } from '../utils/NavigationPage';
 import { selectQuickFilter, checkMatchingRow, checkRowWithMachedText } from '../utils/Filter';
@@ -78,9 +77,6 @@ test.describe('UAT Purchase Requisition Flow', () => {
     await navigationPage.waitUntilProcessingMessageDisappears();
     await navigationPage.clickSaveButton();
     await supplierVendorPage.clickSupplierBackButton();
-
-
-
     navigationPage.openModulesMenu();
     await clickMenuItem(page, 'Purchase ledger', false);
     await page.waitForTimeout(5000);
@@ -91,7 +87,6 @@ test.describe('UAT Purchase Requisition Flow', () => {
       throw new Error('SUPPLIER_NAME environment variable is not set');
     }
     await selectQuickFilter(page, supplierNameFromEnv, 'Name');
-
     await checkMatchingRow(page, supplierNameFromEnv);
     await supplierVendorPage.clickOpenSupplierAfterSearch();
     await navigationPage.waitUntilProcessingMessageDisappears();
@@ -105,14 +100,11 @@ test.describe('UAT Purchase Requisition Flow', () => {
     await supplierVendorPage.enterPaymentTerm("30 Days");
     await supplierVendorPage.selectSettlementDiscount();
     await supplierVendorPage.enterPurposeText("Purpose: " + supplierNameFromEnv);
-
     await supplierVendorPage.clickFinancDimOption();
     await fixedAssetsPage.enterBusinessUnit('freemans');
     await fixedAssetsPage.enterCostCenter('GFA');
     await fixedAssetsPage.enterPublications('NA');
     await navigationPage.clickSaveButton();
-
-
     await supplierVendorPage.clickBankAccountsOption();
     await supplierVendorPage.clickNewButton();
     await navigationPage.waitUntilProcessingMessageDisappears();
@@ -123,17 +115,13 @@ test.describe('UAT Purchase Requisition Flow', () => {
     await supplierVendorPage.clickSaveButton();
     await requisitionPage.clickWorkflow();
     await requisitionPage.getSpanByLabel("Submit");
-
     await requisitionPage.clickSubmitButton()
-
-
     const message = await requisitionPage.checkMessageBar();
-    const cleaned = message.replace(/\s+/g, ' ').trim();
-    expect(cleaned).toContain("Submitted to workflow Supplier bank account approval is not active until a new record is created");
+    const cleanedMessage = message.replace(/\s+/g, ' ').trim();
+    expect(cleanedMessage).toContain("Submitted to workflow Supplier bank account approval is not active until a new record is created");
     await supplierVendorPage.clickBankAccountsBackButton();
     await supplierVendorPage.clickSupplierBackButton();
   });
-
 
   //****************************Create Purchase Requisition****************************************** */
   test('Create new purchase requisition', async ({ page }) => {
@@ -179,10 +167,9 @@ test.describe('UAT Purchase Requisition Flow', () => {
     await requisitionPage.clickWorkflow()
     await requisitionPage.getSpanByLabel("Submit");
     const message = await requisitionPage.checkMessageBar();
-    expect(message).toBe("Operation completed");
+    expect(message).toBe("Operation Completed");
     await requisitionPage.clickSubmitButton()
     await navigationPage.waitUntilProcessingMessageDisappears();
-
   });
 
   //***************************************Ceate Purchase Order and GR for Purchase Requisition*********************************** */
@@ -206,6 +193,7 @@ test.describe('UAT Purchase Requisition Flow', () => {
     console.log(`Purchase Requisition ID: ${purchaseRequisitionId}`);
     await requisitionPage.clickWorkflow();
     await requisitionPage.getSpanByLabel("Workflow history");
+    await requisitionPage.workflowStatusReassignWorkItem
     await navigationPage.waitUntilProcessingMessageDisappears();
     await requisitionPage.waitForPendingStatusRowAndSelect();
     await requisitionPage.clickReassignWorkItem();
@@ -290,16 +278,12 @@ test.describe('UAT Purchase Requisition Flow', () => {
     const matchedQuantity = await requisitionPage.isAmountInputWithValuePresent('-100.00');
     console.log(`Matched Quantity: ${matchedQuantity}`);
     expect(matchedQuantity).toBe(true);
-
   });
 
   //*******************************FGH PR to PO Report**********************/
   test('Verify FGH PR to PO Report', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.waitForSelector('body');
-    // await page.evaluate(() => {
-    //   document.body.style.zoom = "85%";
-    // });
     const navigationPage = new NavigationPage(page);
     const requisitionPage = new PurchaseRequisitionPage(page);
     navigationPage.openModulesMenu();

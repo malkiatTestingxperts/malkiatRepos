@@ -121,9 +121,7 @@ test.describe('UAT Account Receivable', () => {
   test('Customer Payment Journal', async ({ page }) => {
     const navigationPage = new NavigationPage(page);
     const supplierVendorPage = new SupplierVendorPage(page);
-    const customerPage = new CustomerPage(page);
     const fixedAssetsPage = new FixedAssetsPage(page);
-    const dateHelper = new DateHelper(page);
     const requisitionPage = new PurchaseRequisitionPage(page);
     const customerNameFromEnv = readEnvVariable('CUSTOMER_NAME');
 

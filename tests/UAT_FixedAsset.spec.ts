@@ -1,4 +1,3 @@
-// PurchaseRequisitionTest.spec.ts
 import { test, expect, Page } from '@playwright/test';
 import { NavigationPage } from '../utils/NavigationPage';
 import { selectQuickFilter, checkRowWithMachedText } from '../utils/Filter';
@@ -48,7 +47,6 @@ test.describe('UAT Fixed Asset Flow', () => {
 
   test('Create Fixed Asset', async ({ page }) => {
     const navigationPage = new NavigationPage(page);
-    const requisitionPage = new PurchaseRequisitionPage(page);
     const fixedAssetsPage = new FixedAssetsPage(page);
     for (let i = 1; i <= 4; i++) {
       navigationPage.openModulesMenu();
@@ -91,7 +89,6 @@ test.describe('UAT Fixed Asset Flow', () => {
       await fixedAssetsPage.clickBackButtonFAPage();
     }
   });
-
 
   test('Create Fixed Asset Journal', async ({ page }) => {
     //*****************Create Journal FA****************************/
@@ -387,9 +384,6 @@ test.describe('UAT Fixed Asset Flow', () => {
   test('Verify Fixed Assets Balance Report', async ({ page }) => {
     const navigationPage = new NavigationPage(page);
     const fixedAssetsPage = new FixedAssetsPage(page);
-    const requisitionPage = new PurchaseRequisitionPage(page);
-    const dateHelper = new DateHelper(page);
-    const menusOption = new PageMenus(page);
     const fixedAssetNameSplit = readEnvVariable('FIXED_ASSET_NAME3');
     const fixedAssetNumber = readEnvVariable('CAPEX_NUMBER4');
     if (!fixedAssetNameSplit || !fixedAssetNumber) {
@@ -484,7 +478,6 @@ async function postFixedAssetJournalAndVerify(page: Page) {
 }
 
 async function verifyDepriciationProposal(page: Page, type: string) {
-  const navigationPage = new NavigationPage(page);
   const fixedAssetsPage = new FixedAssetsPage(page);
   await fixedAssetsPage.enterFilterBookField(3, type);
   const message = await fixedAssetsPage.checkMessageBar();

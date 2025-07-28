@@ -43,7 +43,3 @@ export async function expandMenuIfCollapsed(page: Page, label: string, labelsubm
   await subLink.waitFor({ state: 'visible' });
   await subLink.click();
 }
-
-
-
-

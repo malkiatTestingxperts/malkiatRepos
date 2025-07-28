@@ -215,9 +215,7 @@ export class PurchaseRequisitionPage {
         return this.page.locator('div.modulesFlyout-link[aria-label="FGH PR to PO report"] > a.modulesFlyout-linkText');
     }
 
-
-    // Method to fill the requisition details
-
+    //********************************Methods for Requisition Details*******************
     async fillRequisitionName() {
         const randomString = Math.random().toString(36).substring(2, 6).toUpperCase();
         const randomNumber = Math.floor(Math.random() * 10000);

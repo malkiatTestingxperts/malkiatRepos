@@ -38,6 +38,9 @@ export class NavigationPage {
         return this.page.locator('button[data-dyn-controlname="OKButton"]');
     }
 
+    get OkButtonMore() {
+        return this.page.locator('button[data-dyn-controlname="OkButton"]');
+    }
 
     get actionsGroupNewCustomerButton() {
         return this.page.locator('button[data-dyn-controlname="NewCustomer"]');
@@ -84,6 +87,11 @@ export class NavigationPage {
     async clickOkButton() {
         await waitForWithRetry(this.oKButton, this.page, 5, 4000, 2000);
         await this.oKButton.click();
+    }
+
+    async clickOkButtonMore() {
+        await waitForWithRetry(this.OkButtonMore, this.page, 5, 4000, 2000);
+        await this.OkButtonMore.click();
     }
 
     async clickSaveButtonSecond() {

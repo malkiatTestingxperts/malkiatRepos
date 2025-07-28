@@ -482,7 +482,7 @@ export class FixedAssetsPage {
     }
 
 
-    // Method's Fixed Asset Details
+    //********************************Fixed Asset Details******************************
     async fillRequisitionName() {
         const randomString = Math.random().toString(36).substring(2, 6).toUpperCase();
         const randomNumber = Math.floor(Math.random() * 10000);

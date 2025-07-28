@@ -1,16 +1,22 @@
 import { chromium } from '@playwright/test';
+import dotenv from 'dotenv';
 
+dotenv.config();
+const baseURL = process.env.BASE_URL;
+if (!baseURL) {
+  throw new Error('BASE_URL environment variable is not set');
+}
 (async () => {
-  const browser = await chromium.launch({ headless: false, channel: 'chrome' }); // Launch Chrome
+  const browser = await chromium.launch({ headless: false, channel: 'chrome' });
   const context = await browser.newContext();
   const page = await context.newPage();
 
-  await page.goto('https://fgh-test.sandbox.operations.dynamics.com/?cmp=010&mi=BankAccountTableListPage');
+  await page.goto(baseURL, { waitUntil: 'domcontentloaded' });
 
   console.log('Manually complete the login and MFA.');
-  await page.waitForTimeout(60000); // Give yourself 60 seconds to log in manually
+  await page.waitForTimeout(90000);
 
-  await context.storageState({ path: 'auth2.json' });
+  await context.storageState({ path: 'auth.json' });
   console.log(' Auth state saved to auth.json');
 
   await browser.close();

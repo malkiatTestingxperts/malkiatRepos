@@ -286,27 +286,6 @@ export class SupplierVendorPage {
         return this.page.locator('button[data-dyn-controlname="buttonCreatePayment"]');
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     get selectGroupFromDisplayedGrid() {
         return this.page.locator('[data-dyn-controlname="Sel"] input');
     }
@@ -513,6 +492,7 @@ export class SupplierVendorPage {
         return this.page.locator('div.modulesFlyout-link[aria-label="FGH PR to PO report"] > a.modulesFlyout-linkText');
     }
 
+    //********************************Methods for Supplier Vendor Page***********************************
     async enterSupplierAccountNumber(supplierNumber: string) {
         await waitForWithRetry(this.supplierAccount, this.page, 5, 4000, 2000);
         await this.supplierAccount.fill(supplierNumber);

@@ -346,26 +346,6 @@ export class CustomerPage {
         return this.page.locator('button[data-dyn-controlname="Save"]');
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     get selectGroupFromDisplayedGrid() {
         return this.page.locator('[data-dyn-controlname="Sel"] input');
     }
@@ -571,6 +551,8 @@ export class CustomerPage {
 
         return this.page.locator('div.modulesFlyout-link[aria-label="FGH PR to PO report"] > a.modulesFlyout-linkText');
     }
+
+    //********************************Methods for Customer Page*******************************
 
     async enterCustomerAccountNumber(supplierNumber: string) {
         await waitForWithRetry(this.customerAccount, this.page, 5, 4000, 2000);

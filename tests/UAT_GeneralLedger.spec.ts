@@ -2,15 +2,12 @@ import { test, expect, Page } from '@playwright/test';
 import { NavigationPage } from '../utils/NavigationPage';
 import { clickMenuItem } from '../utils/MainMenu';
 import { expandMenuIfCollapsed } from '../utils/MainMenu';
-import { DateHelper } from '../utils/DateHelper';
 import { PurchaseRequisitionPage } from '../pages/PurchaseRequisitionPage';
 import { SupplierVendorPage } from '../pages/SupplierVendorPage';
-import { PageMenus } from '../utils/PageMenus';
 import { CustomerPage } from '../pages/CustomerPage';
 import { FixedAssetsPage } from '../pages/FixedAssetsPage';
 import { GeneralLedgerPage } from '../pages/GeneralLedgerPage';
-import { setEnvVariable, readEnvVariable } from '../utils/EnvHelper';
-import { generateRandomPostcode } from '../utils/CommonUtils';
+import { readEnvVariable } from '../utils/EnvHelper';
 import path from 'path';
 import dotenv from 'dotenv';
 
@@ -47,8 +44,6 @@ test.describe('UAT General Ledger', () => {
   //*********************************Chart Accounts***************************** */
   test('Create Chart Accounts', async ({ page }) => {
     const navigationPage = new NavigationPage(page);
-    const customerPage = new CustomerPage(page);
-    const fixedAssetsPage = new FixedAssetsPage(page);
     const generalLedgerPage = new GeneralLedgerPage(page);
     const customerAddress = readEnvVariable('CUSTOMER_ADDRESS');
     if (!customerAddress) {
@@ -69,17 +64,13 @@ test.describe('UAT General Ledger', () => {
     await generalLedgerPage.enterMainAccountName("Test_" + mainAccountName.toString())
     await generalLedgerPage.enterAndSelectLedgerTypeGroup("Balance sheet");
     await generalLedgerPage.enterAndSelectStarCode("10305");
-
     await navigationPage.clickSaveButton();
-
   });
 
   //*********************************General Journals***************************** */
   test('Create General Journals', async ({ page }) => {
     const navigationPage = new NavigationPage(page);
-    const customerPage = new CustomerPage(page);
     const fixedAssetsPage = new FixedAssetsPage(page);
-    const supplierVendorPage = new SupplierVendorPage(page);
     const requisitionPage = new PurchaseRequisitionPage(page);
     const generalLedgerPage = new GeneralLedgerPage(page);
     const customerAddress = readEnvVariable('CUSTOMER_ADDRESS');
@@ -121,8 +112,6 @@ test.describe('UAT General Ledger', () => {
   //*********************************Financial Dimensions***************************** */
   test('Financial Dimensions', async ({ page }) => {
     const navigationPage = new NavigationPage(page);
-    const customerPage = new CustomerPage(page);
-    const fixedAssetsPage = new FixedAssetsPage(page);
     const supplierVendorPage = new SupplierVendorPage(page);
     const generalLedgerPage = new GeneralLedgerPage(page);
     const customerAddress = readEnvVariable('CUSTOMER_ADDRESS');
@@ -161,7 +150,6 @@ test.describe('UAT General Ledger', () => {
   //*********************************Advanced rule structures***************************** */
   test('Advanced rule structures', async ({ page }) => {
     const navigationPage = new NavigationPage(page);
-    const customerPage = new CustomerPage(page);
     const fixedAssetsPage = new FixedAssetsPage(page);
     const generalLedgerPage = new GeneralLedgerPage(page);
     const requisitionPage = new PurchaseRequisitionPage(page);
@@ -188,7 +176,6 @@ test.describe('UAT General Ledger', () => {
     await navigationPage.waitUntilProcessingMessageDisappears();
     await generalLedgerPage.clickSegmentButton(1);
     await navigationPage.waitUntilProcessingMessageDisappears();
-    // await generalLedgerPage.addCriteria.click();
     const dimensionValue3 = Math.floor(100000 + Math.random() * 900000);
     console.log(`dimensionValue is: ${dimensionValue3}`);
     await generalLedgerPage.clickAddCriteriaButton(0, "BU_" + dimensionValue.toString());
@@ -199,16 +186,12 @@ test.describe('UAT General Ledger', () => {
     expect(message).toContain("Advanced rule structure");
     await generalLedgerPage.clickActivateButton();
     await navigationPage.clickOkButton();
-    // await fixedAssetsPage.clickBackButtonUnderMainMenu();
   });
 
   //*********************************Ledger Calenders***************************** */
   test('Ledger Calenders', async ({ page }) => {
     const navigationPage = new NavigationPage(page);
-    const customerPage = new CustomerPage(page);
-    const fixedAssetsPage = new FixedAssetsPage(page);
     const generalLedgerPage = new GeneralLedgerPage(page);
-    const requisitionPage = new PurchaseRequisitionPage(page);
     const supplierVendorPage = new SupplierVendorPage(page);
     const customerAddress = readEnvVariable('CUSTOMER_ADDRESS');
     if (!customerAddress) {
@@ -240,7 +223,6 @@ test.describe('UAT General Ledger', () => {
     const navigationPage = new NavigationPage(page);
     const fixedAssetsPage = new FixedAssetsPage(page);
     const generalLedgerPage = new GeneralLedgerPage(page);
-    const requisitionPage = new PurchaseRequisitionPage(page);
     const customerAddress = readEnvVariable('CUSTOMER_ADDRESS');
     if (!customerAddress) {
       throw new Error('SUPPLIER_ADDRESS environment variable is not set');
