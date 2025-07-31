@@ -3,7 +3,7 @@ import { NavigationPage } from '../utils/NavigationPage';
 import { clickMenuItem } from '../utils/MainMenu';
 import { expandMenuIfCollapsed } from '../utils/MainMenu';
 import { DateHelper } from '../utils/DateHelper';
-import { UpdateExcelFile, DeleteFile } from '../utils/FileReader';
+import { UpdateExcelFile, DeleteFile, GetChequeNumbers } from '../utils/FileReader';
 import { PurchaseRequisitionPage } from '../pages/PurchaseRequisitionPage';
 import { SupplierVendorPage } from '../pages/SupplierVendorPage';
 import { PageMenus } from '../utils/PageMenus';
@@ -148,6 +148,43 @@ test.describe('UAT Cash and Bank Management', () => {
     await cashAndBankPage.importManualCheque(path.join(__dirname, '../updated-file.xlsx'));
     await navigationPage.waitUntilProcessingMessageDisappears();
     await page.waitForTimeout(5000);
+  });
+
+  //*********************************Get Cheques Report***************************** */
+  test('Get Cheques Report', async ({ page }) => {
+    const navigationPage = new NavigationPage(page);
+    const cashAndBankPage = new CashBankManagement(page);
+    const mainAccount = readEnvVariable('MAIN_ACCOUNT');
+    if (!mainAccount) {
+      throw new Error('MAIN_ACCOUNT environment variable is not set');
+    }
+    navigationPage.openModulesMenu();
+    await clickMenuItem(page, 'Cash and bank management', false);
+    await page.waitForTimeout(5000);
+    await expandMenuIfCollapsed(page, 'Enquiries and reports', 'Cheques');
+    await navigationPage.waitUntilProcessingMessageDisappears();
+    await cashAndBankPage.applyDateDescFilter();
+    AssertChequeNumbersNotVisible(page, "D:\\fgh_automation\\updated-file.xlsx");
+    await page.waitForTimeout(5000);
     await DeleteFile(page, "D:\\fgh_automation\\updated-file.xlsx");
   });
 });
+
+async function AssertChequeNumbersNotVisible(page: Page, filePath: string) {
+  const cashAndBankPage = new CashBankManagement(page);
+  const chequeNumbers = await GetChequeNumbers("D:\\fgh_automation\\updated-file.xlsx");
+
+  for (let index = 0; index < chequeNumbers.length; index++) {
+    const cheque = chequeNumbers[index].toString();
+    const uiIndex = chequeNumbers.length - 1 - index;
+
+    const chequeElement = cashAndBankPage.getCheckqueNumberFromDisplayedGrid.nth(uiIndex);
+
+    await expect(chequeElement).toBeVisible();
+
+    const text = await chequeElement.getAttribute('value');
+    console.log("*******************" + text);
+
+    expect(text?.trim()).toBe(cheque);
+  }
+}

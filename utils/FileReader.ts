@@ -53,6 +53,14 @@ export function UpdateExcelFile(page: Page) {
     console.log("All rows updated successfully.");
 }
 
+export async function GetChequeNumbers(filePath: string): Promise<number[]> {
+    const workbook = XLSX.readFile(filePath);
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const data = XLSX.utils.sheet_to_json<any>(sheet);
+    const chequeNumbers: number[] = data.map(row => row["Cheque No.s"]);
+    return chequeNumbers;
+}
+
 export async function DeleteFile(page: Page, filePath: string) {
     if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
