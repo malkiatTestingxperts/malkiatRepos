@@ -20,7 +20,6 @@ if (!baseURL) {
 }
 test.describe('UAT Fixed Asset Flow', () => {
   test.beforeEach(async ({ page }) => {
-
     await page.goto(baseURL, { waitUntil: 'domcontentloaded' });
   });
 
@@ -45,6 +44,7 @@ test.describe('UAT Fixed Asset Flow', () => {
     await page.close();
   });
 
+  //********************************Create FA*************************** */
   test('Create Fixed Asset', async ({ page }) => {
     const navigationPage = new NavigationPage(page);
     const fixedAssetsPage = new FixedAssetsPage(page);
@@ -90,8 +90,9 @@ test.describe('UAT Fixed Asset Flow', () => {
     }
   });
 
+
+  //*****************Create Journal FA****************************/
   test('Create Fixed Asset Journal', async ({ page }) => {
-    //*****************Create Journal FA****************************/
     const navigationPage = new NavigationPage(page);
     const requisitionPage = new PurchaseRequisitionPage(page);
     const fixedAssetsPage = new FixedAssetsPage(page);
@@ -133,8 +134,8 @@ test.describe('UAT Fixed Asset Flow', () => {
     }
   });
 
+  //*****************Create Journal FA Scrapping***************************/
   test('Create Fixed Asset Journal Scrap', async ({ page }) => {
-    //*****************Create Journal FA Scrapping***************************/
     const navigationPage = new NavigationPage(page);
     const requisitionPage = new PurchaseRequisitionPage(page);
     const fixedAssetsPage = new FixedAssetsPage(page);
@@ -172,7 +173,7 @@ test.describe('UAT Fixed Asset Flow', () => {
   });
 
 
-  // //********************************Create FA Journal Disposal - Sale **********************/
+  //********************************Create FA Journal Disposal - Sale **********************/
   test('Create Fixed Asset Journal Sale', async ({ page }) => {
     const navigationPage = new NavigationPage(page);
     const requisitionPage = new PurchaseRequisitionPage(page);
@@ -336,7 +337,7 @@ test.describe('UAT Fixed Asset Flow', () => {
     await menusOption.clickMenuSubMenuOptionOnSpecificPage("Proposals", "Depreciation proposal");
     await navigationPage.waitUntilProcessingMessageDisappears();
     await fixedAssetsPage.clickCheckBoxSummariseDepreciation();
-    await dateHelper.setDateInput(-4, 'Dialog');
+    await dateHelper.setDateInputDialog(-4, 'Dialog');
     await fixedAssetsPage.clickDepreciationFilterButton();
     await navigationPage.waitUntilProcessingMessageDisappears();
     await verifyDepriciationProposal(page, 'UK');
@@ -372,14 +373,14 @@ test.describe('UAT Fixed Asset Flow', () => {
     await menusOption.clickMenuSubMenuOptionOnSpecificPage("Proposals", "Depreciation proposal");
     await navigationPage.waitUntilProcessingMessageDisappears();
     await fixedAssetsPage.clickCheckBoxSummariseDepreciation();
-    await dateHelper.setDateInput(-4, 'Dialog');
+    await dateHelper.setDateInputDialog(-4, 'Dialog');
     await fixedAssetsPage.clickDepreciationFilterButton();
     await navigationPage.waitUntilProcessingMessageDisappears();
     await verifyDepriciationProposal(page, 'IFRS');
   });
 
 
-  //********************************Reports **********************************/
+  // //********************************Reports **********************************/
   //******************************* Fixed Asset Balance *************************/
   test('Verify Fixed Assets Balance Report', async ({ page }) => {
     const navigationPage = new NavigationPage(page);
@@ -483,8 +484,3 @@ async function verifyDepriciationProposal(page: Page, type: string) {
   const message = await fixedAssetsPage.checkMessageBar();
   expect(message).toContain("Operation completed");
 }
-
-
-
-
-

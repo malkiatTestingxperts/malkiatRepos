@@ -18,6 +18,7 @@ if (!baseURL) {
 }
 test.describe('UAT General Ledger', () => {
   test.beforeEach(async ({ page }) => {
+    console.log('#############3');
     await page.goto(baseURL, { waitUntil: 'domcontentloaded' });
   });
 

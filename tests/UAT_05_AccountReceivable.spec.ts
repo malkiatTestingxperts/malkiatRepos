@@ -85,7 +85,6 @@ test.describe('UAT Account Receivable', () => {
     await navigationPage.clickSaveButton();
   });
 
-
   //*********************************All free text invoices***************************** */
   test('All free text invoices', async ({ page }) => {
     const navigationPage = new NavigationPage(page);
@@ -115,7 +114,6 @@ test.describe('UAT Account Receivable', () => {
     const cleaned = message.replace(/\s+/g, ' ').trim();
     expect(cleaned).toContain("Operation completed The free text invoice posting process is complete.");
   });
-
 
   //*********************************Customer Payment Journal***************************** */
   test('Customer Payment Journal', async ({ page }) => {

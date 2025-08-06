@@ -43,7 +43,6 @@ test.describe('UAT Account Payable', () => {
     await page.close();
   });
 
-
   //*********************************Create Invoice Credit Journal***************************** */
   test('Create Invoice Credit Journal', async ({ page }) => {
     const navigationPage = new NavigationPage(page);
@@ -91,7 +90,7 @@ test.describe('UAT Account Payable', () => {
     await fixedAssetsPage.clickBackButtonUnderMainMenu();
   })
 
-  // //*********************************Create Invoice Journal Debit***************************** */
+  //*********************************Create Invoice Journal Debit***************************** */
   test('Create Invoice Journal Debit', async ({ page }) => {
     const navigationPage = new NavigationPage(page);
     const supplierVendorPage = new SupplierVendorPage(page);

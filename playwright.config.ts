@@ -12,5 +12,8 @@ export default defineConfig({
       args: ['--start-maximized'], // Force full window
     },
   },
-  reporter: [['html', { open: 'never' }]],
+  reporter: [
+    ['html', { open: 'never' }],
+    ['junit', { outputFile: 'results.xml' }]
+  ]
 });

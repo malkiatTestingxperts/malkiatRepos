@@ -33,16 +33,16 @@ export class DateHelper {
 
         return `${day}/${month}/${year}`;
     }
-    // async setDateInput(offsetDays: number, dateForm: string) {
-    //     const formattedDate = this.getFormattedDateOffset(offsetDays);
-    //     this.page.locator(`input[aria-controls="ui-datepicker-div"][aria-describedby*='${dateForm}']`).scrollIntoViewIfNeeded();
-    //     await waitForWithRetry(this.page.locator(`input[aria-controls="ui-datepicker-div"][aria-describedby*='${dateForm}']`), this.page, 5, 4000, 2000);
-    //     await this.page.locator(`input[aria-controls="ui-datepicker-div"][aria-describedby*='${dateForm}']`).fill(formattedDate);// Ensure the date is committed
-    // }
-
-
-
     async setDateInput(offsetDays: number, dateForm: string) {
+        const formattedDate = this.getFormattedDateOffset(offsetDays);
+        this.page.locator(`input[aria-controls="ui-datepicker-div"][aria-describedby*='${dateForm}']`).scrollIntoViewIfNeeded();
+        await waitForWithRetry(this.page.locator(`input[aria-controls="ui-datepicker-div"][aria-describedby*='${dateForm}']`), this.page, 5, 4000, 2000);
+        await this.page.locator(`input[aria-controls="ui-datepicker-div"][aria-describedby*='${dateForm}']`).fill(formattedDate);
+    }
+
+
+
+    async setDateInputDialog(offsetDays: number, dateForm: string) {
         const formattedDate = this.getFormattedDateOffset(offsetDays);
         const baseLocator = this.page.locator(
             `input[aria-controls="ui-datepicker-div"]`
