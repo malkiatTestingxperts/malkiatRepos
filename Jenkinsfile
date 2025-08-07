@@ -30,6 +30,7 @@ pipeline {
       keepAll: true,
       alwaysLinkToLastBuild: true,
       allowMissing: false
+      allowScript: true 
     ])
   }
   }
