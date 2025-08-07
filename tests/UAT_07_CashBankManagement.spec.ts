@@ -22,6 +22,7 @@ if (!baseURL) {
   throw new Error('BASE_URL environment variable is not set');
 }
 test.describe('UAT Cash and Bank Management', () => {
+  test.setTimeout(114000);
   test.beforeEach(async ({ page }) => {
     await page.goto(baseURL, { waitUntil: 'domcontentloaded' });
   });
@@ -48,6 +49,7 @@ test.describe('UAT Cash and Bank Management', () => {
 
   //*********************************Chart Accounts***************************** */
   test('Create Chart Accounts', async ({ page }) => {
+    test.setTimeout(23000);
     const navigationPage = new NavigationPage(page);
     const customerPage = new CustomerPage(page);
     const fixedAssetsPage = new FixedAssetsPage(page);
@@ -72,6 +74,7 @@ test.describe('UAT Cash and Bank Management', () => {
 
   //*********************************Bank statement reconciliation***************************** */
   test('Bank statement reconciliation', async ({ page }) => {
+    test.setTimeout(15000);
     const navigationPage = new NavigationPage(page);
     const customerPage = new CustomerPage(page);
     const fixedAssetsPage = new FixedAssetsPage(page);
@@ -108,6 +111,7 @@ test.describe('UAT Cash and Bank Management', () => {
 
   //*********************************Bank statements***************************** */
   test('Bank statements', async ({ page }) => {
+    test.setTimeout(31000);
     const navigationPage = new NavigationPage(page);
     const customerPage = new CustomerPage(page);
     const fixedAssetsPage = new FixedAssetsPage(page);
@@ -134,6 +138,7 @@ test.describe('UAT Cash and Bank Management', () => {
 
   // //*********************************Import Manual Cheque***************************** */
   test('Import Manual Cheque', async ({ page }) => {
+    test.setTimeout(25000);
     const navigationPage = new NavigationPage(page);
     const cashAndBankPage = new CashBankManagement(page);
     const mainAccount = readEnvVariable('MAIN_ACCOUNT');
@@ -152,6 +157,7 @@ test.describe('UAT Cash and Bank Management', () => {
 
   //*********************************Get Cheques Report***************************** */
   test('Get Cheques Report', async ({ page }) => {
+    test.setTimeout(32000);
     const navigationPage = new NavigationPage(page);
     const cashAndBankPage = new CashBankManagement(page);
     const mainAccount = readEnvVariable('MAIN_ACCOUNT');

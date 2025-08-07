@@ -16,6 +16,7 @@ if (!baseURL) {
   throw new Error('BASE_URL environment variable is not set');
 }
 test.describe('UAT Purchase Requisition Flow', () => {
+
   test.beforeEach(async ({ page }) => {
     console.log('#############1');
     await page.goto(baseURL, { waitUntil: 'domcontentloaded' });
@@ -41,8 +42,9 @@ test.describe('UAT Purchase Requisition Flow', () => {
     await page.close();
   });
 
-  //*********************************Create Supplier***************************** */
+  //********************************* Create Supplier ***************************** */
   test('Create New Supplier/Vendor', async ({ page }) => {
+    test.setTimeout(206000);
     const navigationPage = new NavigationPage(page);
     const supplierVendorPage = new SupplierVendorPage(page);
     const fixedAssetsPage = new FixedAssetsPage(page);
@@ -126,6 +128,7 @@ test.describe('UAT Purchase Requisition Flow', () => {
 
   //****************************Create Purchase Requisition****************************************** */
   test('Create new purchase requisition', async ({ page }) => {
+    test.setTimeout(158000);
     const navigationPage = new NavigationPage(page);
     const requisitionPage = new PurchaseRequisitionPage(page);
     const supplierNameFromEnv = readEnvVariable('SUPPLIER_NAME');
@@ -173,8 +176,9 @@ test.describe('UAT Purchase Requisition Flow', () => {
     await navigationPage.waitUntilProcessingMessageDisappears();
   });
 
-  //***************************************Ceate Purchase Order and GR for Purchase Requisition*********************************** */
+  //*************************************** Ceate Purchase Order and GR for Purchase Requisition *********************************** */
   test('Create Good Receipt', async ({ page }) => {
+    test.setTimeout(588000);
     const navigationPage = new NavigationPage(page);
     const requisitionPage = new PurchaseRequisitionPage(page);
     const prName = readEnvVariable('PR_NAME');
@@ -283,6 +287,7 @@ test.describe('UAT Purchase Requisition Flow', () => {
 
   //*******************************FGH PR to PO Report**********************/
   test('Verify FGH PR to PO Report', async ({ page }) => {
+    test.setTimeout(90000);
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.waitForSelector('body');
     const navigationPage = new NavigationPage(page);

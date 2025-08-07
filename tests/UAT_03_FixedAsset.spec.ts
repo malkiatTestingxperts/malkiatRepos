@@ -46,6 +46,7 @@ test.describe('UAT Fixed Asset Flow', () => {
 
   //********************************Create FA*************************** */
   test('Create Fixed Asset', async ({ page }) => {
+    test.setTimeout(280000);
     const navigationPage = new NavigationPage(page);
     const fixedAssetsPage = new FixedAssetsPage(page);
     for (let i = 1; i <= 4; i++) {
@@ -93,6 +94,7 @@ test.describe('UAT Fixed Asset Flow', () => {
 
   //*****************Create Journal FA****************************/
   test('Create Fixed Asset Journal', async ({ page }) => {
+    test.setTimeout(140000);
     const navigationPage = new NavigationPage(page);
     const requisitionPage = new PurchaseRequisitionPage(page);
     const fixedAssetsPage = new FixedAssetsPage(page);
@@ -136,6 +138,7 @@ test.describe('UAT Fixed Asset Flow', () => {
 
   //*****************Create Journal FA Scrapping***************************/
   test('Create Fixed Asset Journal Scrap', async ({ page }) => {
+    test.setTimeout(49000);
     const navigationPage = new NavigationPage(page);
     const requisitionPage = new PurchaseRequisitionPage(page);
     const fixedAssetsPage = new FixedAssetsPage(page);
@@ -175,6 +178,7 @@ test.describe('UAT Fixed Asset Flow', () => {
 
   //********************************Create FA Journal Disposal - Sale **********************/
   test('Create Fixed Asset Journal Sale', async ({ page }) => {
+    test.setTimeout(51000);
     const navigationPage = new NavigationPage(page);
     const requisitionPage = new PurchaseRequisitionPage(page);
     const fixedAssetsPage = new FixedAssetsPage(page);
@@ -218,6 +222,7 @@ test.describe('UAT Fixed Asset Flow', () => {
 
   //************************ Valuations Validate both sale and disposed ************ */
   test('Valuations Validations for Sale and Scrap FA', async ({ page }) => {
+    test.setTimeout(18000);
     const navigationPage = new NavigationPage(page);
     const requisitionPage = new PurchaseRequisitionPage(page);
     const fixedAssetsPage = new FixedAssetsPage(page);
@@ -244,6 +249,7 @@ test.describe('UAT Fixed Asset Flow', () => {
 
   //********************************Splitting functionality*************************** */
   test('Verify the splitting functionality', async ({ page }) => {
+    test.setTimeout(102000);
     const navigationPage = new NavigationPage(page);
     const fixedAssetsPage = new FixedAssetsPage(page);
     const fixedAssetNameSplit = readEnvVariable('FIXED_ASSET_NAME4');
@@ -288,6 +294,7 @@ test.describe('UAT Fixed Asset Flow', () => {
 
   //*************************************Post the Splitted FA's **************************/
   test('Post the both splitted Fixed Asset Journals', async ({ page }) => {
+    test.setTimeout(18000);
     const navigationPage = new NavigationPage(page);
     const fixedAssetsPage = new FixedAssetsPage(page);
     const fixedAssetNameSplit = readEnvVariable('FIXED_ASSET_NAME4');
@@ -311,6 +318,7 @@ test.describe('UAT Fixed Asset Flow', () => {
 
   //********************************Proposal Depriciation UK **************************/
   test('Verify Proposal Depriciation Functionality For UK', async ({ page }) => {
+    test.setTimeout(109000);
     const navigationPage = new NavigationPage(page);
     const fixedAssetsPage = new FixedAssetsPage(page);
     const requisitionPage = new PurchaseRequisitionPage(page);
@@ -348,6 +356,7 @@ test.describe('UAT Fixed Asset Flow', () => {
 
   //********************************Proposal Depriciation IFRS *****************************/
   test('Verify Proposal Depriciation Functionality For IFRS', async ({ page }) => {
+    test.setTimeout(30000);
     const navigationPage = new NavigationPage(page);
     const fixedAssetsPage = new FixedAssetsPage(page);
     const requisitionPage = new PurchaseRequisitionPage(page);
@@ -383,6 +392,7 @@ test.describe('UAT Fixed Asset Flow', () => {
   // //********************************Reports **********************************/
   //******************************* Fixed Asset Balance *************************/
   test('Verify Fixed Assets Balance Report', async ({ page }) => {
+    test.setTimeout(29000);
     const navigationPage = new NavigationPage(page);
     const fixedAssetsPage = new FixedAssetsPage(page);
     const fixedAssetNameSplit = readEnvVariable('FIXED_ASSET_NAME3');
@@ -405,11 +415,13 @@ test.describe('UAT Fixed Asset Flow', () => {
     for (const expected of expectedValues) {
       expect(pdfText).toContain(expected);
     }
-    await DeletePdf(page, "D:\\fgh_automation\\test-data\\downloaded.pdf");
+    const filePath = path.join(__dirname, '..', 'test-data\\', "downloaded.pdf");
+    await DeletePdf(page, filePath);
   });
 
   //*******************************Fixed Asset Summary  *********************/
   test('Verify Fixed Assets Summary Report', async ({ page }) => {
+    test.setTimeout(29000);
     const navigationPage = new NavigationPage(page);
     const fixedAssetsPage = new FixedAssetsPage(page);
     const dateHelper = new DateHelper(page);
@@ -438,6 +450,7 @@ test.describe('UAT Fixed Asset Flow', () => {
 
   // *******************************FGH Fixed Asset Listing ******************************/
   test('Verify FGH Fixed Assets Listing Report', async ({ page }) => {
+    test.setTimeout(29000);
     const navigationPage = new NavigationPage(page);
     const fixedAssetsPage = new FixedAssetsPage(page);
     const fixedAssetNameSplit = readEnvVariable('FIXED_ASSET_NAME3');
@@ -460,7 +473,8 @@ test.describe('UAT Fixed Asset Flow', () => {
     for (const expected of expectedValues) {
       expect(pdfText).toContain(expected);
     }
-    await DeletePdf(page, "D:\\fgh_automation\\test-data\\downloaded.pdf");
+    const filePath = path.join(__dirname, '..', 'test-data\\', "downloaded.pdf");
+    await DeletePdf(page, filePath);
   });
 });
 

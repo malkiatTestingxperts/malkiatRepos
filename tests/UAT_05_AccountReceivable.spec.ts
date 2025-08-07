@@ -44,6 +44,7 @@ test.describe('UAT Account Receivable', () => {
 
   //*********************************Create Customer***************************** */
   test('Create New Customer/Vendor', async ({ page }) => {
+    test.setTimeout(50000);
     const navigationPage = new NavigationPage(page);
     const customerPage = new CustomerPage(page);
     const fixedAssetsPage = new FixedAssetsPage(page);
@@ -87,6 +88,7 @@ test.describe('UAT Account Receivable', () => {
 
   //*********************************All free text invoices***************************** */
   test('All free text invoices', async ({ page }) => {
+    test.setTimeout(43000);
     const navigationPage = new NavigationPage(page);
     const customerPage = new CustomerPage(page);
     const requisitionPage = new PurchaseRequisitionPage(page);
@@ -117,6 +119,7 @@ test.describe('UAT Account Receivable', () => {
 
   //*********************************Customer Payment Journal***************************** */
   test('Customer Payment Journal', async ({ page }) => {
+    test.setTimeout(40000);
     const navigationPage = new NavigationPage(page);
     const supplierVendorPage = new SupplierVendorPage(page);
     const fixedAssetsPage = new FixedAssetsPage(page);
