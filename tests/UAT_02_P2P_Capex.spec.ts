@@ -41,7 +41,7 @@ test.describe('UAT Purchase Requisition Capex Flow', () => {
 
   //*************************************Create Purchase Requisition********************************** */
   test('Create new purchase requisition with Capex', async ({ page }) => {
-    test.setTimeout(158000);
+    //test.setTimeout(158000);
     const navigationPage = new NavigationPage(page);
     const requisitionPage = new PurchaseRequisitionPage(page);
     navigationPage.openModulesMenu();
@@ -87,7 +87,7 @@ test.describe('UAT Purchase Requisition Capex Flow', () => {
 
   //*************************Ceate Purchase Order and Good Receipt for Purchase Requisition*********************************************** */
   test('Create Good Receipt For Capex PR', async ({ page }) => {
-    test.setTimeout(400000);
+    //test.setTimeout(400000);
     const navigationPage = new NavigationPage(page);
     const requisitionPage = new PurchaseRequisitionPage(page);
     const prName = readEnvVariable('PR_NAME');

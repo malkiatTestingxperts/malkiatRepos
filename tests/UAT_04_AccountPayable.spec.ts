@@ -46,7 +46,7 @@ test.describe('UAT Account Payable', () => {
 
   //*********************************Create Invoice Credit Journal***************************** */
   test('Create Invoice Credit Journal', async ({ page }) => {
-    test.setTimeout(50000);
+    //test.setTimeout(50000);
     const navigationPage = new NavigationPage(page);
     const supplierVendorPage = new SupplierVendorPage(page);
     const fixedAssetsPage = new FixedAssetsPage(page);
@@ -94,7 +94,7 @@ test.describe('UAT Account Payable', () => {
 
   //*********************************Create Invoice Journal Debit***************************** */
   test('Create Invoice Journal Debit', async ({ page }) => {
-    test.setTimeout(50000);
+    // test.setTimeout(50000);
     const navigationPage = new NavigationPage(page);
     const supplierVendorPage = new SupplierVendorPage(page);
     const fixedAssetsPage = new FixedAssetsPage(page);
@@ -141,7 +141,7 @@ test.describe('UAT Account Payable', () => {
 
   //*********************************Invoice Register and the Purchase Order Pick***************************** */
   test('Invoice Register And the Purchase Order Details', async ({ page }) => {
-    test.setTimeout(50000);
+    // test.setTimeout(50000);
     await page.setViewportSize({ width: 1536, height: 864 });
     const navigationPage = new NavigationPage(page);
     const supplierVendorPage = new SupplierVendorPage(page);
@@ -194,7 +194,7 @@ test.describe('UAT Account Payable', () => {
 
   //*********************************Invoice Pool***************************** */
   test('Invoice Pool', async ({ page }) => {
-    test.setTimeout(150000);
+    //test.setTimeout(150000);
     await page.setViewportSize({ width: 1536, height: 864 });
     const navigationPage = new NavigationPage(page);
     const supplierVendorPage = new SupplierVendorPage(page);
@@ -231,7 +231,7 @@ test.describe('UAT Account Payable', () => {
 
   //*********************************Invoice Payments***************************** */
   test('Invoice Payments', async ({ page }) => {
-    test.setTimeout(58000);
+    //test.setTimeout(58000);
     const navigationPage = new NavigationPage(page);
     const supplierVendorPage = new SupplierVendorPage(page);
     const fixedAssetsPage = new FixedAssetsPage(page);

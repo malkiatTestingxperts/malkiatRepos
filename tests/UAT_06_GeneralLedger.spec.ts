@@ -45,7 +45,7 @@ test.describe('UAT General Ledger', () => {
 
   //*********************************Chart Accounts***************************** */
   test('Create Chart Accounts', async ({ page }) => {
-    test.setTimeout(29000);
+    //test.setTimeout(29000);
     const navigationPage = new NavigationPage(page);
     const generalLedgerPage = new GeneralLedgerPage(page);
     const customerAddress = readEnvVariable('CUSTOMER_ADDRESS');
@@ -72,7 +72,7 @@ test.describe('UAT General Ledger', () => {
 
   //*********************************General Journals***************************** */
   test('Create General Journals', async ({ page }) => {
-    test.setTimeout(51000);
+    //test.setTimeout(51000);
     const navigationPage = new NavigationPage(page);
     const fixedAssetsPage = new FixedAssetsPage(page);
     const requisitionPage = new PurchaseRequisitionPage(page);
@@ -115,7 +115,7 @@ test.describe('UAT General Ledger', () => {
 
   //*********************************Financial Dimensions***************************** */
   test('Financial Dimensions', async ({ page }) => {
-    test.setTimeout(39000);
+    // test.setTimeout(39000);
     const navigationPage = new NavigationPage(page);
     const supplierVendorPage = new SupplierVendorPage(page);
     const generalLedgerPage = new GeneralLedgerPage(page);
@@ -154,7 +154,7 @@ test.describe('UAT General Ledger', () => {
 
   //*********************************Advanced rule structures***************************** */
   test('Advanced rule structures', async ({ page }) => {
-    test.setTimeout(48000);
+    // test.setTimeout(48000);
     const navigationPage = new NavigationPage(page);
     const fixedAssetsPage = new FixedAssetsPage(page);
     const generalLedgerPage = new GeneralLedgerPage(page);
@@ -196,7 +196,7 @@ test.describe('UAT General Ledger', () => {
 
   //*********************************Ledger Calenders***************************** */
   test('Ledger Calenders', async ({ page }) => {
-    test.setTimeout(34000);
+    // test.setTimeout(34000);
     const navigationPage = new NavigationPage(page);
     const generalLedgerPage = new GeneralLedgerPage(page);
     const supplierVendorPage = new SupplierVendorPage(page);
@@ -226,7 +226,7 @@ test.describe('UAT General Ledger', () => {
 
   //*********************************General Journals Reversal***************************** */
   test('General Journals Reversals', async ({ page }) => {
-    test.setTimeout(38000);
+    //test.setTimeout(38000);
     await page.setViewportSize({ width: 1536, height: 864 });
     const navigationPage = new NavigationPage(page);
     const fixedAssetsPage = new FixedAssetsPage(page);
