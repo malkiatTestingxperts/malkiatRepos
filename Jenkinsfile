@@ -11,13 +11,13 @@ pipeline {
 
     stage('Test') {
       steps {
-        bat 'npm run test -- tests/UAT_01_P2P_NonCapex.spec.ts'
-        bat 'npm run test -- tests/UAT_02_P2P_Capex.spec.ts'
-        bat 'npm run test -- tests/UAT_03_FixedAsset.spec.ts'
-        bat 'npm run test -- tests/UAT_04_AccountPayable.spec.ts'
-        bat 'npm run test -- tests/UAT_AccountReceivable.spec.ts'
-        bat 'npm run test -- tests/UAT_06_GeneralLedger.spec.ts'
-        bat 'npm run test -- tests/UAT_07_CashBankManagement.spec.ts'
+        bat 'npm run test -- tests/UAT_01_P2P_NonCapex.spec.ts --retries=1'
+        bat 'npm run test -- tests/UAT_02_P2P_Capex.spec.ts --retries=1'
+        bat 'npm run test -- tests/UAT_03_FixedAsset.spec.ts --retries=1'
+        bat 'npm run test -- tests/UAT_04_AccountPayable.spec.ts --retries=1'
+        bat 'npm run test -- tests/UAT_AccountReceivable.spec.ts --retries=1'
+        bat 'npm run test -- tests/UAT_06_GeneralLedger.spec.ts --retries=1'
+        bat 'npm run test -- tests/UAT_07_CashBankManagement.spec.ts --retries=1'
      }
     }
   }

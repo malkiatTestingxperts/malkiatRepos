@@ -5,7 +5,7 @@ export default defineConfig({
   workers: 1, // Run tests sequentially (you can increase in CI)
   use: {
     storageState: 'auth.json',
-    headless: false,
+    headless: true,
     channel: 'chrome',
     viewport: null,
     screenshot: 'only-on-failure',
