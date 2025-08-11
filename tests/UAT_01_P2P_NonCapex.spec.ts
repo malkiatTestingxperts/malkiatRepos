@@ -80,6 +80,13 @@ test.describe('UAT Purchase Requisition Flow', () => {
     await navigationPage.waitUntilProcessingMessageDisappears();
     await navigationPage.clickSaveButton();
     await supplierVendorPage.clickSupplierBackButton();
+  });
+
+  test('Enter Supplier/Vendor Information', async ({ page }) => {
+    const navigationPage = new NavigationPage(page);
+    const supplierVendorPage = new SupplierVendorPage(page);
+    const fixedAssetsPage = new FixedAssetsPage(page);
+    const requisitionPage = new PurchaseRequisitionPage(page);
     navigationPage.openModulesMenu();
     await clickMenuItem(page, 'Purchase ledger', false);
     await page.waitForTimeout(5000);
