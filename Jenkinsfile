@@ -185,9 +185,7 @@
 // }
 pipeline {
   agent any
-  options {
-    ansiColor('xterm')
-  }
+  options { ansiColor('xterm') }
 
   environment {
     REPORTS_DIR = "playwright-reports"
@@ -205,13 +203,13 @@ pipeline {
       steps {
         script {
           catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-            bat "npx playwright test tests/UAT_01_P2P_NonCapex.spec.ts --workers=1 --reporter=blob --output=${REPORTS_DIR}/part1"
+            bat "npx playwright test tests/UAT_01_P2P_NonCapex.spec.ts --workers=1 --output=${REPORTS_DIR}/part1"
           }
           catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-            bat "npx playwright test tests/UAT_04_AccountPayable.spec.ts --workers=1 --reporter=blob --output=${REPORTS_DIR}/part2"
+            bat "npx playwright test tests/UAT_04_AccountPayable.spec.ts --workers=1 --output=${REPORTS_DIR}/part2"
           }
           catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-            bat "npx playwright test tests/UAT_AccountReceivable.spec.ts --workers=1 --reporter=blob --output=${REPORTS_DIR}/part3"
+            bat "npx playwright test tests/UAT_AccountReceivable.spec.ts --workers=1 --output=${REPORTS_DIR}/part3"
           }
         }
       }
@@ -223,47 +221,47 @@ pipeline {
         stage('UAT_02_P2P_Capex') {
           steps {
             catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-              bat "npx playwright test tests/UAT_02_P2P_Capex.spec.ts --workers=4 --reporter=blob --output=${REPORTS_DIR}/part4"
+              bat "npx playwright test tests/UAT_02_P2P_Capex.spec.ts --workers=4 --output=${REPORTS_DIR}/part4"
             }
           }
         }
         stage('UAT_03_FixedAsset') {
           steps {
             catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-              bat "npx playwright test tests/UAT_03_FixedAsset.spec.ts --workers=4 --reporter=blob --output=${REPORTS_DIR}/part5"
+              bat "npx playwright test tests/UAT_03_FixedAsset.spec.ts --workers=4 --output=${REPORTS_DIR}/part5"
             }
           }
         }
         stage('UAT_06_GeneralLedger') {
           steps {
             catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-              bat "npx playwright test tests/UAT_06_GeneralLedger.spec.ts --workers=4 --reporter=blob --output=${REPORTS_DIR}/part6"
+              bat "npx playwright test tests/UAT_06_GeneralLedger.spec.ts --workers=4 --output=${REPORTS_DIR}/part6"
             }
           }
         }
         stage('UAT_07_CashBankManagement') {
           steps {
             catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-              bat "npx playwright test tests/UAT_07_CashBankManagement.spec.ts --workers=4 --reporter=blob --output=${REPORTS_DIR}/part7"
+              bat "npx playwright test tests/UAT_07_CashBankManagement.spec.ts --workers=4 --output=${REPORTS_DIR}/part7"
             }
           }
         }
       }
     }
 
-   stage('Merge Reports') {
-  steps {
-    script {
-      catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
-        // Create the merged directory if it doesn't exist
-        bat "if not exist ${REPORTS_DIR}\\merged mkdir ${REPORTS_DIR}\\merged"
-        
-        // Merge blob reports into a single HTML report
-        bat "npx playwright merge-reports ${REPORTS_DIR}/part* --reporter=html --report-dir=${REPORTS_DIR}/merged"
+    stage('Merge Reports') {
+      steps {
+        script {
+          catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
+            // Ensure merged folder exists
+            bat "if not exist ${REPORTS_DIR}\\merged mkdir ${REPORTS_DIR}\\merged"
+
+            // Merge only blob data from part folders
+            bat "npx playwright merge-reports ${REPORTS_DIR}/part*/blob-report --reporter=html --report-dir=${REPORTS_DIR}/merged"
+          }
+        }
       }
     }
-  }
-}
   }
 
   post {

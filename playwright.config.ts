@@ -18,7 +18,7 @@ export default defineConfig({
     },
   },
   reporter: [
-    ['html', { open: 'never' }],
-    ['junit', { outputFile: 'results.xml' }]
+    ['blob'], // for test runs
+    ['html', { outputFolder: 'playwright-reports/merged', open: 'never' }]
   ]
 });
