@@ -183,7 +183,6 @@
 //     }
 //   }
 // }
-
 pipeline {
   agent any
   options {
@@ -203,59 +202,66 @@ pipeline {
     }
 
     stage('Run Dependent Tests Sequentially') {
-  steps {
-    script {
-      catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-        bat "npx playwright test tests/UAT_01_P2P_NonCapex.spec.ts --workers=1 --reporter=blob --output=${REPORTS_DIR}/part1"
-      }
-      catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-        bat "npx playwright test tests/UAT_04_AccountPayable.spec.ts --workers=1 --reporter=blob --output=${REPORTS_DIR}/part2"
-      }
-      catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-        bat "npx playwright test tests/UAT_AccountReceivable.spec.ts --workers=1 --reporter=blob --output=${REPORTS_DIR}/part3"
+      steps {
+        script {
+          catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+            bat "npx playwright test tests/UAT_01_P2P_NonCapex.spec.ts --workers=1 --reporter=blob --output=${REPORTS_DIR}/part1"
+          }
+          catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+            bat "npx playwright test tests/UAT_04_AccountPayable.spec.ts --workers=1 --reporter=blob --output=${REPORTS_DIR}/part2"
+          }
+          catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+            bat "npx playwright test tests/UAT_AccountReceivable.spec.ts --workers=1 --reporter=blob --output=${REPORTS_DIR}/part3"
+          }
+        }
       }
     }
-  }
-}
 
-stage('Run Independent Tests in Parallel') {
-  parallel {
-    stage('UAT_02_P2P_Capex') {
-      steps {
-        catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-          bat "npx playwright test tests/UAT_02_P2P_Capex.spec.ts --workers=4 --reporter=blob --output=${REPORTS_DIR}/part4"
+    stage('Run Independent Tests in Parallel') {
+      failFast false
+      parallel {
+        stage('UAT_02_P2P_Capex') {
+          steps {
+            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+              bat "npx playwright test tests/UAT_02_P2P_Capex.spec.ts --workers=4 --reporter=blob --output=${REPORTS_DIR}/part4"
+            }
+          }
+        }
+        stage('UAT_03_FixedAsset') {
+          steps {
+            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+              bat "npx playwright test tests/UAT_03_FixedAsset.spec.ts --workers=4 --reporter=blob --output=${REPORTS_DIR}/part5"
+            }
+          }
+        }
+        stage('UAT_06_GeneralLedger') {
+          steps {
+            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+              bat "npx playwright test tests/UAT_06_GeneralLedger.spec.ts --workers=4 --reporter=blob --output=${REPORTS_DIR}/part6"
+            }
+          }
+        }
+        stage('UAT_07_CashBankManagement') {
+          steps {
+            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+              bat "npx playwright test tests/UAT_07_CashBankManagement.spec.ts --workers=4 --reporter=blob --output=${REPORTS_DIR}/part7"
+            }
+          }
         }
       }
     }
-    stage('UAT_03_FixedAsset') {
-      steps {
-        catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-          bat "npx playwright test tests/UAT_03_FixedAsset.spec.ts --workers=4 --reporter=blob --output=${REPORTS_DIR}/part5"
-        }
-      }
-    }
-    stage('UAT_06_GeneralLedger') {
-      steps {
-        catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-          bat "npx playwright test tests/UAT_06_GeneralLedger.spec.ts --workers=4 --reporter=blob --output=${REPORTS_DIR}/part6"
-        }
-      }
-    }
-    stage('UAT_07_CashBankManagement') {
-      steps {
-        catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-          bat "npx playwright test tests/UAT_07_CashBankManagement.spec.ts --workers=4 --reporter=blob --output=${REPORTS_DIR}/part7"
-        }
-      }
-    }
-  }
-}
 
-stage('Merge Reports') {
-  steps {
-    bat "npx playwright merge-reports ${REPORTS_DIR}/part* --reporter=html --output=${REPORTS_DIR}/merged"
+    stage('Merge Reports') {
+      steps {
+        script {
+          catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
+            bat "if not exist ${REPORTS_DIR}\\merged mkdir ${REPORTS_DIR}\\merged"
+            bat "npx playwright merge-reports ${REPORTS_DIR}/part* --reporter=html --output=${REPORTS_DIR}/merged"
+          }
+        }
+      }
+    }
   }
-}
 
   post {
     always {
@@ -266,9 +272,8 @@ stage('Merge Reports') {
         reportName: 'Playwright Report',
         keepAll: true,
         alwaysLinkToLastBuild: true,
-        allowMissing: false
+        allowMissing: true
       ])
     }
   }
-}
 }
