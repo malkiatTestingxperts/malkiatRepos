@@ -251,16 +251,19 @@ pipeline {
       }
     }
 
-    stage('Merge Reports') {
-      steps {
-        script {
-          catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
-            bat "if not exist ${REPORTS_DIR}\\merged mkdir ${REPORTS_DIR}\\merged"
-            bat "npx playwright merge-reports ${REPORTS_DIR}/part* --reporter=html --output=${REPORTS_DIR}/merged"
-          }
-        }
+   stage('Merge Reports') {
+  steps {
+    script {
+      catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
+        // Create the merged directory if it doesn't exist
+        bat "if not exist ${REPORTS_DIR}\\merged mkdir ${REPORTS_DIR}\\merged"
+        
+        // Merge blob reports into a single HTML report
+        bat "npx playwright merge-reports ${REPORTS_DIR}/part* --reporter=html --report-dir=${REPORTS_DIR}/merged"
       }
     }
+  }
+}
   }
 
   post {
