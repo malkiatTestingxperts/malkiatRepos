@@ -46,14 +46,12 @@ Install Playwright browsers:
 Run npx playwright install
  
 ---
- 
+ ```
+
 ## How To Run
 
 After installing dependencies and Playwright browsers, you can execute tests using the following commands:
 
-### Run All Tests
-```bash
-npx playwright test
 ```
 
 ### Run Specific Test File
