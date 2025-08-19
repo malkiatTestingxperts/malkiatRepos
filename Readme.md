@@ -4,8 +4,8 @@ The **FGH D365 Automated Testing Framework** provides a consistent, maintainable
 
 It is designed using **Playwright + TypeScript** and follows a modular structure:  
 
-- **Automation Core** → Browser management, custom helpers, utilities, fixtures  
-- **Automation Framework** → Page objects, step definitions, data handling, and test execution setup  
+- **Automation Core** → Browser configuration, Environment configuration with playwright.config.ts, Custom helpers, utilities
+- **Automation Framework** → Page objects, Test Cases, data handling, and test execution setup  
 
 ---
 
@@ -15,11 +15,11 @@ It is designed using **Playwright + TypeScript** and follows a modular structure
 
 Ensure the following are installed before running the tests:  
 
-- [Node.js](https://nodejs.org/en/download/) (version **18+**)  
+- [Node.js](https://nodejs.org/en/download/) (version **20+**)  
 - [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) or [yarn](https://yarnpkg.com/)  
 - [Google Chrome / Edge / Chromium / Firefox / WebKit] (Playwright supports multiple browsers)  
 
-### Optional (for Development)  
+### IDE
 
 - [Visual Studio Code](https://code.visualstudio.com/) (recommended IDE)  
 - Extensions:  
@@ -34,8 +34,9 @@ Ensure the following are installed before running the tests:
 Clone the repo locally:  
 
 ```bash
-git clone git@gitprime.ottouk.com:quality-assurance/d365-automated-tests.git
-cd d365-automated-tests
+git clone git@gitprime.ottouk.com:quality-assurance/d365_automation.git
+ 
+cd d365_automation
  
 Install dependencies:
  
@@ -51,9 +52,6 @@ Run npx playwright install
 ## How To Run
 
 After installing dependencies and Playwright browsers, you can execute tests using the following commands:
-
-```
-```
 
 ### Run Specific Test File
 
@@ -77,3 +75,22 @@ npx playwright show-report
 
 ```bash
 npx playwright test
+
+```
+
+# Directory Structure
+
+pages/           → Page Object Models (POM) for D365 modules
+tests/           → Test specs (UAT regression)
+session/         → Authentication session-storage to run the test case with live user's credentials
+test-data/       → test-data to be passed in number of test cases
+playwright-report/     → .html report of execution
+utils/           → Helpers functions
+playwright.config.ts      → Global configuration file include timeouts of test, browser type, browser mode (headless or not)
+
+# Configuration
+
+Framework configuration is managed via playwright.config.ts:
+Browser & viewport settings
+Retries and timeouts
+Reporters (HTML, Allure, etc.)
