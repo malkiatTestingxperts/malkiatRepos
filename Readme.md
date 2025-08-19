@@ -29,7 +29,7 @@ Ensure the following are installed before running the tests:
 
 ---
 
-## Installation
+### Installation
 
 ### Clone the Repository  
 
@@ -39,15 +39,15 @@ cd d365_automation
 
 ```
 
-## Install dependencies
+### Install dependencies
 
 Run npm install or npm i
 
-## Install Playwright browsers
+### Install Playwright browsers
 
 Run npx playwright install
 
-## How To Run
+### How To Run
 
 After installing dependencies and Playwright browsers, you can execute tests using the following commands:
 
@@ -76,7 +76,7 @@ npx playwright test
 
 ```
 
-## Directory Structure
+### Directory Structure
 
 - **pages/** → Page Object Models (POM) for D365 modules  
 - **tests/** → Test specs (UAT, regression)  
@@ -88,7 +88,7 @@ npx playwright test
 
 ---
 
-## Configuration
+### Configuration
 
 Framework configuration is managed via **playwright.config.ts**:  
 
