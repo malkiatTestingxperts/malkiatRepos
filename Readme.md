@@ -95,3 +95,16 @@ Framework configuration is managed via **playwright.config.ts**:
 - Browser & viewport settings  
 - Retries and timeouts  
 - Reporters (HTML, Allure, JUnit, etc.)  
+
+## Jenkins Pipeline
+
+The framework includes a `Jenkinsfile` for CI/CD integration.  
+This file defines the pipeline stages required to run Playwright tests in Jenkins.  
+
+### Pipeline Overview
+
+- **Checkout Code** – Pull the latest version of the repository  
+- **Install Dependencies** – Run `npm install`  
+- **Install Browsers** – Run `npx playwright install --with-deps`  
+- **Run Tests** – Execute `npx playwright test`  
+- **Publish Report** – Archive Playwright test reports (HTML, JUnit, Allure if configured)  
