@@ -31,22 +31,21 @@ Ensure the following are installed before running the tests:
 
 ## Installation
 
-Clone the repo locally:  
+### Clone the Repository  
 
 ```bash
 git clone git@gitprime.ottouk.com:quality-assurance/d365_automation.git
- 
 cd d365_automation
- 
-Install dependencies:
- 
-Run npm install or npm i
- 
-Install Playwright browsers:
- 
-Run npx playwright install
- 
+
 ```
+
+## Install dependencies
+
+Run npm install or npm i
+
+## Install Playwright browsers
+
+Run npx playwright install
 
 ## How To Run
 
