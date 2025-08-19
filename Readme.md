@@ -29,7 +29,7 @@ Ensure the following are installed before running the tests:
 
 ---
 
-### Installation
+### How to configure
 
 ### Clone the Repository  
 
