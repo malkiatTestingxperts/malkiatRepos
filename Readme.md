@@ -41,11 +41,15 @@ cd d365_automation
 
 ### Install dependencies
 
+```bash
 Run npm install or npm i
+```
 
 ### Install Playwright browsers
 
+```bash
 Run npx playwright install
+```
 
 ### How To Run
 
