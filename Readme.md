@@ -78,7 +78,7 @@ npx playwright test
 
 ```
 
-# Directory Structure
+### Directory Structure
 
 pages/           → Page Object Models (POM) for D365 modules
 tests/           → Test specs (UAT regression)
@@ -88,7 +88,7 @@ playwright-report/     → .html report of execution
 utils/           → Helpers functions
 playwright.config.ts      → Global configuration file include timeouts of test, browser type, browser mode (headless or not)
 
-# Configuration
+### Configuration
 
 Framework configuration is managed via playwright.config.ts:
 Browser & viewport settings
