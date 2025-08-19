@@ -1,4 +1,4 @@
-**# FGH D365 Automated Testing Framework**
+## FGH D365 Automated Testing Framework
  
 The **FGH D365 Automated Testing Framework** provides a consistent, maintainable, and scalable approach for **UI test automation** across Dynamics 365 projects.  
  
@@ -43,12 +43,12 @@ Run npx playwright install
  
 ---
  
-**How To Run**
- 
-Run all tests (default):
- 
+## How To Run
+
+### Run All Tests (default)  
+```bash
 npx playwright test
- 
-Generate HTML test report:
- 
+
+
+Generate HTML Test Repor
 npx playwright show-report
