@@ -46,8 +46,7 @@ Install Playwright browsers:
  
 Run npx playwright install
  
----
- ```
+```
 
 ## How To Run
 
@@ -78,19 +77,22 @@ npx playwright test
 
 ```
 
-### Directory Structure
+## Directory Structure
 
-pages/           → Page Object Models (POM) for D365 modules
-tests/           → Test specs (UAT regression)
-session/         → Authentication session-storage to run the test case with live user's credentials
-test-data/       → test-data to be passed in number of test cases
-playwright-report/     → .html report of execution
-utils/           → Helpers functions
-playwright.config.ts      → Global configuration file include timeouts of test, browser type, browser mode (headless or not)
+- **pages/** → Page Object Models (POM) for D365 modules  
+- **tests/** → Test specs (UAT, regression)  
+- **session/** → Authentication session-storage to run test cases with live user credentials  
+- **test-data/** → Test data files used across multiple test cases  
+- **playwright-report/** → Auto-generated `.html` execution reports  
+- **utils/** → Helper functions and common utilities  
+- **playwright.config.ts** → Global configuration file (timeouts, browser type, headless/headed mode, etc.)  
 
-### Configuration
+---
 
-Framework configuration is managed via playwright.config.ts:
-Browser & viewport settings
-Retries and timeouts
-Reporters (HTML, Allure, etc.)
+## Configuration
+
+Framework configuration is managed via **playwright.config.ts**:  
+
+- Browser & viewport settings  
+- Retries and timeouts  
+- Reporters (HTML, Allure, JUnit, etc.)  
