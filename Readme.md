@@ -4,8 +4,7 @@ The **FGH D365 Automated Testing Framework** provides a consistent, maintainable
 
 It is designed using **Playwright + TypeScript** and follows a modular structure:  
 
-- **Automation Core** → Browser configuration, Environment configuration with playwright.config.ts, Custom helpers, utilities
-- **Automation Framework** → Page objects, Test Cases, data handling, and test execution setup  
+**Automation Framework** → browser configuration and nvironment configuration with playwright.config.ts, utils, page object (pages), tests, data handling and test execution setup  
 
 ---
 
