@@ -283,7 +283,7 @@ pipeline {
   agent any
  
   tools {
-    nodejs "Node22" // This must match the name you configured in "Manage Jenkins" → "Global Tool Configuration"
+    nodejs "Node" // This must match the name you configured in "Manage Jenkins" → "Global Tool Configuration"
   }
  
   stages {
