@@ -6,6 +6,10 @@ export class NavigationPage {
         return this.page.locator('#navPaneModuleID');
     }
 
+    get blockingOverlay() {
+        return this.page.locator('#ShellBlockingDiv[style*="display: block"], #ShellProcessingDiv[style*="display: block"]');
+    }
+
     get home() {
         return this.page.locator('#home');
     }
@@ -47,9 +51,25 @@ export class NavigationPage {
     }
 
     async openModulesMenu() {
-        await waitForWithRetry(this.mainModules, this.page, 5, 40000, 2000);
-        await this.mainModules.click();
+        await this.blockingOverlay.waitFor({ state: 'hidden', timeout: 40000 });
+        await this.mainModules.waitFor({ state: 'visible', timeout: 40000 });
+        for (let attempt = 1; attempt <= 5; attempt++) {
+            try {
+                if (!(await this.mainModules.isEnabled())) {
+                    throw new Error("Main modules menu is not enabled");
+                }
+                await this.mainModules.scrollIntoViewIfNeeded();
+                await this.mainModules.click({ timeout: 5000 });
+                console.log("Modules menu opened");
+                return;
+            } catch (e) {
+                console.warn(`Attempt ${attempt} failed to click Modules menu. Retrying...`, e);
+                await this.page.waitForTimeout(2000);
+            }
+        }
+        throw new Error("Failed to open Modules menu after 3 retries");
     }
+
 
     async clickNewButton() {
         await waitForWithRetry(this.actionsGroupNewButton, this.page, 5, 4000, 2000);

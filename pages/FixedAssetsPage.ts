@@ -595,28 +595,69 @@ export class FixedAssetsPage {
         await this.selectFinancialDimensions.click();
     }
 
+    // async enterBusinessUnit(businessUnit: string) {
+    //     await this.page.waitForTimeout(5000);
+    //     const field = this.enterBusinessUnitinFinancialDimensions;
+    //     await field.waitFor({ state: 'visible' });
+    //     await field.fill('');
+    //     await this.page.waitForTimeout(800);
+    //     await field.type(businessUnit, { delay: 100 });
+    //     await this.page.locator('[data-dyn-controlname="DimensionEntryControl_DECValue_BusinessUnit"] .lookupButton').click();
+    //     await this.selectValueInFinancialDimensions.waitFor({ state: 'visible', timeout: 10000 });
+    //     await this.selectValueInFinancialDimensions.click();
+    //     await this.page.waitForTimeout(2000);
+    // }
+
+    // async enterCostCenter(costCenter: string) {
+    //     await this.enterCostCenterinFinancialDimensions.scrollIntoViewIfNeeded();
+    //     await this.enterCostCenterinFinancialDimensions.fill('');
+    //     await this.enterCostCenterinFinancialDimensions.pressSequentially(costCenter, { delay: 100 })
+    //     await this.page.locator("[data-dyn-controlname='DimensionEntryControl_DECValue_CostCenter'] [class='lookupButton']").click();
+    //     await this.selectValueInFinancialDimensions.waitFor({ state: 'visible', timeout: 10000 });
+    //     await this.selectValueInFinancialDimensions.click();
+    //     await this.page.waitForTimeout(2000);
+    // }
+
     async enterBusinessUnit(businessUnit: string) {
-        await this.page.waitForTimeout(5000);
         const field = this.enterBusinessUnitinFinancialDimensions;
         await field.waitFor({ state: 'visible' });
+
         await field.fill('');
-        await this.page.waitForTimeout(800);
+        await field.focus();
         await field.type(businessUnit, { delay: 100 });
-        await this.page.locator('[data-dyn-controlname="DimensionEntryControl_DECValue_BusinessUnit"] .lookupButton').click();
-        await this.selectValueInFinancialDimensions.waitFor({ state: 'visible', timeout: 10000 });
-        await this.selectValueInFinancialDimensions.click();
-        await this.page.waitForTimeout(2000);
+
+        // Click lookup button for Business Unit
+        const lookupBtn = this.page.locator('[data-dyn-controlname="DimensionEntryControl_DECValue_BusinessUnit"] .lookupButton');
+        await lookupBtn.click();
+
+        // Wait for selection list and choose
+        await this.selectValueInFinancialDimensions.first().waitFor({ state: 'visible', timeout: 10000 });
+        await this.selectValueInFinancialDimensions.first().click();
+
+        // Ensure lookup closes before proceeding
+        await this.selectValueInFinancialDimensions.first().waitFor({ state: 'detached', timeout: 5000 });
     }
 
     async enterCostCenter(costCenter: string) {
-        await this.enterCostCenterinFinancialDimensions.scrollIntoViewIfNeeded();
-        await this.enterCostCenterinFinancialDimensions.fill('');
-        await this.enterCostCenterinFinancialDimensions.pressSequentially(costCenter, { delay: 100 })
-        await this.page.locator("[data-dyn-controlname='DimensionEntryControl_DECValue_CostCenter'] [class='lookupButton']").click();
-        await this.selectValueInFinancialDimensions.waitFor({ state: 'visible', timeout: 10000 });
-        await this.selectValueInFinancialDimensions.click();
-        await this.page.waitForTimeout(2000);
+        const field = this.enterCostCenterinFinancialDimensions;
+        await field.waitFor({ state: 'visible' });
+
+        await field.fill('');
+        await field.focus();
+        await field.type(costCenter, { delay: 100 });
+
+        // Click lookup button for Cost Center
+        const lookupBtn = this.page.locator("[data-dyn-controlname='DimensionEntryControl_DECValue_CostCenter'] .lookupButton");
+        await lookupBtn.click();
+
+        // Wait for selection list and choose
+        await this.selectValueInFinancialDimensions.first().waitFor({ state: 'visible', timeout: 10000 });
+        await this.selectValueInFinancialDimensions.first().click();
+
+        // Ensure lookup closes before proceeding
+        await this.selectValueInFinancialDimensions.first().waitFor({ state: 'detached', timeout: 5000 });
     }
+
     async enterPublications(publication: string) {
         await this.enterPublicationinFinancialDimensions.scrollIntoViewIfNeeded();
         await this.enterPublicationinFinancialDimensions.clear();
@@ -1286,7 +1327,8 @@ export class FixedAssetsPage {
             this.page.waitForEvent('download'),
             frame.click('#download'),
         ]);
-        const filePath = path.join("D:\\fgh_automation\\test-data\\", filename);
+        const filePath = path.join(__dirname, '..', 'test-data', filename);
+        //const filePath = path.join("D:\\fgh_automation\\test-data\\", filename);
         await download.saveAs(filePath);
         await this.page.waitForTimeout(4000);
     }

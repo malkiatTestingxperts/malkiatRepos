@@ -1293,14 +1293,17 @@ export class CustomerPage {
     }
 
     async enterAndAddCustomerAccountOnFreeTaxInvoice(account: string) {
+
         await this.customerAccountNameOnFreeTaxInvoice.scrollIntoViewIfNeeded();
         await this.customerAccountNameOnFreeTaxInvoice.click({ clickCount: 1 });
         for (const char of account) {
             await this.page.keyboard.type(char);
-            await this.page.waitForTimeout(900); // tiny delay between characters
+            await this.page.waitForTimeout(700); // tiny delay between characters
         }
-        await waitForWithRetry(this.selectFreeTaxCustomerFromGrid, this.page, 5, 10000, 2000);
-        await this.selectFreeTaxCustomerFromGrid.click();
+        // await this.page.waitForTimeout(5000);
+        await this.page.keyboard.press('Enter');
+        // await waitForWithRetry(this.selectFreeTaxCustomerFromGrid, this.page, 5, 10000, 2000);
+        // await this.selectFreeTaxCustomerFromGrid.click();
     }
 
     async enterDescription(desc: string, accountnum: number, index: number, vat: string, quantity: number, unit: number) {

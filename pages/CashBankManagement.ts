@@ -710,8 +710,29 @@ export class CashBankManagement {
     get buttonOk() {
         return this.page.locator('button[data-dyn-controlname="CommandButton"]');
     }
+
     get butonUpload() {
         return this.page.locator('button[data-dyn-controlname="Select fileUploadButton"]');
+    }
+
+    get inputFilter() {
+        return this.page.locator('[data-dyn-controlname*="FilterField_Grid"] input');
+    }
+
+    get applyFilter() {
+        return this.page.locator('button[data-dyn-controlname="Grid_TransDate_ApplyFilters"]');
+    }
+
+    get dateFilter() {
+        return this.page.locator('[data-dyn-columnname="Grid_TransDate"]');
+    }
+
+    get descDateFilter() {
+        return this.page.locator('button[data-dyn-controlname="Descending_Grid_TransDate"]');
+    }
+
+    get getCheckqueNumberFromDisplayedGrid() {
+        return this.page.locator('[data-dyn-controlname="Grid_ChequeNum"] input');
     }
 
     //********************************Methods for Cash and Bank Managment*******************
@@ -836,6 +857,16 @@ export class CashBankManagement {
         await this.page.click('text=Browse');
         await this.page.waitForTimeout(7000);
         await this.buttonOk.click();
+    }
+
+    async applyDateDescFilter() {
+        await waitForWithRetry(this.dateFilter, this.page, 5, 12000, 2000);
+        await this.dateFilter.click();
+        await waitForWithRetry(this.inputFilter.nth(0), this.page, 5, 12000, 2000);
+        await this.inputFilter.nth(0).fill('');
+        await this.inputFilter.nth(1).fill('');
+        await this.descDateFilter.click();
+        await this.page.waitForTimeout(7000);
     }
 }
 
